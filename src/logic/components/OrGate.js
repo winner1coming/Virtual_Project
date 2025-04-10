@@ -3,15 +3,17 @@ import { SignalState } from "../SignalState";
 
 export class OrGate extends BaseComponent {
     compute() {
+        let hasConnected = false;
         for (const value of this.inputs) {
-            if (value === SignalState.DISCONNECTED) {
-                this.outputs = [SignalState.DISCONNECTED];
-                return this.outputs;
-            }
             if (value === SignalState.HIGH) {
                 this.outputs = [SignalState.HIGH];
                 return this.outputs;
+            }else if (!hasConnected && value === SignalState.LOW) {
+                hasConnected = true;
             }
+        }
+        if(!hasConnected) {
+            this.outputs = [SignalState.DISCONNECTED]
         }
         this.outputs = [SignalState.LOW];
         return this.outputs;
@@ -19,10 +21,6 @@ export class OrGate extends BaseComponent {
 
     changeInput(index, v) {
         this.inputs[index] = v;
-        if (v === SignalState.DISCONNECTED) {
-            this.outputs = [SignalState.DISCONNECTED];
-            return this.outputs;
-        }
         if (v === SignalState.HIGH) {
             this.outputs = [SignalState.HIGH];
             return this.outputs;
