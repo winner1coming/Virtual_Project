@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Canvas Modeling with Vue</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    canvas {
+      border: 1px solid #ccc;
+      touch-action: none; /* 防止移动端触摸滚动 */
+    }
+    .container {
+      display: flex;
+      gap: 20px;
+    }
+    .controls {
+      padding: 20px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <div class="controls">
+        <input type="color" v-model="currentColor">
+        <button @click="addRect">添加矩形</button>
+        <button @click="addCircle">添加圆形</button>
+      </div>
+      <canvas ref="canvas" 
+              @mousedown="startDrag"
+              @mousemove="doDrag"
+              @mouseup="endDrag"
+              @mouseleave="endDrag"
+              @touchstart.prevent="startDrag"
+              @touchmove.prevent="doDrag"
+              @touchend.prevent="endDrag">
+      </canvas>
+    </div>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          shapes: [],
+          currentColor: '#ff0000',
+          isDragging: false,
+          selectedShape: null,
+          dragOffset: { x: 0, y: 0 },
+          canvasSize: { width: 800, height: 600 }
+        }
+      },
+      mounted() {
+        this.initCanvas();
+        this.draw();
+      },
+      methods: {
+        initCanvas() {
+          const canvas = this.$refs.canvas;
+          const dpr = window.devicePixelRatio || 1;
+          
+          canvas.width = this.canvasSize.width * dpr;
+          canvas.height = this.canvasSize.height * dpr;
+          canvas.style.width = this.canvasSize.width + 'px';
+          canvas.style.height = this.canvasSize.height + 'px';
+          
+          this.ctx = canvas.getContext('2d');
+          this.ctx.scale(dpr, dpr);
+        },
+
+        addRect() {
+          this.shapes.push({
+            type: 'rect',
+            x: Math.random() * (this.canvasSize.width - 100),
+            y: Math.random() * (this.canvasSize.height - 100),
+            width: 100,
+            height: 60,
+            color: this.currentColor
+          });
+          this.draw();
+        },
+
+        addCircle() {
+          this.shapes.push({
+            type: 'circle',
+            x: Math.random() * (this.canvasSize.width - 60),
+            y: Math.random() * (this.canvasSize.height - 60),
+            radius: 30,
+            color: this.currentColor
+          });
+          this.draw();
+        },
+
+        getCanvasPosition(event) {
+          const rect = this.$refs.canvas.getBoundingClientRect();
+          const scaleX = this.canvasSize.width / rect.width;
+          const scaleY = this.canvasSize.height / rect.height;
+          
+          const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+          const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+          
+          return {
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
+          };
+        },
+
+        startDrag(event) {
+          const pos = this.getCanvasPosition(event);
+          const shapes = [...this.shapes].reverse(); // 从最上层开始检测
+          
+          this.selectedShape = shapes.find(shape => {
+            if (shape.type === 'rect') {
+              return pos.x > shape.x && pos.x < shape.x + shape.width &&
+                     pos.y > shape.y && pos.y < shape.y + shape.height;
+            } else if (shape.type === 'circle') {
+              const dx = pos.x - shape.x;
+              const dy = pos.y - shape.y;
+              return dx*dx + dy*dy < shape.radius*shape.radius;
+            }
+          });
+
+          if (this.selectedShape) {
+            this.isDragging = true;
+            this.dragOffset = {
+              x: pos.x - this.selectedShape.x,
+              y: pos.y - this.selectedShape.y
+            };
+          }
+        },
+
+        doDrag(event) {
+          if (!this.isDragging || !this.selectedShape) return;
+          
+          const pos = this.getCanvasPosition(event);
+          this.selectedShape.x = pos.x - this.dragOffset.x;
+          this.selectedShape.y = pos.y - this.dragOffset.y;
+          this.draw();
+        },
+
+        endDrag() {
+          this.isDragging = false;
+          this.selectedShape = null;
+        },
+
+        draw() {
+          this.ctx.clearRect(0, 0, this.canvasSize.width, this.canvasSize.height);
+          
+          this.shapes.forEach(shape => {
+            this.ctx.fillStyle = shape.color;
+            
+            if (shape.type === 'rect') {
+              this.ctx.fillRect(shape.x, shape.y, shape.width, shape.height);
+            } else if (shape.type === 'circle') {
+              this.ctx.beginPath();
+              this.ctx.arc(shape.x, shape.y, shape.radius, 0, Math.PI * 2);
+              this.ctx.fill();
+            }
+          });
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
