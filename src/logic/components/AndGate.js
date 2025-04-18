@@ -1,4 +1,4 @@
-import { BaseComponent } from "../BaseComponent";
+import { BaseComponent } from "../BaseComponent.js";
 export class AndGate extends BaseComponent{
     // constructor(bitCount=1){this.bitCount=bitCount;}
     compute(){   // 返回输出(int)
@@ -26,12 +26,12 @@ export class AndGate extends BaseComponent{
 
     changeInput(index, v){
         this.inputs[index]=v;
-        const oldOutput = this.output;
         if(v===-2){
             this.output = -2;
         }else{
             this.compute();
         }
-        return this.output===oldOutput? false : true;
+        // console.log(this.inputs);  //
+        return this.output;
     }
 }

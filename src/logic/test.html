@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Logic Gates</title>
+</head>
+<body>
+    <h1>Testing Logic Gates</h1>
+    <script type="module">
+        import { AndGate } from "./components/AndGate.js";
+        import { OrGate } from "./components/OrGate.js";
+        import { NotGate } from "./components/NotGate.js";
+        import {CircuitLogic} from "./CircuitLogic.js";
+
+        function testConnect(){
+            let circuitLogic = new CircuitLogic();
+             // 创建逻辑门实例
+            let c1 = new AndGate(0, "And");
+            let c2 = new OrGate(1, "Or");
+            let c3 = new NotGate(2, "Not");
+
+            c1.changeInputPinCount(2);
+            c2.changeInputPinCount(2);
+            c3.changeInputPinCount(1);
+            c1.changeInput(0, 1);
+            c1.changeInput(1, 1);
+
+            console.log("AndGate instance:", c1);
+            console.log("OrGate instance:", c2);
+            console.log("NotGate instance:", c3);
+            
+            
+            // 测试连接
+            console.log("test connect");
+            circuitLogic.connect(c1, 2, c2, 0);
+            circuitLogic.connect(c2, 2, c3, 0);
+
+            console.log("AndGate instance:", c1);
+            console.log("OrGate instance:", c2);
+            console.log("NotGate instance:", c3);  
+
+            // 当连接发生变化
+            let c4 = new AndGate(3, "And");
+            c4.changeInputPinCount(2);
+            c4.changeInput(0, 0);
+            
+            circuitLogic.connect(c4,2,c1,1);
+
+            console.log("andGate一个输入为0，andGate输出给orGate，orGate输出给Not")
+            console.log("AndGate instance:", c1);
+            console.log("OrGate instance:", c2);
+            console.log("NotGate instance:", c3);  
+
+        }
+
+
+        testConnect();
+       
+
+    </script>
+</body>
+</html>

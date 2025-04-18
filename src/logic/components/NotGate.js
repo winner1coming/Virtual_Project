@@ -1,5 +1,4 @@
-import { BaseComponent } from "../BaseComponent";
-import { SignalState } from "../SignalState";
+import { BaseComponent } from "../BaseComponent.js";
 
 export class NotGate extends BaseComponent {
     compute() {

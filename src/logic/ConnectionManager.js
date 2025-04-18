@@ -1,4 +1,4 @@
-class ConnectionManager {
+export class ConnectionManager {
     constructor() {
         this.connections = new Map(); // 存储连线关系
         // 连线关系的结构如下：
