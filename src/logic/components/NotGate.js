@@ -8,15 +8,15 @@ export class NotGate extends BaseComponent {
             throw new Error("NotGate requires exactly one input.");
         }
         const input = this.inputs[0];
-        if (input === SignalState.DISCONNECTED) {
-            this.outputs = [SignalState.DISCONNECTED];
-        } else if (input === SignalState.HIGH) {
-            this.outputs = [SignalState.LOW];
-        } else if (input === SignalState.LOW) {
-            this.outputs = [SignalState.HIGH];
+        if (input < 0) {
+            this.output = input;
+        } else if (input === 1) {
+            this.output = 0;
+        } else if (input === 0) {
+            this.output = 1;
         }
 
-        return this.outputs;
+        return this.output;
     }
 
     changeInput(index, v) {
@@ -24,13 +24,13 @@ export class NotGate extends BaseComponent {
             throw new Error("NotGate only supports a single input at index 0.");
         }
         this.inputs[index] = v;
-        if (v === SignalState.DISCONNECTED) {
-            this.outputs = [SignalState.DISCONNECTED];
-        } else if (v === SignalState.HIGH) {
-            this.outputs = [SignalState.LOW];
-        } else if (v === SignalState.LOW) {
-            this.outputs = [SignalState.HIGH];
+        if (v < 0) {
+            this.output = v;
+        } else if (v === 1) {
+            this.output = 0;
+        } else if (v === 0) {
+            this.output = 1;
         }
-        return this.outputs;
+        return this.output;
     }
 }

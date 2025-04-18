@@ -1,3 +1,4 @@
+// 电路传输整型，-1表示未连接，-2表示错误
 export class BaseComponent{
     // id;
     // type;
@@ -8,12 +9,13 @@ export class BaseComponent{
     // width;
     // position;
     // pinPosition;
-    constructor({ id = null, type = null, name = null, inputs = [], outputs = [], height = 0, width = 0, position = { x: 0, y: 0 }, pinPosition = [] } = {}) {
+    constructor({ id = null, type = null, name = null, inputs = [], output = null, bitCount = 1, height = 0, width = 0, position = { x: 0, y: 0 }, pinPosition = [] } = {}) {
         this.id = id;
         this.type = type;
         this.name = name;
         this.inputs = inputs;
-        this.outputs = outputs;
+        this.output = output;
+        this.bitCount = bitCount;
         this.height = height;
         this.width = width;
         this.position = position;
