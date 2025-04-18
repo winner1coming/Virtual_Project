@@ -23,12 +23,15 @@ export class AndGate extends BaseComponent{
         }
         return this.output;
     }
+
     changeInput(index, v){
         this.inputs[index]=v;
+        const oldOutput = this.output;
         if(v===-2){
             this.output = -2;
-            return this.output;
+        }else{
+            this.compute();
         }
-        return this.compute();
+        return this.output===oldOutput? false : true;
     }
 }
