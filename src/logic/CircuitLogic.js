@@ -1,5 +1,5 @@
-import { BaseComponent } from "./BaseComponent";
-import {ConnectionManager} from "./ConnectionManager";
+import { BaseComponent } from "./BaseComponent.js";
+import {ConnectionManager} from "./ConnectionManager.js";
 
 export class CircuitLogic{
     constructor(){
@@ -16,7 +16,7 @@ export class CircuitLogic{
             if(pinIndex2 >= component2.getInputPinCount()){
                 // 非法
                 // 标记连线为非法  todo
-                
+
             }else{
                 // 合法
                 inputIndex = pinIndex1 - inputComponent.getInputPinCount();
@@ -38,22 +38,34 @@ export class CircuitLogic{
             }
         }
         // 正常的情况 
+        // console.log(inputComponent, outputComponent);  //
         let workList = [];  // 数组元素为[component, idx, value]
-        let pinMap;
-        if(outputComponent.changeIndex(outputIndex)){
+        let pinMap, oldOutput;
+        oldOutput = outputComponent.getOutput();
+        if(oldOutput !== outputComponent.changeInput(outputIndex, inputComponent.getOutput())){
             // 将与输出组件的输出端相连的所有组件加入workList
             pinMap = this.connectionManager.getOutputPinMap(outputComponent)
-            for(const idx in pinMap){
-                workList.push([pinMap[idx].component, pinMap[idx].index, outputComponent.getOutput()]);
+            if(pinMap){
+                //console.log(pinMap);  //
+                for(const connection of pinMap.values()){
+                    //console.log(pinMap);  //
+                    workList.push([connection.component, connection.index, outputComponent.getOutput()]);
+                }
             }
+            
         }
         while(workList.length !== 0){
             let tmp = workList.shift();  // 删除第一个元素
-            if(tmp[0].changeIndex(tmp[1], tmp[2])){
-                pinMap = this.connectionManager.getOutputPinMap(tmp[0])
-                for(const idx in pinMap){
-                    workList.push([pinMap[idx].component, pinMap[idx].index, outputComponent.getOutput()]);
+            //console.log(tmp[0]);
+            oldOutput = tmp[0].getOutput();
+            if(oldOutput !== tmp[0].changeInput(tmp[1], tmp[2])){
+                pinMap = this.connectionManager.getOutputPinMap(tmp[0]);
+                if(pinMap){
+                    for(const connection of pinMap.values()){
+                        workList.push([connection.component, connection.index, outputComponent.getOutput()]);
+                    }
                 }
+                
             }
         }
     }

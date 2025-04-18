@@ -21,8 +21,11 @@ export class BaseComponent{
         this.position = position;
         this.pinPosition = pinPosition;
     }
-    compute(){}   // 调用后返回output是否改变，改变了则返回true
-    changeInput(index, v){}   // 改变某一个引脚的电平，返回outputs
+    compute(){}   // 调用后返回output
+    changeInput(index, v){}   // 改变某一个引脚的电平，返回output
+    changeInputPinCount(num){
+        this.inputs = Array(num).fill(-1);
+    }
     getInputPinCount(){
         return this.inputs.length;
     }
