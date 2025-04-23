@@ -1,30 +1,37 @@
-import { BaseComponent } from "../BaseComponent";
-import { SignalState } from "../SignalState";
+import { BaseComponent } from "../BaseComponent.js";
 export class AndGate extends BaseComponent{
-    compute(){
+    // constructor(bitCount=1){this.bitCount=bitCount;}
+    compute(){   // 返回输出(int)
+        let hasConnected = false;
         for(const value of this.inputs){
-            if(value===SignalState.DISCONNECTED){
-                this.outputs=[SignalState.DISCONNECTED];
-                return this.outputs;
-            }if(value===SignalState.LOW){
-                this.outputs=[SignalState.LOW];
-                return this.outputs;
+            if(value === -2){
+                this.output = -2;
+                return -2;
             }
+            if(value !== -1){
+                if(!hasConnected){
+                    hasConnected = true;
+                    this.output = value;
+                } else{
+                    this.output = this.output & value;
+                }
+            }
+            
         }
-       this.outputs = [SignalState.HIGH];
-        return this.outputs;
+        if(!hasConnected) {
+            this.output = -1;
+        }
+        return this.output;
     }
+
     changeInput(index, v){
         this.inputs[index]=v;
-        if(v===SignalState.DISCONNECTED){
-            this.outputs=[SignalState.DISCONNECTED];
-            return this.outputs;
+        if(v===-2){
+            this.output = -2;
+        }else{
+            this.compute();
         }
-        if(v===SignalState.LOW){
-            this.outputs = [SignalState.LOW];
-            return this.outputs;
-        }
-        this.outputs = [SignalState.HIGH];
-        return this.outputs;
+        // console.log(this.inputs);  //
+        return this.output;
     }
 }
