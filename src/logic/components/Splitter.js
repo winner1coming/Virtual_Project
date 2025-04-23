@@ -3,14 +3,14 @@ import { SignalState } from "../SignalState";
 // Separator 类继承自 BaseComponent
 export class Separator extends BaseComponent {
     constructor({ bitLength = 4, multiPinCount = 4, id = null, name = null, position = { x: 0, y: 0 } } = {}) {
-        super({ id, name, type: 'Separator', inputs: [], outputs: [], height: 20, width: 20, position, pinPosition: [] });
+        super({ id, name, type: 'Separator', inputs: [], outputs, height: 20, width: 20, position, pinPosition: [] });
 
         this.bitLength = bitLength;  
         this.multiPinCount = multiPinCount;
         // 默认状态：1 表示单引脚输入，多引脚输出；2 表示多引脚输入，单引脚输出 
         this.situation = 1;  
         this.inputs = Array(bitLength).fill({ name: 'Pin0', value: SignalState.DISCONNECTED }); 
-        this.outputs = [];
+        this.outputs;
         for (let i = 0; i < multiPinCount; i++) {
             this.outputs.push({ name: `Pin${i}`, value: SignalState.DISCONNECTED });
         }
