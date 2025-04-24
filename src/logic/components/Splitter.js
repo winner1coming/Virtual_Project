@@ -65,4 +65,3 @@ export class Separator extends BaseComponent {
         return this.outputs.map(output => `${output.name}:${output.value}`).join(', ');
     }
 }
-
