@@ -9,7 +9,7 @@ export class BaseComponent{
     // width;
     // position;
     // pinPosition;
-    constructor({ id = null, type = null, name = null, inputs = [], output = null, bitCount = 1, height = 0, width = 0, position = { x: 0, y: 0 }, pinPosition = [] } = {}) {
+    constructor(id = null, type = null, name = null, inputs = [], output = null, bitCount = 1, height = 0, width = 0, position = { x: 0, y: 0 }, pinPosition = []) {
         this.id = id;
         this.type = type;
         this.name = name;
