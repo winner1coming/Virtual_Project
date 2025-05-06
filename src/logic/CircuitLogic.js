@@ -3,6 +3,11 @@ import {ConnectionManager} from "./ConnectionManager.js";
 
 export class CircuitLogic{
     constructor(){
+        // 设置为单例模式
+        if(CircuitLogic.instance){
+            return CircuitLogic.instance;
+        }
+        CircuitLogic.instance = this;
         this.connectionManager = new ConnectionManager();
     }
     // 连线
