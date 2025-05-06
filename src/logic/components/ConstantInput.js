@@ -2,41 +2,38 @@ import { BaseComponent } from "../BaseComponent";
 import { SignalState } from "../SignalState";
 
 export class ConstantInput extends BaseComponent {
-    constructor({ id, name, position, value = 0, bitWidth = 1, height = 30, width = 30 } = {}) {
+    constructor({ id, name, position, value = 0, bitWidth = 1, height = 30, width = 30 , bitCount = 1} = {}) {
         super({
             id,
             type: "ConstantInput",
             name,
             inputs: [],
-            outputs: [value],  // 输出固定值，默认为 0
+            outputs,
+            bitCount,
             height,
             width,
             position,
-            pinPosition: []  // 根据需要可添加引脚位置
+            pinPosition: {}
         });
-
-        // 新增的位宽属性
-        this.bitWidth = bitWidth;
-
-        // 根据位宽限制常量值的范围
-        this.maxValue = Math.pow(2, this.bitWidth) - 1;
+        this.maxValue = Math.pow(2, this.bitCount) - 1;
+        this.state = 'normal';
     }
 
-    // 固定输出值，无需重新计算
     compute() {
-        return this.outputs;  // 始终返回固定的输出
+        return this.outputs; 
     }
-
-    // 修改常量值的方法，确保值不超过最大范围
-    changeInput(value) {
-        // 限制值的范围为 0 到 2^n - 1
-        this.outputs[0] = Math.max(0, Math.min(value, this.maxValue));
-        return this.outputs;
+    //用户通过直接输入十进制数来改变常量的输入
+    getChange(value){
+        //如果超过当前位数能表示的，返回错误状态
+        if(value > this.maxValue){
+            this.state = 'error';
+            return;
+        }
+        this.outputs = value;
     }
-
-    // 修改位宽后，重新计算最大值
+    //设置位数
     setBitWidth(newBitWidth) {
-        this.bitWidth = newBitWidth;
-        this.maxValue = Math.pow(2, this.bitWidth) - 1;
+        this.bitCount = newBitWidth;
+        this.maxValue = Math.pow(2, this.bitCount) - 1;
     }
 }

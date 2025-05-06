@@ -4,38 +4,55 @@ import { SignalState } from "../SignalState";
 
 
 export class InputPin extends BaseComponent {
-    constructor({ id = null, name = null, bitLength = 4, position = { x: 0, y: 0 } } = {}) {
-        super({ id, name, type: 'InputPin', inputs: [], outputs: [("output",SignalState.DISCONNECTED)], height: 20, width: 20, position, pinPosition: [] });
-        this.bitLength = bitLength; // 二进制输入位数
-        this.value = Array(bitLength).fill(0); // 默认为 0000 或根据位数初始化
+    constructor({ id = null, name = null, bitCount = 1, position = { x: 0, y: 0 } } = {}) {
+        super({ id, name, type: 'InputPin', inputs: [], outputs, bitCount,height: 20, width: 20, position, pinPosition: [] });
+        this.bitCount = bitCount;
+        this.inputs = new Array(bitCount).fill(0);
+    }
+    //二进制数组变成十进制数，为了输出
+    binaryToDecimal() {
+        return this.inputs.reduce(
+          (acc, bit, index) => acc + (bit << (this.bitCount - 1 - index)), 
+          0
+        );
     }
 
-    // 获取当前的二进制值
-    getValue() {
-        return this.value.join('');
-    }
-
-    // 设置某一位的值
-    setBit(index, value) {
-        if (index >= 0 && index < this.bitLength) {
-            this.value[index] = value ? 1 : 0;
-            this.compute(); // 更新output
+    setBit(index) {
+        if (index >= 0 && index < this.bitCount) {
+            this.inputs[index] = this.inputs[index] == 0 ? 1 : 0;
+            this.compute();
         }
     }
 
-    // 改变位数，并初始化所有位为0
     changeBitLength(newBitLength) {
-        if (newBitLength !== this.bitLength) {
-            // 将所有位初始化为0
-            this.value = Array(newBitLength).fill(0);
-            this.bitLength = newBitLength; // 更新位数
-            this.compute(); // 更新output
+        if (newBitLength !== this.bitCount) {
+            this.inputs = new Array(newBitLength).fill(0);
+            this.bitCount = newBitLength;
+            this.compute();
         }
+
+        //如果想要这个保留原来的逻辑可换成这个
+        /*
+            if(newBitLength !== this.bitCount){
+                const newInputs = new Array(newBitLength).fill(0);
+                for(let i = 0; i < Math.min(this..bitCount, newBitLength); i++){
+                    newInputs[i] = this.inputs[i];
+                }
+                this.inputs = newInputs;
+                this.bitCount = newBitLength;
+                this.compute();
+            }
+        */
     }
 
-    // 计算当前输入下的outputs，InputPin将outputs作为整个输入值
     compute() {
         // 更新outputs为value，后续计算时会根据每一位的值来判断电平
-        this.outputs = [...this.value];
+        const decimalValue = this.binaryToDecimal();
+        //考虑将output的一些属性封装起来，比如value、还有name（后续对于这个隧道的实现）
+        this.outputs = decimalValue;
+    }
+
+    getValue(){
+        return this.outputs;
     }
 }
