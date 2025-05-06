@@ -11,13 +11,14 @@ export const useCircuitStore = defineStore('circuit', {
     currentId: 0,
   }),
   actions: {
-    getComponent(id: number){
+    getComponent(id: number): BaseComponent{
       return this.components.get(id);
     },
-    getComponentOutput(id:number){
+    getComponentOutput(id:number): number{
       return this.components.get(id).getOutput();
     },
-    addComponent(type: String, position: [number, number]) {
+    // 添加一个组件，返回id
+    addComponent(type: String, position: [number, number]): number {
       const id = this.currentId++;
       // const logic = createGate(type, id);
       if(type === "And"){
