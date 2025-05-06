@@ -2,12 +2,15 @@ import { defineStore } from 'pinia'
 import { BaseComponent } from '@/logic/BaseComponent.js';
 export const useCircuitStore = defineStore('circuit', {
   state: () => ({
-    components: new Map<string, BaseComponent>(),
+    components: new Map<number, BaseComponent>(),
     // wires: new Map<string, Wire>(),
     selectedGateId: null,
     currentId: 0,
   }),
   actions: {
+    getComponent(id: number){
+      return this.components.get(id);
+    },
     addComponent(type: String, position: [number, number]) {
       const id = this.currentId++;
       // const logic = createGate(type, id);

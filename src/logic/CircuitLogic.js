@@ -1,4 +1,5 @@
 import { BaseComponent } from "./BaseComponent.js";
+import {useCircuitStore} from "@/store/CircuitStore"
 import {ConnectionManager} from "./ConnectionManager.js";
 
 export class CircuitLogic{
@@ -11,7 +12,10 @@ export class CircuitLogic{
         this.connectionManager = new ConnectionManager();
     }
     // 连线
-    connect(component1, pinIndex1, component2, pinIndex2){
+    connect(componentID1, pinIndex1, componentID2, pinIndex2){
+        const circuitStore = useCircuitStore();
+        const component1 = circuitStore.getComponent(componentID1);
+        const component2 = circuitStore.getComponent(componentID2);
         // 组件的引脚从0开始编号，前n位为输入
         let inputComponent, outputComponent, inputIndex, outputIndex;
         // component1 为电线输入端，即其端口为输出端
