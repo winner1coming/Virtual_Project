@@ -4,33 +4,45 @@ export abstract class BaseComponent{
     type: String;
     name: String;
     inputs: number[];
-    output: number;
+    outputs: number[];
     bitCount: number;
     height: number;
     width: number;
     position: [number, number];
     pinPosition: Array<[number, number]>;
-    constructor(id = null, type = null, name = null, inputs = [], output = null, bitCount = 1, height = 0, width = 0, position:[number, number] = [0,0], pinPosition = null) {
+
+    constructor(id: number, type: String, position:[number, number] = [0,0],  pinPosition = []) {
         this.id = id;
         this.type = type;
-        this.name = name;
-        this.inputs = inputs;
-        this.output = output;
-        this.bitCount = bitCount;
-        this.height = height;
-        this.width = width;
+        this.name = "";    // todo
+        this.inputs = [];     // 在子类中需要详细初始化！
+        this.outputs = [-1];  // 输出初始值为-1 未连接
+        this.bitCount = 1;
+        this.height = 1;   // todo
+        this.width = 1;
         this.position = position;
         this.pinPosition = pinPosition;
     };
-    abstract compute(): number;   // 调用后返回output
-    abstract changeInput(idx: number, v: number): number;  // 改变某一个引脚的电平，返回output
-    changeInputPinCount(num: number){
-        this.inputs = Array(num).fill(-1);
+
+    abstract compute(): number[];   // 调用后返回outputs
+    abstract changeInput(idx: number, v: number): number[];  // 改变某一个引脚的电平，返回outputs
+
+    setName(name: String){
+        this.name = name;
     }
+
+    setBitCount(bitCount: number){
+        this.bitCount = bitCount;
+    }
+
+    changeInputPinCount(num: number){
+        this.inputs = Array(num).fill(-1);    // 将输入全部置-1
+    }
+
     getInputPinCount(): number{
         return this.inputs.length;
     }
-    getOutput(): number{
-        return this.output;
+    getOutputs(): number[]{
+        return this.outputs;
     }
 }
