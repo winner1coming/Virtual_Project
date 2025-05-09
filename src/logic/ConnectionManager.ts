@@ -9,7 +9,7 @@ export type PinMap = Map<number, Conn>;
 export class ConnectionManager {
     // 连线关系的结构如下：
     // Map{
-    //   id1: Map{   // id1 一般为输入端（对电线来说）
+    //   id1: Map{   // id1 一般为输入端（对电线来说），即id1为输出设备
     //       idx1: { id: id2, idx: idx2, legal },
     //       ...
     //   },
@@ -26,14 +26,14 @@ export class ConnectionManager {
         if (!this.connections.has(id1)) {
             this.connections.set(id1, new Map());
         }
-        this.connections.get(id1).set(idx1, { id: id2, idx: idx2, legal: legal });
+        this.connections.get(id1)!.set(idx1, { id: id2, idx: idx2, legal: legal });
         return true;
     }
 
     // 删除连线
     removeConnection(id: number, idx: number): boolean {
-        if (this.connections.has(id)) {
-            const pinMap = this.connections.get(id);
+        const pinMap = this.connections.get(id);
+        if(pinMap){
             pinMap.delete(idx); // 删除指定引脚的连线
             return true;
         }
@@ -43,17 +43,14 @@ export class ConnectionManager {
     // 查找连线
     getConnection(id: number, idx: number): Conn|null {    // 返回{id, idx, legal}
         if (this.connections.has(id)) {
-            return this.connections.get(id).get(idx) || null;
+            return this.connections.get(id)!.get(idx) || null;
         }
         return null;
     }
 
-    // 获取与某组件的输出端相连的pinMap
-    getOutputPinMap(id: number): PinMap{
-        if(this.connections.has(id)){
-            return this.connections.get(id);
-        }
-        return null;
+    // 获取与某组件的输出端的pinMap
+    getOutputPinMap(id: number): PinMap | undefined{
+        return this.connections.get(id);
     }
 
     // 获取所有连线（暂时没什么用）

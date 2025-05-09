@@ -12,10 +12,14 @@ export const useCircuitStore = defineStore('circuit', {
   }),
   actions: {
     getComponent(id: number): BaseComponent{
-      return this.components.get(id);
+      const component = this.components.get(id);
+      if(!component){
+        throw new Error(`Component with id ${id} not found`);
+      } 
+      return component;
     },
-    getComponentOutput(id:number): number{
-      return this.components.get(id).getOutput();
+    getComponentOutputs(id:number): number[]{
+      return this.getComponent(id).getOutputs();
     },
     // 添加一个组件，返回id
     addComponent(type: String, position: [number, number]): number {
@@ -30,7 +34,7 @@ export const useCircuitStore = defineStore('circuit', {
       }
       return id;
     },
-    addWire(from, to) { },
+    // addWire(from, to) { },
     simulateCircuit() {},
   }
 });

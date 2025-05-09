@@ -1,6 +1,6 @@
-import { BaseComponent } from "./BaseComponent.js";
+import { BaseComponent } from "./BaseComponent";
 import {useCircuitStore} from "@/store/CircuitStore"
-import {ConnectionManager, PinMap, Conn} from "./ConnectionManager.js";
+import {ConnectionManager, PinMap, Conn} from "./ConnectionManager";
 
 export class CircuitLogic{
     connectionManager: ConnectionManager;
@@ -18,17 +18,20 @@ export class CircuitLogic{
         this.circuitStore = useCircuitStore();
     }
     // 连线
-    connect(id1, pinIndex1, id2, pinIndex2){
+    connect(id1: number, pinIndex1: number, id2: number, pinIndex2: number){
         // 组件的引脚从0开始编号，前n位为输入
-        let inputId, outputId, inputIndex, outputIndex;
-        // component1 为电线输入端，即其端口为输出端
+        let inputId: number, outputId: number, inputIndex: number, outputIndex: number;
+        // inputId 对应电线输入端，即其实际上为该元件的输出引脚
         if(pinIndex1 >= this.circuitStore.getComponent(id1).getInputPinCount()){
             inputId = id1;
             // 那么component2应为输出
             if(pinIndex2 >= this.circuitStore.getComponent(id2).getInputPinCount()){
                 // 非法
                 // 标记连线为非法  todo
-
+                outputId = id2;
+                outputIndex = pinIndex1;
+                inputIndex = pinIndex2 - this.circuitStore.getComponent(inputId).getInputPinCount();    
+                this.connectionManager.addConnection(inputId, inputIndex, outputId, outputIndex, false);
             }else{
                 // 合法
                 inputIndex = pinIndex1 - this.circuitStore.getComponent(inputId).getInputPinCount();
@@ -41,6 +44,10 @@ export class CircuitLogic{
             if(pinIndex2 < this.circuitStore.getComponent(id2).getInputPinCount()){
                 // 非法
                 // 标记连线为非法  todo
+                inputId = id2;
+                inputIndex = pinIndex1 - this.circuitStore.getComponent(inputId).getInputPinCount();
+                outputIndex = pinIndex2;
+                this.connectionManager.addConnection(inputId, inputIndex, outputId, outputIndex, false);
             }else{
                 // 合法
                 outputIndex = pinIndex1;
@@ -51,31 +58,41 @@ export class CircuitLogic{
         }
         // 正常的情况 
         // console.log(inputComponent, outputComponent);  //
-        let workList = [];  // 数组元素为[component, idx, value]
-        let pinMap: PinMap, oldOutput;
-        oldOutput = this.circuitStore.getComponent(outputId).getOutput();
-        if(oldOutput !== this.circuitStore.getComponent(outputId)
-                .changeInput(outputIndex, this.circuitStore.getComponent(inputId).getOutput())){
-            // 将与输出组件的输出端相连的所有组件加入workList
+        interface workListItem{
+            id: number;
+            idx: number;
+            value: number;
+        }
+        let workList: workListItem[] = [];  
+        let pinMap, oldOutputs: number[];
+        
+        oldOutputs = JSON.parse(JSON.stringify(this.circuitStore.getComponent(outputId).getOutputs()));
+        let newOutputs = this.circuitStore.getComponent(outputId).changeInput(outputIndex, this.circuitStore.getComponent(inputId).getOutputs()[inputIndex]);
+        if(oldOutputs !== newOutputs){
+            // 将与电线输出组件的输出端相连的所有组件加入workList
             pinMap = this.connectionManager.getOutputPinMap(outputId)
             if(pinMap){
                 //console.log(pinMap);  //
-                for(const connection of pinMap.values()){
+                for(const [pinIdx, connection] of pinMap.entries()){
                     //console.log(pinMap);  //
-                    workList.push([connection.id, connection.idx, this.circuitStore.getComponent(outputId).getOutput()]);
+                    // 要将id组件的idx索引改为value
+                    workList.push({ id: connection.id, idx: connection.idx, value: newOutputs[pinIdx] });
                 }
+            }else{
+                // 没有引脚图 todo 不该出现的情况
             }
             
         }
         while(workList.length !== 0){
-            let tmp = workList.shift();  // 删除第一个元素
+            let tmp: workListItem = workList.shift()!; // 删除第一个元素
             //console.log(tmp[0]);
-            oldOutput = this.circuitStore.getComponentOutput(tmp[0]);
-            if(oldOutput !== this.circuitStore.getComponent(tmp[0]).changeInput(tmp[1], tmp[2])){
-                pinMap = this.connectionManager.getOutputPinMap(tmp[0]);
+            oldOutputs = JSON.parse(JSON.stringify(this.circuitStore.getComponentOutputs(tmp.id)));
+            newOutputs = this.circuitStore.getComponent(tmp.id).changeInput(tmp.idx, tmp.value);
+            if(oldOutputs !== newOutputs){
+                pinMap = this.connectionManager.getOutputPinMap(tmp.id);
                 if(pinMap){
-                    for(const connection of pinMap.values()){
-                        workList.push([connection.id, connection.idx, this.circuitStore.getComponentOutput(tmp[0])]);
+                    for(const [pinIdx, connection] of pinMap.entries()){
+                        workList.push({ id: connection.id, idx: connection.idx, value: this.circuitStore.getComponentOutputs(tmp.id)[pinIdx] });
                     }
                 }
                 
