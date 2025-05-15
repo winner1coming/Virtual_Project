@@ -57,7 +57,7 @@ export class CircuitLogic{
             }
         }
         // 正常的情况 
-        // console.log(inputComponent, outputComponent);  //
+        // console.log(this.circuitStore.getComponent(inputId), this.circuitStore.getComponent(outputId));  //
         interface workListItem{
             id: number;
             idx: number;
