@@ -1,28 +1,140 @@
 <template>
   <div class="workspace-container">
-    <!-- 导航栏 -->
-    <nav class="navbar">
-      <div class="nav-left">
-        <router-link to="/" class="nav-item">首页</router-link>
-        <button @click="saveProject" class="nav-item">保存</button>
-      </div>
-      <div class="nav-right">
-        <span>当前模式：{{ modeLabel }}</span>
-      </div>
-    </nav>
+    <!-- 导航栏-->
+    <div class="navbar-container">
+      <nav class="navbar">
+        <!-- 左侧面包屑 -->
+        <div class="nav-left">
+          <n-breadcrumb>
+            <n-breadcrumb-item @click="goHome">
+              <n-icon :component="home"/>首页
+            </n-breadcrumb-item>
+            <n-breadcrumb-item>
+              <n-icon :component="Bo"/>{{ modeLabel }}
+            </n-breadcrumb-item>
+          </n-breadcrumb>
+        </div>
 
-    <!-- 主工作区 -->
+        <!-- 右侧菜单 -->
+        <div class="nav-right">
+            <n-button quaternary circle @click="handleClick">
+              <template #icon>
+                <n-icon>
+                  <component :is = "showToolbar ? downIcon : forwardIcon"/>
+                </n-icon>
+              </template>
+            </n-button>
+        </div>
+      </nav>
+      
+      <!-- 工具栏 - 展开后显示 -->
+      <div v-if="showToolbar" class="toolbar">
+        <n-button-group class = "buttongroup">
+          <n-tooltip trigger="hover">
+            <template #trigger>
+              <n-button quaternary @click="saveProject" >
+                <template #icon>
+                  <n-icon><save-icon /></n-icon>
+                </template>
+              </n-button>
+            </template>
+            保存
+          </n-tooltip>
+          
+          <n-tooltip trigger="hover">
+            <template #trigger>
+              <n-button quaternary @click="prevStep">
+                <template #icon>
+                  <n-icon><arrow-back-icon /></n-icon>
+                </template>
+              </n-button>
+            </template>
+            上一步
+          </n-tooltip>
+          
+          <n-tooltip trigger="hover">
+            <template #trigger>
+              <n-button quaternary @click="nextStep" >
+                <template #icon>
+                  <n-icon><arrow-forward-icon /></n-icon>
+                </template>
+              </n-button>
+            </template>
+            下一步
+          </n-tooltip>
+          
+          <n-tooltip trigger="hover">
+            <template #trigger>
+              <n-button quaternary @click="clearWorkspace">
+                <template #icon>
+                  <n-icon><trash-icon /></n-icon>
+                </template>
+              </n-button>
+            </template>
+            清空
+          </n-tooltip>
+        </n-button-group>
+      </div>
+    </div>
+
+    <!-- 主工作区 - 保持不变 -->
     <div class="main-content">
-      <!-- 工具区 -->
+      <!-- 左侧工具区（抽屉式） -->
       <div class="toolbox">
-        <div 
-          v-for="component in components"
-          :key="component.type"
-          class="toolbox-item"
-          draggable="true"
-          @dragstart="onDragStart($event, component)"
-        >
-          {{ component.name }}
+        <!-- 抽屉按钮 -->
+        <div class="drawer-buttons">
+          <n-tooltip trigger="hover" placement="right">
+            <template #trigger>
+              <n-button 
+                quaternary 
+                class="drawer-button"
+                :type="activeDrawer === 'material' ? 'primary' : 'default'"
+                @click="toggleDrawer('material')"
+              >
+                <template #icon>
+                  <n-icon><textoutline /></n-icon>
+                </template>
+              </n-button>
+            </template>
+            资料
+          </n-tooltip>
+          
+          <n-tooltip trigger="hover" placement="right">
+            <template #trigger>
+              <n-button 
+                quaternary 
+                class="drawer-button"
+                :type="activeDrawer === 'component' ? 'primary' : 'default'"
+                @click="toggleDrawer('component')"
+              >
+                <template #icon>
+                  <n-icon><cube /></n-icon>
+                </template>
+              </n-button>
+            </template>
+            元件
+          </n-tooltip>
+          
+          <n-tooltip trigger="hover" placement="right">
+            <template #trigger>
+              <n-button 
+                quaternary 
+                class="drawer-button"
+                :type="activeDrawer === 'project' ? 'primary' : 'default'"
+                @click="toggleDrawer('project')"
+              >
+                <template #icon>
+                  <n-icon><folder /></n-icon>
+                </template>
+              </n-button>
+            </template>
+            项目文件
+          </n-tooltip>
+        </div>
+        
+        <!-- 抽屉内容区 -->
+        <div class="drawer-content">
+          <component :is="activeDrawerComponent" v-if="activeDrawer" />
         </div>
       </div>
 
@@ -39,9 +151,40 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, defineAsyncComponent} from 'vue'
+import { useRouter } from 'vue-router'
+import { 
+  NBreadcrumb, 
+  NBreadcrumbItem, 
+  NButton, 
+  NButtonGroup, 
+  NIcon, 
+  NTooltip
+} from 'naive-ui'
+import { 
+  SaveOutline as SaveIcon,
+  ArrowBackOutline as ArrowBackIcon,
+  ArrowForwardOutline as ArrowForwardIcon,
+  TrashOutline as TrashIcon,
+  HomeOutline as home,
+  BowlingBallOutline as Bo,
+  CaretForwardCircleOutline as forwardIcon,
+  CaretDownCircleOutline as downIcon,
+  DocumentTextOutline as textoutline,
+  CubeOutline as cube,
+  FolderOpenOutline as folder
+} from '@vicons/ionicons5'
 
 const props = defineProps(['mode'])
+
+// 添加新状态
+const showToolbar = ref(false)
+const router = useRouter()
+// 异步加载抽屉内容组件
+const MaterialPanel = defineAsyncComponent(() => import('./Freedom/MaterialPanel.vue'))
+const ComponentPanel = defineAsyncComponent(() => import('./Freedom/ComponentPanel.vue'))
+const ProjectFilePanel = defineAsyncComponent(() => import('./Freedom/ProjectFilePanel.vue'))
+const activeDrawer = ref('component') // 默认打开元件抽屉
 
 const modeLabels = {
   practice: '自由练习模式',
@@ -58,6 +201,49 @@ const components = [
 
 const modeLabel = computed(() => modeLabels[props.mode] || '自由练习模式')
 
+const activeDrawerComponent = computed(() => {
+  switch (activeDrawer.value) {
+    case 'material': return MaterialPanel
+    case 'component': return ComponentPanel
+    case 'project': return ProjectFilePanel
+    default: return null
+  }
+})
+
+// 导航栏相关方法
+const goHome = () => {
+  router.push({name : 'Home'})
+}
+
+const handleClick = () => {
+  showToolbar.value = !showToolbar.value
+}
+
+const toggleDrawer = (drawerName) => {
+  if (activeDrawer.value === drawerName) {
+    activeDrawer.value = null // 点击已激活的抽屉则关闭
+  } else {
+    activeDrawer.value = drawerName // 激活新抽屉
+  }
+}
+
+const saveProject = () => {
+  console.log('保存项目')
+}
+
+const prevStep = () => {
+  console.log('上一步')
+}
+
+const nextStep = () => {
+  console.log('下一步')
+}
+
+const clearWorkspace = () => {
+  console.log('清空工作区')
+}
+
+// 以下方法保持不变
 const onDragStart = (event, component) => {
   event.dataTransfer.setData('component', JSON.stringify(component))
 }
@@ -83,24 +269,78 @@ const generateUniqueId = () => Date.now().toString(36) + Math.random().toString(
   flex-direction: column;
 }
 
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem;
-  background: #2c3e50;
+/* 导航栏容器 */
+.navbar-container {
+  background: #95bfe8;
   color: white;
 }
 
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mode-label {
+  font-size: 0.9rem;
+}
+
+/* 工具栏 */
+.toolbar {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 以下样式保持不变 */
 .main-content {
   flex: 1;
   display: flex;
 }
 
+/* 工具区 - 抽屉式 */
 .toolbox {
-  width: 250px;
-  padding: 1rem;
-  background: #f5f6fa;
+  display: flex;
+  width: 300px; /* 增加宽度以适应内容 */
+  background: #b7daf1;
   border-right: 1px solid #ddd;
+}
+
+.drawer-buttons {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0.5rem;
+  gap: 0.5rem;
+  background: #c0dcef;
+  border-right: 1px solid #ddd;
+}
+
+.drawer-button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drawer-content {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
 }
 
 .canvas {
