@@ -46,6 +46,34 @@ export const useCircuitStore = defineStore('circuit', {
       }
       return id;
     },
+    removeComponent(id: number) {
+      const component = this.components.get(id);
+      if (!component) {
+        throw new Error(`Component with id ${id} not found`);
+      }
+      // 删除组件时，先删除其所有连接的电线  todo
+      // this.wires.forEach((wire, key) => {
+      //   if (wire.from.id === id || wire.to.id === id) {
+      //     this.wires.delete(key);
+      //   }
+      // });
+      this.components.delete(id);
+      // 如果删除的组件是当前选中的组件，则取消选中
+      if (this.selectedGateId === id) {
+        this.selectedGateId = null;
+      }
+    },
+    // selectComponent(id: number) {
+    //   if (this.components.has(id)) {
+    //     this.selectedGateId = id;
+    //   } else {
+    //     throw new Error(`Component with id ${id} not found`);
+    //   }
+    // },
+    // unselectComponent() {
+    //   this.selectedGateId = null;
+    // },
+
     // addWire(from, to) { },
     simulateCircuit() {},
   }
