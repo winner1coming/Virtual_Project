@@ -30,6 +30,11 @@ export class Clock extends BaseComponent {
         }
     }
 
+    // 销毁时钟，释放定时器的资源
+    destroy() {
+        this.stop(); // 停止定时器
+    }
+
     compute(): number[] {
         // 时钟输出由定时器自动切换，compute 只返回当前输出
         return this.outputs;
