@@ -77,11 +77,9 @@
       </div>
     </div>
 
-    <!-- 主工作区 - 保持不变 -->
     <div class="main-content">
-      <!-- 左侧工具区（抽屉式） -->
+      <!-- 左侧工具栏按钮区 -->
       <div class="toolbox">
-        <!-- 抽屉按钮 -->
         <div class="drawer-buttons">
           <n-tooltip trigger="hover" placement="right">
             <template #trigger>
@@ -98,7 +96,7 @@
             </template>
             资料
           </n-tooltip>
-          
+
           <n-tooltip trigger="hover" placement="right">
             <template #trigger>
               <n-button 
@@ -114,7 +112,7 @@
             </template>
             元件
           </n-tooltip>
-          
+
           <n-tooltip trigger="hover" placement="right">
             <template #trigger>
               <n-button 
@@ -131,12 +129,17 @@
             项目文件
           </n-tooltip>
         </div>
-        
-        <!-- 抽屉内容区 -->
-        <div class="drawer-content">
-          <component :is="activeDrawerComponent" v-if="activeDrawer" />
-        </div>
       </div>
+
+      <!-- 自定义抽屉 -->
+      <transition name="slide-fade">
+        <div 
+          v-if="activeDrawer" 
+          class="local-drawer"
+        >
+          <component :is="activeDrawerComponent" />
+        </div>
+      </transition>
 
       <!-- 实验区 -->
       <div 
@@ -144,7 +147,6 @@
         @dragover.prevent
         @drop="onDrop"
       >
-        
       </div>
     </div>
   </div>
@@ -159,8 +161,10 @@ import {
   NButton, 
   NButtonGroup, 
   NIcon, 
-  NTooltip
+  NTooltip,
+  NDrawer
 } from 'naive-ui'
+
 import { 
   SaveOutline as SaveIcon,
   ArrowBackOutline as ArrowBackIcon,
@@ -184,7 +188,7 @@ const router = useRouter()
 const MaterialPanel = defineAsyncComponent(() => import('./Freedom/MaterialPanel.vue'))
 const ComponentPanel = defineAsyncComponent(() => import('./Freedom/ComponentPanel.vue'))
 const ProjectFilePanel = defineAsyncComponent(() => import('./Freedom/ProjectFilePanel.vue'))
-const activeDrawer = ref('component') // 默认打开元件抽屉
+const activeDrawer = ref(null)//默认状态是不会打开任何的抽屉
 
 const modeLabels = {
   practice: '自由练习模式',
@@ -202,7 +206,7 @@ const components = [
 const modeLabel = computed(() => modeLabels[props.mode] || '自由练习模式')
 
 const activeDrawerComponent = computed(() => {
-  switch (activeDrawer.value) {
+  switch(activeDrawer.value){
     case 'material': return MaterialPanel
     case 'component': return ComponentPanel
     case 'project': return ProjectFilePanel
@@ -315,7 +319,7 @@ const generateUniqueId = () => Date.now().toString(36) + Math.random().toString(
 /* 工具区 - 抽屉式 */
 .toolbox {
   display: flex;
-  width: 300px; /* 增加宽度以适应内容 */
+  width: 50px; /* 增加宽度以适应内容 */
   background: #b7daf1;
   border-right: 1px solid #ddd;
 }
@@ -325,7 +329,7 @@ const generateUniqueId = () => Date.now().toString(36) + Math.random().toString(
   flex-direction: column;
   padding: 1rem 0.5rem;
   gap: 0.5rem;
-  background: #c0dcef;
+  background: #98d5e0;
   border-right: 1px solid #ddd;
 }
 
@@ -342,6 +346,29 @@ const generateUniqueId = () => Date.now().toString(36) + Math.random().toString(
   padding: 1rem;
   overflow-y: auto;
 }
+
+/* 自定义抽屉区域 */
+.local-drawer {
+  width: 300px;
+  background: #dfb8b8;
+  border-right: 1px solid #ddd;
+  padding: 1rem;
+  overflow-y: auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* 动画效果 */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.5s ease;
+}
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(-10px);
+  opacity: 0;
+}
+
 
 .canvas {
   flex: 1;
