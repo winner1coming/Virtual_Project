@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    "strict": true,
+
+    "outDir": "./dist", // 指定编译后的文件输出到 dist 目录
+    "rootDir": "./src", // 指定源文件的根目录
+    
+    "allowJs": true,
+    "typeRoots": ["./node_modules/@types", "./types"], // 指定类型声明文件的路径
+
+    "moduleResolution": "node",
+    "module": "ES2020",
+    "target": "es2020", 
+    "lib": ["es2020", "dom"] 
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/logic/components/ConstantInput.js"],
+  "exclude": ["node_modules"]
+}
