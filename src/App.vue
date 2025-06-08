@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div>
     <h1>数字电路实验</h1>
     <AndGate />
@@ -20,4 +20,21 @@ body {
   margin: 0;
   font-family: sans-serif;
 }
-</style>
+</style> -->
+
+<template>
+  <div id="app">
+    <Builder />
+  </div>
+</template>
+  
+<script setup>
+import Builder from './components/CanvasEditor.vue'
+</script>
+
+<style>
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+</style> 
