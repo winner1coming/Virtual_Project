@@ -4,9 +4,6 @@
       viewBox="0 0 600 600"
       width="600"
       height="600"
-      @mousedown="onMouseDown"
-      @mousemove="onMouseMove"
-      @mouseup="onMouseUp"
     >
       <g :transform="`translate(${norGate.x}, ${norGate.y})`" cursor="move">
         <!-- NOR 门图形 -->
@@ -58,24 +55,24 @@
   const dragging = ref(false)
   const offset = ref({ x: 0, y: 0 })
   
-  function onMouseDown(e) {
-    dragging.value = true
-    offset.value = {
-      x: e.offsetX - norGate.value.x,
-      y: e.offsetY - norGate.value.y,
-    }
-  }
+  // function onMouseDown(e) {
+  //   dragging.value = true
+  //   offset.value = {
+  //     x: e.offsetX - norGate.value.x,
+  //     y: e.offsetY - norGate.value.y,
+  //   }
+  // }
   
-  function onMouseMove(e) {
-    if (dragging.value) {
-      norGate.value.x = e.offsetX - offset.value.x
-      norGate.value.y = e.offsetY - offset.value.y
-    }
-  }
+  // function onMouseMove(e) {
+  //   if (dragging.value) {
+  //     norGate.value.x = e.offsetX - offset.value.x
+  //     norGate.value.y = e.offsetY - offset.value.y
+  //   }
+  // }
   
-  function onMouseUp() {
-    dragging.value = false
-  }
+  // function onMouseUp() {
+  //   dragging.value = false
+  // }
   </script>
   
   <style scoped>
