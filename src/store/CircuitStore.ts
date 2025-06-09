@@ -46,6 +46,8 @@ export const useCircuitStore = defineStore('circuit', {
       }
       return id;
     },
+    // 移除一个组件
+    // 注意：如果组件有连接的电线，需要先删除电线
     removeComponent(id: number) {
       const component = this.components.get(id);
       if (!component) {
@@ -63,6 +65,15 @@ export const useCircuitStore = defineStore('circuit', {
         this.selectedGateId = null;
       }
     },
+    // 移动一个组件
+    moveComponent(id: number, newPosition: [number, number]) {
+      const component = this.components.get(id);
+      if (!component) {
+        throw new Error(`Component with id ${id} not found`);
+      }
+      component.setPosition(newPosition);
+      // 更新组件位置后，可能需要更新电线的位置 todo
+    },
     // selectComponent(id: number) {
     //   if (this.components.has(id)) {
     //     this.selectedGateId = id;
@@ -75,6 +86,8 @@ export const useCircuitStore = defineStore('circuit', {
     // },
 
     // addWire(from, to) { },
+    
+    // 一次性刷新所有组件输出  todo
     simulateCircuit() {},
   }
 });

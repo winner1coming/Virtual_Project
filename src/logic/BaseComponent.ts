@@ -26,6 +26,11 @@ export abstract class BaseComponent{
 
     abstract compute(): number[];   // 调用后返回outputs
     abstract changeInput(idx: number, v: number): number[];  // 改变某一个引脚的电平，返回outputs
+    // // 取反（只给位宽为1的输入引脚用）
+    // invertInput(idx: number): void {
+    //     this.inputs[idx] = this.inputs[idx] === 1 ? 0 : 1;
+    //     this.compute();  // 更新outputs
+    // } 
 
     setName(name: String){
         this.name = name;
@@ -33,6 +38,9 @@ export abstract class BaseComponent{
 
     setBitCount(bitCount: number){
         this.bitCount = bitCount;
+    }
+    setPosition(position: [number, number]){
+        this.position = position;
     }
 
     changeInputPinCount(num: number){
