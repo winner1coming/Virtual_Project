@@ -64,19 +64,22 @@ export class CircuitLogic{
             value: number;
         }
         let workList: workListItem[] = [];  
-        let pinMap, oldOutputs: number[];
+        let oldOutputs: number[];
+        let pinMap: PinMap;
         
         oldOutputs = JSON.parse(JSON.stringify(this.circuitStore.getComponent(outputId).getOutputs()));
         let newOutputs = this.circuitStore.getComponent(outputId).changeInput(outputIndex, this.circuitStore.getComponent(inputId).getOutputs()[inputIndex]);
         if(oldOutputs !== newOutputs){
             // 将与电线输出组件的输出端相连的所有组件加入workList
-            pinMap = this.connectionManager.getOutputPinMap(outputId)
+            pinMap = this.connectionManager.getOutputPinMap(outputId)!;
             if(pinMap){
                 //console.log(pinMap);  //
-                for(const [pinIdx, connection] of pinMap.entries()){
-                    //console.log(pinMap);  //
-                    // 要将id组件的idx索引改为value
-                    workList.push({ id: connection.id, idx: connection.idx, value: newOutputs[pinIdx] });
+                for(const pinIdx of pinMap.keys()){
+                    for(const connection of pinMap.get(pinIdx) as Conn[]){
+                        //console.log(pinMap);  //
+                        // 要将id组件的idx索引改为value
+                        workList.push({ id: connection.id, idx: connection.idx, value: newOutputs[pinIdx] });
+                    }
                 }
             }else{
                 // 没有引脚图 todo 不该出现的情况
@@ -89,10 +92,12 @@ export class CircuitLogic{
             oldOutputs = JSON.parse(JSON.stringify(this.circuitStore.getComponentOutputs(tmp.id)));
             newOutputs = this.circuitStore.getComponent(tmp.id).changeInput(tmp.idx, tmp.value);
             if(oldOutputs !== newOutputs){
-                pinMap = this.connectionManager.getOutputPinMap(tmp.id);
+                pinMap = this.connectionManager.getOutputPinMap(tmp.id)!;
                 if(pinMap){
-                    for(const [pinIdx, connection] of pinMap.entries()){
-                        workList.push({ id: connection.id, idx: connection.idx, value: this.circuitStore.getComponentOutputs(tmp.id)[pinIdx] });
+                    for(const pinIdx of pinMap.keys()){
+                        for(const connection of pinMap.get(pinIdx) as Conn[]){
+                            workList.push({ id: connection.id, idx: connection.idx, value: this.circuitStore.getComponentOutputs(tmp.id)[pinIdx] });
+                        }
                     }
                 }
                 

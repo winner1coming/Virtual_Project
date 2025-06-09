@@ -91,6 +91,7 @@ export class EventDrivenSimulator {
     this.processQueue();
   }
 
+  // 注意考虑多条连线连到同一引脚的情况
   disconnect(id1: number, pinIndex1: number, id2: number, pinIndex2: number) {
     const comp1 = this.circuitStore.getComponent(id1);
     const comp2 = this.circuitStore.getComponent(id2);
@@ -113,7 +114,7 @@ export class EventDrivenSimulator {
       inputIdx = pinIndex2 - comp2.getInputPinCount();
     }
 
-    this.connectionManager.removeConnection(inputId, inputIdx);
+    this.connectionManager.removeConnection(inputId, inputIdx, outputId, outputIdx);
 
     // 断开连接后，清除该电线输出端的输入引脚的输入
     const component = this.circuitStore.getComponent(outputId);
@@ -126,13 +127,15 @@ export class EventDrivenSimulator {
     // if (this.isEqualOutputs(oldOutputs, newOutputs)) return false;
     const pinMap = this.connectionManager.getOutputPinMap(outputId);
     if (!pinMap) return false;
-    for (const [pinIdx, conn] of pinMap.entries()) {
-      if (conn.legal) {
-        const targetComponent = this.circuitStore.getComponent(conn.id);
-        if (!targetComponent) continue;
+    for (const pinIdx of pinMap.keys()) {
+      for(const conn of pinMap.get(pinIdx) || []) {
+        if (conn.legal) {
+          const targetComponent = this.circuitStore.getComponent(conn.id);
+          if (!targetComponent) continue;
 
-        // 通知其他组件该组件的输出改变
-        this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
+          // 通知其他组件该组件的输出改变
+          this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
+        }
       }
     }
   }
@@ -165,12 +168,14 @@ export class EventDrivenSimulator {
         const pinMap = this.connectionManager.getOutputPinMap(id);
         if (!pinMap) continue;
 
-        for (const [pinIdx, conn] of pinMap.entries()) {
-          if (conn.legal) {
-            const targetComponent = this.circuitStore.getComponent(conn.id);
-            if (!targetComponent) continue;
+        for (const pinIdx of pinMap.keys()) {
+          for( const conn of pinMap.get(pinIdx) || []) {
+            if (conn.legal) {
+              const targetComponent = this.circuitStore.getComponent(conn.id);
+              if (!targetComponent) continue;
 
-            this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
+              this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
+            }
           }
         }
       }

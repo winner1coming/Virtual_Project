@@ -7,14 +7,19 @@ import {NandGate} from '@/logic/components/NandGate';
 import {NorGate} from '@/logic/components/NorGate';
 import {XorGate} from '@/logic/components/XorGate';
 import {Clock} from '@/logic/components/Clock';
+import { EventDrivenSimulator } from '@/logic/Simulator';
+
+const simulator = EventDrivenSimulator.getInstance();
+
 export const useCircuitStore = defineStore('circuit', {
   state: () => ({
     components: new Map<number, BaseComponent>(),
     // wires: new Map<string, Wire>(),
-    selectedGateId: null,
+    selectedGateId: -1,   // 选中的组件ID，-1表示没有选中任何组件
     currentId: 0,
   }),
   actions: {
+    // #region 组件相关操作
     getComponent(id: number): BaseComponent{
       const component = this.components.get(id);
       if(!component){
@@ -25,6 +30,7 @@ export const useCircuitStore = defineStore('circuit', {
     getComponentOutputs(id:number): number[]{
       return this.getComponent(id).getOutputs();
     },
+
     // 添加一个组件，返回id
     addComponent(type: String, position: [number, number]): number {
       const id = this.currentId++;
@@ -62,9 +68,10 @@ export const useCircuitStore = defineStore('circuit', {
       this.components.delete(id);
       // 如果删除的组件是当前选中的组件，则取消选中
       if (this.selectedGateId === id) {
-        this.selectedGateId = null;
+        this.selectedGateId = -1;
       }
     },
+
     // 移动一个组件
     moveComponent(id: number, newPosition: [number, number]) {
       const component = this.components.get(id);
@@ -74,20 +81,48 @@ export const useCircuitStore = defineStore('circuit', {
       component.setPosition(newPosition);
       // 更新组件位置后，可能需要更新电线的位置 todo
     },
-    // selectComponent(id: number) {
-    //   if (this.components.has(id)) {
-    //     this.selectedGateId = id;
-    //   } else {
-    //     throw new Error(`Component with id ${id} not found`);
-    //   }
-    // },
-    // unselectComponent() {
-    //   this.selectedGateId = null;
-    // },
+
+    // 选择组件
+    selectComponent(id: number) {
+      if (this.components.has(id)) {
+        this.selectedGateId = id;
+      } else {
+        throw new Error(`Component with id ${id} not found`);
+      }
+    },
+    unselectComponent() {
+      this.selectedGateId = -1;
+    },
+    // #endregion 组件相关操作
+
+    // #region 连线相关操作
+    connect(id1: number, idx1:number, id2: number, idx2:number) {
+      simulator.connect(id1, idx1, id2, idx2);
+    },
+    disconnect(id1: number, idx1:number, id2: number, idx2:number) {
+      simulator.disconnect(id1, idx1, id2, idx2);
+    },
+    // #endregion 连线相关操作
 
     // addWire(from, to) { },
-    
-    // 一次性刷新所有组件输出  todo
+
+    // #region 模拟器逻辑
+    // 启用模拟器
+    enableSimulator() {
+      simulator.enable();
+      simulator.resumeSimulator();
+    },
+    disableSimulator() {
+      simulator.disable();
+    },
+    pauseSimulator(){
+      simulator.pauseSimulator();
+    },
+    resumeSimulator(){
+      simulator.resumeSimulator();
+    },
+    // 一次性刷新所有组件输出  todo  应该可以不用这个接口了
     simulateCircuit() {},
+    // #endregion 模拟器逻辑
   }
 });
