@@ -23,7 +23,8 @@ export class EventDrivenSimulator {
   private circuitStore = useCircuitStore();
   private workQueue: WorkItem[] = [];
   private inQueue: Set<string> = new Set();
-
+  private enableSimulator: Boolean = false; // 是否启用模拟器
+  private pause: Boolean = false; // 是否暂停模拟器
   private constructor() {
     this.connectionManager = new ConnectionManager();
   }
@@ -33,6 +34,25 @@ export class EventDrivenSimulator {
       EventDrivenSimulator.instance = new EventDrivenSimulator();
     }
     return EventDrivenSimulator.instance;
+  }
+  // 启用模拟器
+  enable() {
+    this.enableSimulator = true;
+  }
+  // 禁用模拟器
+  disable() {
+    this.enableSimulator = false;
+    this.workQueue = [];
+    this.inQueue.clear();
+  }
+  // 暂停模拟器
+  pauseSimulator() {
+    this.pause = true;
+  }
+  // 恢复模拟器
+  resumeSimulator() {
+    this.pause = false;
+    this.processQueue();
   }
 
   connect(id1: number, pinIndex1: number, id2: number, pinIndex2: number){
@@ -66,6 +86,8 @@ export class EventDrivenSimulator {
     const outputVal = this.circuitStore.getComponent(inputId).getOutputs()[inputIdx];
     // 电线输出端的组件，其索引为idx的输入引脚的输入更改为了outputVal
     this.enqueue(outputId, outputIdx, outputVal);
+    // 如果模拟器未启用或暂停，则不处理队列
+    if (!this.enableSimulator || this.pause) return;
     this.processQueue();
   }
 
