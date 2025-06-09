@@ -1,10 +1,10 @@
 <template>
 <div id="app">
-  <n-config-provider>
+  <!-- <n-config-provider>
     <n-message-provider>
       <router-view></router-view>
     </n-message-provider>
-  </n-config-provider>
+  </n-config-provider> -->
   <div id="app">
     <Builder />
   </div>
