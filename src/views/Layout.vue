@@ -131,22 +131,32 @@
         </div>
       </div>
 
-      <!-- 自定义抽屉 -->
-      <transition name="slide-fade">
-        <div 
-          v-if="activeDrawer" 
-          class="local-drawer"
-        >
-          <component :is="activeDrawerComponent" />
-        </div>
-      </transition>
-
-      <!-- 实验区 -->
-      <div 
-        class="canvas"
-        @dragover.prevent
-        @drop="onDrop"
-      >
+      <div class="drawer-container" v-if="activeDrawer">
+        <!-- 自定义抽屉 -->
+        <transition name="slide-fade">
+          <n-split
+            :default-size="0.08"
+            :min="0"
+            :max="0.60"
+            direction="horizontal"
+            class="split-container"
+          >
+          <template #1>
+            <div class="local-drawer">
+              <component :is="activeDrawerComponent" />
+            </div>
+          </template>
+          <template #2>
+            <!-- 实验区 -->
+            <div 
+              class="canvas"
+              @dragover.prevent
+              @drop="onDrop"
+            >
+            </div>
+          </template>
+          </n-split>
+        </transition>
       </div>
     </div>
   </div>
@@ -162,7 +172,7 @@ import {
   NButtonGroup, 
   NIcon, 
   NTooltip,
-  NDrawer
+  NSplit
 } from 'naive-ui'
 
 import { 
@@ -349,23 +359,45 @@ const generateUniqueId = () => Date.now().toString(36) + Math.random().toString(
 
 /* 自定义抽屉区域 */
 .local-drawer {
-  width: 300px;
+  height: 100%;
   background: #dfb8b8;
   border-right: 1px solid #ddd;
   padding: 0;
   overflow-y: auto;
-  height: 100%;
   box-sizing: border-box;
+}
+
+/* 分割容器样式 */
+.drawer-container {
+  flex: 1;
+  position: relative;
+  height: 100%;
+}
+
+.split-container {
+  height: 100%;
+  border-right: 1px solid #ddd;
+}
+
+/* 调整分割条样式 */
+:deep(.n-split-trigger) {
+  background-color: #95bfe8;
+  width: 8px;
+  transition: background-color 0.3s;
+}
+
+:deep(.n-split-trigger:hover) {
+  background-color: #7aa3cc;
 }
 
 /* 动画效果 */
 .slide-fade-enter-active,
 .slide-fade-leave-active {
-  transition: all 0.5s ease;
+  transition: all 0.3s ease;
 }
 .slide-fade-enter-from,
 .slide-fade-leave-to {
-  transform: translateX(-10px);
+  transform: translateX(-20px);
   opacity: 0;
 }
 
