@@ -131,11 +131,11 @@
         </div>
       </div>
 
-      <div class="drawer-container" v-if="activeDrawer">
+      <div class="drawer-container">
         <!-- 自定义抽屉 -->
         <transition name="slide-fade">
           <n-split
-            :default-size="0.08"
+            v-model:size="drawerSize"
             :min="0"
             :max="0.60"
             direction="horizontal"
@@ -146,6 +146,7 @@
               <component :is="activeDrawerComponent" />
             </div>
           </template>
+
           <template #2>
             <!-- 实验区 -->
             <!-- <div 
@@ -201,6 +202,7 @@ const MaterialPanel = defineAsyncComponent(() => import('./Freedom/MaterialPanel
 const ComponentPanel = defineAsyncComponent(() => import('./Freedom/ComponentPanel.vue'))
 const ProjectFilePanel = defineAsyncComponent(() => import('./Freedom/ProjectFilePanel.vue'))
 const activeDrawer = ref(null)//默认状态是不会打开任何的抽屉
+const drawerSize = ref(0); // 初始宽度为 0
 
 const modeLabels = {
   practice: '自由练习模式',
@@ -237,9 +239,11 @@ const handleClick = () => {
 
 const toggleDrawer = (drawerName) => {
   if (activeDrawer.value === drawerName) {
-    activeDrawer.value = null // 点击已激活的抽屉则关闭
+    activeDrawer.value = null 
+    drawerSize.value = 0
   } else {
-    activeDrawer.value = drawerName // 激活新抽屉
+    activeDrawer.value = drawerName
+    drawerSize.value = 0.08
   }
 }
 
