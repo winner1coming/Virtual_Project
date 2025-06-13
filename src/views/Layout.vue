@@ -352,7 +352,7 @@ const generateUniqueId = () => Date.now().toString(36) + Math.random().toString(
   width: 300px;
   background: #dfb8b8;
   border-right: 1px solid #ddd;
-  padding: 1rem;
+  padding: 0;
   overflow-y: auto;
   height: 100%;
   box-sizing: border-box;
