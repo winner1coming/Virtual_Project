@@ -182,14 +182,18 @@
           </template>
 
           <template #2>
-            <!-- 实验区 -->
-            <!-- <div 
-              class="canvas"
-              @dragover.prevent
-              @drop="onDrop"
+            <n-split 
+            direction="horizontal"
+            v-model:size="CanvasSize"
+            :min="0.5"
             >
-            </div> -->
-            <CanvasEditor />
+              <template #1>
+                <CanvasEditor />
+              </template>
+              <template #2 v-if="showRightPDF">
+                <PDFViewer :pdfFile="currentPdfFile" />
+              </template>
+            </n-split>
           </template>
           </n-split>
         </transition>
@@ -200,7 +204,8 @@
 
 <script setup>
 import CanvasEditor from '@/components/CanvasEditor.vue'
-import { computed, ref, defineAsyncComponent} from 'vue'
+import PDFViewer from './Freedom/PDFViewer.vue'
+import { computed, ref, defineAsyncComponent, provide} from 'vue'
 import { useRouter } from 'vue-router'
 import { 
   NBreadcrumb, 
@@ -238,8 +243,12 @@ const router = useRouter()
 const MaterialPanel = defineAsyncComponent(() => import('./Freedom/MaterialPanel.vue'))
 const ComponentPanel = defineAsyncComponent(() => import('./Freedom/ComponentPanel.vue'))
 const ProjectFilePanel = defineAsyncComponent(() => import('./Freedom/ProjectFilePanel.vue'))
-const activeDrawer = ref(null)//默认状态是不会打开任何的抽屉
-const drawerSize = ref(0); // 初始宽度为 0
+const activeDrawer = ref(null)
+const drawerSize = ref(0);
+const CanvasSize = ref(1);
+const showRightPDF = ref(false)
+const currentPdfFile = ref(null)
+provide('pdfState', {showRightPDF,currentPdfFile})
 
 const modeLabels = {
   practice: '自由练习模式',
@@ -282,6 +291,19 @@ const toggleDrawer = (drawerName) => {
     drawerSize.value = 0.08
   }
 }
+
+const togglePDF = (file) => {
+  if(currentPdfFile.value == file && showRightPDF.value){
+    CanvasSize.value = 1
+    showRightPDF.value = false
+  }else{
+    CanvasSize.value = 0.8
+    currentPdfFile.value = file
+    showRightPDF.value = true
+  }
+}
+
+provide('togglePDF', togglePDF)
 
 const saveProject = () => {
   console.log('保存项目')
@@ -345,22 +367,6 @@ const resumeSimulator = () => {
 
 // #endregion 导航栏相关方法
 
-// 以下方法保持不变
-const onDragStart = (event, component) => {
-  event.dataTransfer.setData('component', JSON.stringify(component))
-}
-
-// const onDrop = (event) => {
-//   const component = JSON.parse(event.dataTransfer.getData('component'))
-//   componentStore.addComponent({
-//     ...component,
-//     id: generateUniqueId(),
-//     x: event.offsetX,
-//     y: event.offsetY
-//   })
-// }
-
-const generateUniqueId = () => Date.now().toString(36) + Math.random().toString(36).substr(2)
 </script>
 
 <style scoped>

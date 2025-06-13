@@ -1,28 +1,49 @@
 <template>
-  <div class="material-panel">
-    <h3>资料库</h3>
-    <div class="material-item">电路设计教程.pdf</div>
-    <div class="material-item">电子元件手册.docx</div>
-    <div class="material-item">参考案例.zip</div>
-    <div class="material-item">设计规范.pdf</div>
+  <div class="pdf-buttons">
+    <div class="item" @click="openPdf(lab8PdfUrl)">
+      <span>教材一</span>
+    </div>
+    <div class="item" @click="openPdf(lab9PdfUrl)">
+      <span>教材二</span>
+    </div>
   </div>
 </template>
 
-<style scoped>
-.material-panel {
-  padding: 10px;
+<script setup>
+import { inject } from 'vue'
+import lab8PdfUrl from '@/assets/studySource/lab8.pdf'
+import lab9PdfUrl from '@/assets/studySource/lab9.pdf'
+
+const togglePDF = inject('togglePDF')
+
+const openPdf = (file) => {
+  togglePDF(file)
 }
 
-.material-item {
-  padding: 8px;
-  margin: 5px 0;
+</script>
+
+<style scoped>
+.pdf-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item {
+  padding: 10px;
+  margin: 8px;
   background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
-  cursor: pointer;
+  cursor: move;
+}
+.item:hover {
+    background-color: #f0f5ff;
 }
 
-.material-item:hover {
-  background-color: #f0f5ff;
+.item.active {
+  background: #e3f2fd;
+  border-left: 3px solid #2196f3;
+  font-weight: bold;
 }
 </style>
