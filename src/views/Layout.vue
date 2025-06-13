@@ -73,6 +73,40 @@
             </template>
             清空
           </n-tooltip>
+
+          <n-tooltip trigger="hover">
+            <template #trigger>
+              <n-button quaternary @click="startSimulator" >
+                <template #icon>
+                  <n-icon :color="isSimulatorStarted && !isSimulatorPaused ? 'green' : 'black'"><play-icon /></n-icon>
+                </template>
+              </n-button>
+            </template>
+            启动模拟器
+          </n-tooltip>
+
+          <n-tooltip trigger="hover">
+            <template #trigger>
+              <n-button quaternary @click="pauseSimulator">
+                <template #icon>
+                  <n-icon :color="isSimulatorPaused ? 'red' : 'black'"><pause-icon /></n-icon>
+                </template>
+              </n-button>
+            </template>
+            暂停模拟器
+          </n-tooltip>
+
+          <n-tooltip trigger="hover">
+            <template #trigger>
+              <n-button quaternary @click="stopSimulator">
+                <template #icon>
+                  <n-icon><stop-icon /></n-icon>
+                </template>
+              </n-button>
+            </template>
+            停止模拟器
+          </n-tooltip>
+
         </n-button-group>
       </div>
     </div>
@@ -174,7 +208,7 @@ import {
   NButtonGroup, 
   NIcon, 
   NTooltip,
-  NSplit
+  NSplit,
 } from 'naive-ui'
 
 import { 
@@ -182,6 +216,9 @@ import {
   ArrowBackOutline as ArrowBackIcon,
   ArrowForwardOutline as ArrowForwardIcon,
   TrashOutline as TrashIcon,
+  Play as PlayIcon,
+  Pause as PauseIcon,
+  Stop as StopIcon,
   HomeOutline as home,
   BowlingBallOutline as Bo,
   CaretForwardCircleOutline as forwardIcon,
@@ -208,13 +245,6 @@ const modeLabels = {
   tutorial: '教学模式'
 }
 
-const components = [
-  { type: 'AND', name: '与门' },
-  { type: 'OR', name: '或门' },
-  { type: 'NOT', name: '非门' },
-  { type: 'XOR', name: '异或门' }
-]
-
 const modeLabel = computed(() => modeLabels[props.mode] || '自由练习模式')
 
 const activeDrawerComponent = computed(() => {
@@ -226,7 +256,13 @@ const activeDrawerComponent = computed(() => {
   }
 })
 
-// 导航栏相关方法
+import { useCircuitStore } from '@/store/CircuitStore'
+const circuitStore = useCircuitStore();
+
+// #region 导航栏相关方法
+import {useHistory} from '@/modules/useHistory'
+const {redo, undo, clearAll} = useHistory(); 
+
 const goHome = () => {
   router.push({name : 'Home'})
 }
@@ -247,17 +283,63 @@ const saveProject = () => {
   console.log('保存项目')
 }
 
+// 历史记录相关
 const prevStep = () => {
-  console.log('上一步')
+  undo();
 }
-
 const nextStep = () => {
-  console.log('下一步')
+  redo();
+}
+const clearWorkspace = () => {
+  clearAll();
 }
 
-const clearWorkspace = () => {
-  console.log('清空工作区')
+// 模拟器控制相关
+const isSimulatorStarted = ref(true);
+const isSimulatorPaused = ref(false);
+
+// 开启模拟器
+const startSimulator = () => {
+  if(isSimulatorPaused.value) {
+    circuitStore.resumeSimulator();
+    isSimulatorPaused.value = false; // 恢复暂停状态
+    return; // 如果模拟器已经暂停，则不执行任何操作
+  }
+  if(isSimulatorStarted.value) {
+    return; // 如果模拟器已经启动，则不执行任何操作
+  }
+  circuitStore.enableSimulator();
+  circuitStore.resumeSimulator();
+  isSimulatorStarted.value = true;
 }
+// 关闭模拟器
+const stopSimulator = () => {
+  if(!isSimulatorStarted.value) {
+    return; // 如果模拟器没有启动，则不执行任何操作
+  }
+  isSimulatorPaused.value = false; 
+  circuitStore.disableSimulator();
+  isSimulatorStarted.value = false;
+}
+// 暂停模拟器
+const pauseSimulator = () => {
+  if(isSimulatorPaused.value || !isSimulatorStarted.value) {
+    return; // 如果模拟器已经暂停，则不执行任何操作
+  }
+  circuitStore.pauseSimulator();
+  isSimulatorPaused.value = true;
+} 
+// 恢复模拟器
+const resumeSimulator = () => {
+  if(!isSimulatorPaused.value || !isSimulatorStarted.value) {
+    return; // 如果模拟器没有暂停，则不执行任何操作
+  }
+  circuitStore.resumeSimulator();
+  isSimulatorPaused.value = false;
+}
+// 单步运行模拟器 todo
+
+// #endregion 导航栏相关方法
 
 // 以下方法保持不变
 const onDragStart = (event, component) => {
