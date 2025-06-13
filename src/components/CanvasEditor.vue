@@ -1,11 +1,11 @@
 <template>
   <div class="editor-wrapper">
-    <!-- 左侧工具栏 -->
-    <div class="toolbar">
+    <!-- 左侧工具栏 删除-->
+    <div class="toolbar" v-if="false">
       <!-- 逻辑门 -->
       <div class="category">
-        <div class="category-title" @click="toggleCategory('logic')">逻辑门</div>
-        <div v-show="expanded.logic" class="category-content">
+        <!-- <div class="category-title" @click="toggleCategory('logic')">逻辑门</div> -->
+        <!-- <div v-show="expanded.logic" class="category-content"> -->
           <div class="item" @click="startPlacingVueComponent('AND')">
             <img :src="IMAGE_MAP.AND.src" alt="与门" />
             <span>与门</span>
@@ -18,7 +18,7 @@
             <img :src="IMAGE_MAP.NOT.src" alt="非门" />
             <span>非门</span>
           </div>
-        </div>
+        <!-- </div> -->
       </div>
 
       <!-- 输入输出分类 -->
@@ -26,14 +26,14 @@
       <!-- 其他 -->
 
       <!-- 操作按钮（固定在工具栏底部） -->
-      <div class="category">
+      <!-- <div class="category">
         <div class="category-title">操作</div>
         <div class="category-content">
           <button @click="clearAll">清空</button>
           <button @click="undo">回滚</button>
           <button @click="redo">前进</button>
         </div>
-      </div>
+      </div> -->
     </div>
     
 
@@ -116,9 +116,9 @@
       />
     </div>
 
-    <!-- 右侧编辑栏 -->
+    <!-- 右侧编辑栏 移除 todo-->
     <div
-      v-if="selectedComponent"
+      v-if="false"
       class="edit-panel"
       style="width: 200px; padding: 10px; border-left: 1px solid #ccc;"
     >
@@ -147,21 +147,26 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import AndGate from './AndGate.vue'
 import OrGate from './OrGate.vue'
 import NotGate from './NotGate.vue'
 
+import { useHistory } from '@/modules/useHistory';
+import eventBus from '@/modules/useEventBus';
+
 const canvasContainer = ref(null)
 const components = reactive([])
-const undoStack = reactive([])// 历史操作栈
-const redoStack = reactive([])// 重做栈
+// const undoStack = reactive([])// 历史操作栈
+// const redoStack = reactive([])// 重做栈
 const currentComponent = ref(null)
 const selectedComponent = ref(null)
 const isDragging = ref(false)
 const dragOffset = reactive({ x: 0, y: 0 })// 拖动偏移量
 const previewPos = reactive({ x: 0, y: 0 })// 预览的位置
 const connections = reactive([])// 全局连接列表
+
+const { saveHistory, saveSnapshot } = useHistory(components) // 使用自定义的历史记录管理
 
 // 当前拖动的临时连线
 const tempWire = ref(null)
@@ -178,9 +183,9 @@ const contextMenu = reactive({
 const wireStart = ref(null) // 记录起始点
 
 
-// 组件按钮对应图片选择
-const expanded = reactive({ logic:true })// 逻辑门、IO、其他分类的展开状态
-function toggleCategory(type) {expanded[type] = !expanded[type]}
+// // 组件按钮对应图片选择
+// const expanded = reactive({ logic:true })// 逻辑门、IO、其他分类的展开状态
+// function toggleCategory(type) {expanded[type] = !expanded[type]}
 
 // 组件映射表
 const componentMap = {
@@ -227,7 +232,7 @@ function startPlacingVueComponent(type) {
       size:{...COMPONENT_SIZES[type]},// 组件尺寸
       inputs: type === 'NOT' ? [{ id: 1, value: false }] : [{ id: 1, value: false }, { id: 2, value: false }],
       output: false,
-      direction: 'east' // 默认方向
+      //direction: 'east' // 默认方向
     }
   }
   // components.push(currentComponent.value)// 将当前组件添加到组件列表
@@ -478,74 +483,74 @@ function deleteComponent() {
   }
 }
 
-
-// 保存当前状态为快照
-function saveSnapshot() {
-  //TODO
-  undoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
-  redoStack.length = 0// 清空重做栈
-}
+// #region 移动到其他文件
+// // 保存当前状态为快照
+// function saveSnapshot() {
+//   //TODO
+//   undoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
+//   redoStack.length = 0// 清空重做栈
+// }
 
 // 修改后的应用快照的方法
-function applySnapshot (snapshot) {
-  //TODO
-  components.splice(0, components.length, ...JSON.parse(JSON.stringify(snapshot)))
-}
+// function applySnapshot (snapshot) {
+//   //TODO
+//   components.splice(0, components.length, ...JSON.parse(JSON.stringify(snapshot)))
+// }
 
-// 清空画布：支持撤销
-function clearAll() {
-  saveSnapshot()// 保存快照
-  //TODO
-  components.splice(0) // 清空组件
-  saveHistory()
-}
+// // 清空画布：支持撤销
+// function clearAll() {
+//   saveSnapshot()// 保存快照
+//   //TODO
+//   components.splice(0) // 清空组件
+//   saveHistory()
+// }
 
-// 原函数：清空组件（可删除）
-function clearComponents() {
-  if (components.length > 0) {
-    saveHistory()
-    components.splice(0)
-  }
-}
+// // 原函数：清空组件（可删除）
+// function clearComponents() {
+//   if (components.length > 0) {
+//     saveHistory()
+//     components.splice(0)
+//   }
+// }
 
-// 原函数：保存历史（可删除）
-function saveHistory() {
-  if (undoStack.length >= 50) undoStack.shift()// 限制撤销栈的长度
-  undoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
-  redoStack.length = 0
-}
+// // 原函数：保存历史（可删除）
+// function saveHistory() {
+//   if (undoStack.length >= 50) undoStack.shift()// 限制撤销栈的长度
+//   undoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
+//   redoStack.length = 0
+// }
 
 // 撤销
-function undo() {
-  // if (undoStack.length === 0) return
-  // redoStack.push(JSON.stringify(components))
-  // const prev = undoStack.pop()
-  // Object.assign(components, JSON.parse(prev))
-  // 保存当前状态到重做栈
-  if (undoStack.length > 0) return
-  // 保存当前状态到重做栈
-  redoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
-  // 获取上一个状态
-  const prevState = undoStack.pop()
-  applySnapshot(prevState)// 应用上一个状态
-}
+// function undo() {
+//   // if (undoStack.length === 0) return
+//   // redoStack.push(JSON.stringify(components))
+//   // const prev = undoStack.pop()
+//   // Object.assign(components, JSON.parse(prev))
+//   // 保存当前状态到重做栈
+//   if (undoStack.length > 0) return
+//   // 保存当前状态到重做栈
+//   redoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
+//   // 获取上一个状态
+//   const prevState = undoStack.pop()
+//   applySnapshot(prevState)// 应用上一个状态
+// }
 
 // 重做
-function redo() {
-  // if (redoStack.length === 0) return
-  // undoStack.push(JSON.stringify(components))
-  // const next = redoStack.pop()
-  // Object.assign(components, JSON.parse(next))
-  // TODO
-  if (redoStack.length === 0) return
+// function redo() {
+//   // if (redoStack.length === 0) return
+//   // undoStack.push(JSON.stringify(components))
+//   // const next = redoStack.pop()
+//   // Object.assign(components, JSON.parse(next))
+//   // TODO
+//   if (redoStack.length === 0) return
 
-  // 保存当前状态到重做栈
-  undoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
-  // 获取下一个状态
-  const nextState = redoStack.pop()
-  applySnapshot(nextState)// 应用下一个状态
-}
-
+//   // 保存当前状态到重做栈
+//   undoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
+//   // 获取下一个状态
+//   const nextState = redoStack.pop()
+//   applySnapshot(nextState)// 应用下一个状态
+// }
+// #endregion 移动到其他文件
 
 function handleMouseDown(event) {
   if (event.button !== 0) return; // 只响应左键
@@ -774,13 +779,26 @@ function toggleInput(component, index) {
   }
 }
 
+onMounted(() => {
+  eventBus.on('start-place-component', (type) => {
+    startPlacingVueComponent(type);
+  });  
+  eventBus.on('updateComponentDirection', () => {
+    updateComponentDirection();
+  });
+});
 
+onUnmounted(() => {
+  eventBus.off('start-place-component');
+  eventBus.off('updateComponentDirection');
+});
 </script>
 
 <style scoped>
 .editor-wrapper {
   display: flex;
-  height: 80vh;
+  height: 100%;
+  width: 100%;
   overflow: hidden; /* 防止整体页面滚动 */
 }
 .toolbar {
@@ -823,10 +841,10 @@ function toggleInput(component, index) {
   background: #f8f9fa;
   border-radius: 4px;
 }
-.category-title[data-expanded="true"] {
+/* .category-title[data-expanded="true"] {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-}
+} */
 .category-content {
   display: flex;
   flex-direction: column;

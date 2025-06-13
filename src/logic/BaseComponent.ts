@@ -10,6 +10,7 @@ export abstract class BaseComponent{
     width: number;
     position: [number, number];
     pinPosition: Array<[number, number]>;
+    direction: String; // 组件的方向，'east', 'west', 'north', 'south'
 
     constructor(id: number, type: String, position:[number, number] = [0,0],  pinPosition = []) {
         this.id = id;
@@ -22,6 +23,7 @@ export abstract class BaseComponent{
         this.width = 1;
         this.position = position;
         this.pinPosition = pinPosition;
+        this.direction = 'east';  // 默认方向为东
     };
 
     abstract compute(): number[];   // 调用后返回outputs

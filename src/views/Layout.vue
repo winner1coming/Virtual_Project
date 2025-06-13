@@ -148,12 +148,13 @@
           </template>
           <template #2>
             <!-- 实验区 -->
-            <div 
+            <!-- <div 
               class="canvas"
               @dragover.prevent
               @drop="onDrop"
             >
-            </div>
+            </div> -->
+            <CanvasEditor />
           </template>
           </n-split>
         </transition>
@@ -163,6 +164,7 @@
 </template>
 
 <script setup>
+import CanvasEditor from '@/components/CanvasEditor.vue'
 import { computed, ref, defineAsyncComponent} from 'vue'
 import { useRouter } from 'vue-router'
 import { 
@@ -262,15 +264,15 @@ const onDragStart = (event, component) => {
   event.dataTransfer.setData('component', JSON.stringify(component))
 }
 
-const onDrop = (event) => {
-  const component = JSON.parse(event.dataTransfer.getData('component'))
-  componentStore.addComponent({
-    ...component,
-    id: generateUniqueId(),
-    x: event.offsetX,
-    y: event.offsetY
-  })
-}
+// const onDrop = (event) => {
+//   const component = JSON.parse(event.dataTransfer.getData('component'))
+//   componentStore.addComponent({
+//     ...component,
+//     id: generateUniqueId(),
+//     x: event.offsetX,
+//     y: event.offsetY
+//   })
+// }
 
 const generateUniqueId = () => Date.now().toString(36) + Math.random().toString(36).substr(2)
 </script>

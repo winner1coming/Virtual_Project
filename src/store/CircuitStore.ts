@@ -16,6 +16,10 @@ export const useCircuitStore = defineStore('circuit', {
     // wires: new Map<string, Wire>(),
     selectedGateId: -1,   // 选中的组件ID，-1表示没有选中任何组件
     currentId: 0,
+
+    undoStack:[] as any[],
+    redoStack:[] as any[],
+
     selectedComponent: null as BaseComponent | null,
     simulator: EventDrivenSimulator.getInstance(),
   }),

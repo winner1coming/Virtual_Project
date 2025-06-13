@@ -5,8 +5,8 @@
       v-for="component in components"
       :key="component.type"
       class="component-item"
-      draggable="true"
-      @dragstart="onDragStart($event, component)"
+      
+      @click="onDragStart(component.type)"
     >
       {{ component.name }}
     </div>
@@ -15,6 +15,7 @@
 
 <script setup>
 import { NCollapse, NCollapseItem } from 'naive-ui';
+import eventBus from '@/modules/useEventBus';
 
 const emit = defineEmits(['dragstart']);
 
@@ -37,8 +38,9 @@ const components = [
 ];
 
 
-const onDragStart = (event, component) => {
-  event.dataTransfer.setData('component', JSON.stringify(component));
+const onDragStart = (type) => {
+  // event.dataTransfer.setData('component', JSON.stringify(component));
+  eventBus.emit('start-place-component', type); // 发送拖动事件
 };
 </script>
 
