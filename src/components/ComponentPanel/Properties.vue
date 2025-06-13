@@ -13,17 +13,18 @@
         />
       </div>
 
-      <!-- 修改朝向  todo -->
+      <!-- 修改朝向 -->
       <div class="property-item">
         <label for="orientation">朝向：</label>
         <select
           id="orientation"
-          v-model="selectedComponent.orientation"  
+          v-model="selectedComponent.direction"  
+          @change="updateDirection"
         >
-          <option value="up">向上</option>
-          <option value="down">向下</option>
-          <option value="left">向左</option>
-          <option value="right">向右</option>
+          <option value="east">东</option>
+          <option value="west">西</option>
+          <option value="north">北</option>
+          <option value="south">南</option>
         </select>
       </div>
 
@@ -49,6 +50,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { useCircuitStore } from '@/store/CircuitStore';
+import eventBus from '@/modules/useEventBus';
 
 const circuitStore = useCircuitStore();
 
@@ -61,6 +63,11 @@ const selectedComponent = circuitStore.selectedComponent;
 // });
 // 数据位宽选项
 const bitWidthOptions = ref([1, 2, 4, 8, 16, 32, 64]);
+
+function updateDirection() {
+  // 更新元件的方向
+  eventBus.emit('updateComponentDirection');
+}
 
 </script>
 
