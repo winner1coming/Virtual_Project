@@ -361,7 +361,8 @@ const generateUniqueId = () => Date.now().toString(36) + Math.random().toString(
 .local-drawer {
   height: 100%;
   background: #dfb8b8;
-  padding: 1rem;
+  border-right: 1px solid #ddd;
+  padding: 0;
   overflow-y: auto;
   box-sizing: border-box;
 }

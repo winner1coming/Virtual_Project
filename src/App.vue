@@ -5,15 +5,11 @@
       <router-view></router-view>
     </n-message-provider>
   </n-config-provider>
-  <div id="app">
-    <Builder />
-  </div>
 </div>
 </template>
 
 <script setup>
 import { NMessageProvider, NConfigProvider } from 'naive-ui';
-import Builder from './components/CanvasEditor.vue'
 </script>
 
 <style>
