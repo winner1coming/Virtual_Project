@@ -1,13 +1,17 @@
+import { reactive } from "vue";
 // 电路传输整型，-1表示未连接，-2表示错误
 export abstract class BaseComponent{
     id: number;
     type: String;
     name: String;
     inputs: number[];
+    inputCount: number; // 输入引脚数量
+    inputInverted: boolean[]; // 输入引脚是否取反   todo 内部逻辑未实现
     outputs: number[];
     bitCount: number;
     height: number;
     width: number;
+    scale: number; // 缩放比例
     position: [number, number];
     pinPosition: Array<[number, number]>;
     direction: String; // 组件的方向，'east', 'west', 'north', 'south'
@@ -16,11 +20,16 @@ export abstract class BaseComponent{
         this.id = id;
         this.type = type;
         this.name = "";    // todo
-        this.inputs = [];     // 在子类中需要详细初始化！
-        this.outputs = [-1];  // 输出初始值为-1 未连接
+        
+        this.inputs = reactive([-1, -1]);     // 默认2个输入，如果不是，子类需要在构造函数中初始化
+        this.inputCount = 2; // 默认2个输入
+        this.inputInverted = reactive([false, false]);   // 默认两个引脚
+
+        this.outputs = reactive([-1]);  // 输出初始值为-1 未连接
         this.bitCount = 1;
         this.height = 1;   // todo
         this.width = 1;
+        this.scale = 1;    
         this.position = position;
         this.pinPosition = pinPosition;
         this.direction = 'east';  // 默认方向为东
@@ -46,7 +55,9 @@ export abstract class BaseComponent{
     }
 
     changeInputPinCount(num: number){
-        this.inputs = Array(num).fill(-1);    // 将输入全部置-1
+        this.inputCount = num;
+        this.inputs.splice(0, this.inputs.length, ...Array(num).fill(-1));    // 将输入全部置-1
+        this.inputInverted.splice(0, this.inputInverted.length, ...Array(num).fill(false)); // 初始化输入取反状态
     }
 
     getInputPinCount(): number{

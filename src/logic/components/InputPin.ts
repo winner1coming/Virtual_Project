@@ -8,8 +8,12 @@ export class InputPin extends BaseComponent {
         pinPosition = []
     ) {
         super(id, type, position, pinPosition);
-        this.inputs = []; // InputPin不需要输入引脚
-        this.outputs = [-1]; // 初始输出为未连接状态
+        // this.inputs = []; // InputPin不需要输入引脚
+        this.inputs.splice(0, this.inputs.length); // 清空输入引脚
+        this.inputCount = 0; // 输入引脚数量为0
+        this.inputInverted.splice(0, this.inputInverted.length);
+        //this.outputs = [-1]; // 初始输出为未连接状态
+        this.outputs.splice(0, this.outputs.length, -1); 
         this.bitCount = 1; // 默认为1位
     }
 
@@ -17,16 +21,23 @@ export class InputPin extends BaseComponent {
     toggleBit(index: number): void {
         if (index >= 0 && index < this.bitCount) {
             if (this.bitCount === 1) {
-                this.outputs[0] = this.outputs[0] === 0 ? 1 : 
-                                 this.outputs[0] === 1 ? 0 : 
-                                 this.outputs[0]; // 保持-1或-2不变
+                // this.outputs[0] = this.outputs[0] === 0 ? 1 : 
+                //                  this.outputs[0] === 1 ? 0 : 
+                //                  this.outputs[0]; // 保持-1或-2不变
+                this.outputs.splice(0, 1, this.outputs[0] === 0 ? 1 : 
+                                      this.outputs[0] === 1 ? 0 :
+                                        this.outputs[0]); // 保持-1或-2不变
             } else {
                 if (this.outputs.length !== this.bitCount) {
-                    this.outputs = new Array(this.bitCount).fill(-1);
+                    //this.outputs = new Array(this.bitCount).fill(-1);
+                    this.outputs.splice(0, this.outputs.length, ...Array(this.bitCount).fill(-1));
                 }
-                this.outputs[index] = this.outputs[index] === 0 ? 1 : 
-                                      this.outputs[index] === 1 ? 0 : 
-                                      this.outputs[index];
+                // this.outputs[index] = this.outputs[index] === 0 ? 1 : 
+                //                       this.outputs[index] === 1 ? 0 : 
+                //                       this.outputs[index];
+                this.outputs.splice(index, 1, this.outputs[index] === 0 ? 1 : 
+                                              this.outputs[index] === 1 ? 0 : 
+                                              this.outputs[index]); // 保持-1或-2不变
             }
         }
     }
@@ -62,7 +73,8 @@ export class InputPin extends BaseComponent {
                 }
             }
             
-            this.outputs = newOutputs;
+            ////is.outputs = newOutputs;
+            this.outputs.splice(0, this.outputs.length, ...newOutputs); // 替换outputs的值
         }
     }
 
