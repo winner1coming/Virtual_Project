@@ -60,15 +60,18 @@ import {useComponentsWatchers} from '@/module/useComponentsWatchers'
 
 // const inputCount = 8 // 输入引脚个数可调整
 
+const circuitStore = useCircuitStore();
 const props = defineProps({
   id: {
     type: Number,
     required: true
   }
 })
-const circuitStore = useCircuitStore();
+//  const id = circuitStore.addComponent('And', [0,0]);  debug
+
 const andGate = computed(() => {
-  return circuitStore.getComponent(id);    // todo 测试代码，之后id会从外部传入
+  // return circuitStore.getComponent(id);   debug
+  return circuitStore.getComponent(props.id);  
 });
 
 let inputYs = useGateLayout(andGate.value.inputCount)
