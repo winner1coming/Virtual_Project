@@ -7,7 +7,7 @@
     style="overflow: visible;"
     
   >
-    <g :transform="`translate(${andGate.position[0]}, ${andGate.position[1]}) scale(${andGate.scale})`" cursor="move">
+    <g :transform="`translate(${andGate.x}, ${andGate.y}) scale(${andGate.scale})`" cursor="move">
       <!-- AND 门图形 -->
        <!--左侧竖线-->
       <path
@@ -26,9 +26,9 @@
       <path stroke="black" stroke-width="12" d="M440 288L497 288" />
 
       <!-- 输入引脚 -->
-      <template v-for="(input, index) in andGate.inputs" :key="index">
+      <template v-for="(input, index) in andGate.inputs" :key="input.id">
         <circle
-          v-if="andGate.inputInverted[index]"
+          v-if="input.inverted"
           :cx="149 - 26"
           :cy="inputYs[index]"
           r="16"
@@ -36,68 +36,48 @@
           stroke-width="12"
           fill="none"
         />
-        <path v-if="!andGate.inputInverted[index]":d="`M92 ${inputYs[index]}L149 ${inputYs[index]}`" stroke="black" stroke-width="12" />
-        <!-- <path v-if="andGate.inputInverted[index]":d="`M${92 - 30} ${inputYs[index]}L${149 - 44} ${inputYs[index]}`" stroke="black" stroke-width="12" /> -->
-        <InputPort :cx="92" :cy="inputYs[index]" :active="input" @toggle="() => handleToggleInput(index)"/>
+        <path v-if="!input.inverted":d="`M92 ${inputYs[index]}L149 ${inputYs[index]}`" stroke="black" stroke-width="12" />
+        <!-- <path v-if="input.inverted":d="`M${92 - 30} ${inputYs[index]}L${149 - 44} ${inputYs[index]}`" stroke="black" stroke-width="12" /> -->
+        <InputPort :cx="92" :cy="inputYs[index]" :active="input.value" @toggle="() => handleToggleInput(index)"/>
         <!-- <InputPort v-if="input.inverted":cx="92-30" :cy="inputYs[index]" :active="input.value" @toggle="() => toggleInput(index)" /> -->
       </template>
 
       <!-- 输出状态 -->
-      <OutputPort :cx="497" :cy="288" :active="andGate.outputs[0]===1" />
+      <OutputPort :cx="497" :cy="288" :active="andGate.output" />
     </g>
   </svg>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import InputPort from './InputPort.vue'
 import OutputPort from './OutputPort.vue'
-import { defineProps } from 'vue'
-
+import {
+  createInputs,
+  setInputValue,
+  toggleInput,
+  setInputInverted,
+  setScale
+} from '@/logic/usegates/useLogicGates'
 import { useGateLayout } from '@/logic/usegates/useGateLayout'
-import { useCircuitStore } from '@/store/CircuitStore'
-import {useComponentsWatchers} from '@/module/useComponentsWatchers'
 
 // const inputCount = 8 // 输入引脚个数可调整
 
-const props = defineProps({
-  id: {
-    type: Number,
-    required: true
-  }
-})
-const circuitStore = useCircuitStore();
-const andGate = computed(() => {
-  return circuitStore.getComponent(id);    // todo 测试代码，之后id会从外部传入
-});
 
-let inputYs = useGateLayout(andGate.value.inputCount)
+
+const andGate = reactive({
+  x: 0,
+  y: 0,
+  scale: 1,
+  inputCount: 8,
+  inputs: [],
+  output: false,
+})
+
+let inputYs = useGateLayout(andGate.inputCount)
 
 let minY = Math.min(...inputYs.value);
 let maxY = Math.max(...inputYs.value);
-
-function setInputCount(newCount)
-{
-  andGate.value.changeInputPinCount(newCount);
-  // 更新输入引脚的布局
-  inputYs = useGateLayout(andGate.value.inputCount)
-
-  minY = Math.min(...inputYs.value);
-  maxY = Math.max(...inputYs.value);
-}
-
-const {unwatchInputCount } = useComponentsWatchers(andGate, setInputCount);
-
-onUnmounted(() => {
-  unwatchInputCount(); // 清理监听
-});
-
-
-// 以下为调试用代码，后期可删除---------------------------------------
-
-// andGate.value.changeInput(0, 0);   // todo debug
-// andGate.value.changeInput(1, 0);
-
 // 每个输入引脚都有唯一 id，方便用外部数据更新，比如 andGate.inputs.find(i => i.id === 'in2').value = true,
 // 日后可以扩展属性，比如 label, connected, position 等
 
@@ -109,39 +89,39 @@ onUnmounted(() => {
 // 用法：setInputValue(0, true)  // 设置第 0 个引脚为高电平
 //      setInputValue(1, false) // 设置第 1 个引脚为低电平
 
-//handleSetInputInverted(0, true);
-// handleSetScale(1);   
+handleSetInputInverted(0, true);
+handleSetScale(0.5);
 
-// 测试用函数，后期删掉  todo
 function handleToggleInput(index) {
-  //toggleInput(andGate, index, updateOutput)
-  if(andGate.value.inputs[index] === 0){
-    andGate.value.changeInput(index, 1);
-  }else{
-    andGate.value.changeInput(index, 0);
-  }
+  toggleInput(andGate, index, updateOutput)
 }
 
-// function handleSetInputValue(index, value) {
-//   setInputValue(andGate, index, value, updateOutput)
-// }
-
-// function handleSetInputInverted(index, inverted) {
-//   setInputInverted(andGate, index, inverted, updateOutput)
-// }
-
-function handleSetScale(newScale){
-  andGate.value.scale = newScale;
+function handleSetInputValue(index, value) {
+  setInputValue(andGate, index, value, updateOutput)
 }
 
+function handleSetInputInverted(index, inverted) {
+  setInputInverted(andGate, index, inverted, updateOutput)
+}
 
+function handleSetScale(newscale){
+  setScale(andGate, newscale)
+}
 
+function setInputCount(newCount)
+{
+  andGate.inputCount = newCount;
+  inputYs = useGateLayout(andGate.inputCount)
 
-// function updateOutput() {
-//   andGate.output = andGate.inputs.every(input =>
-//     input.inverted ? !input.value : input.value
-//   )
-// }
+  minY = Math.min(...inputYs.value);
+  maxY = Math.max(...inputYs.value);
+}
+
+function updateOutput() {
+  andGate.output = andGate.inputs.every(input =>
+    input.inverted ? !input.value : input.value
+  )
+}
 
 // 提供所有元件端口的位置
 function getAllPorts(gate) {
@@ -169,6 +149,11 @@ function getAllPorts(gate) {
 
   return ports;
 }
+
+
+onMounted(()=>{
+ andGate.inputs = computed(()=>createInputs(andGate.inputCount));
+})
 
 </script>
 

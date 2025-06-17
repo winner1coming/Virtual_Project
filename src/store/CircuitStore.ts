@@ -1,3 +1,4 @@
+import { reactive, computed } from 'vue';
 import { defineStore } from 'pinia'
 import { BaseComponent } from '@/logic/BaseComponent.js';
 import {AndGate} from '@/logic/components/AndGate';
@@ -25,6 +26,8 @@ export const useCircuitStore = defineStore('circuit', {
   }),
   actions: {
     // #region 组件相关操作
+    // getComponent返回的对象并不是响应式的，返回时需要用compute手动包装
+    // 用法：const A = computed(() => store.components.get(1));
     getComponent(id: number): BaseComponent{
       const component = this.components.get(id);
       if(!component){
@@ -41,19 +44,21 @@ export const useCircuitStore = defineStore('circuit', {
       const id = this.currentId++;
       // const logic = createGate(type, id);
       if(type === "And"){
-        this.components.set(id, new AndGate(id, type, position));
+        this.components.set(id, reactive(new AndGate(id, type, position)));
       }else if(type === "Or"){
-        this.components.set(id, new OrGate(id, type, position));
+        this.components.set(id, reactive(new OrGate(id, type, position)));
       }else if(type === "Not"){
-        this.components.set(id, new NotGate(id, type, position));
+        this.components.set(id, reactive(new NotGate(id, type, position)));
       }else if(type === "Nand"){
-        this.components.set(id, new NandGate(id, type, position));
+        this.components.set(id, reactive(new NandGate(id, type, position)));
       }else if(type === "Nor"){
-        this.components.set(id, new NorGate(id, type, position));
+        this.components.set(id, reactive(new NorGate(id, type, position)));
       }else if(type === "Xor"){
-        this.components.set(id, new XorGate(id, type, position));
+        this.components.set(id, reactive(new XorGate(id, type, position)));
       }else if(type === "Clock"){
-        this.components.set(id, new Clock(id, type, position));
+        this.components.set(id, reactive(new Clock(id, type, position)));
+      }else{
+        throw new Error(`Unknown component type: ${type}`);
       }
       return id;
     },

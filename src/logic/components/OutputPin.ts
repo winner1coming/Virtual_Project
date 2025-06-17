@@ -10,8 +10,12 @@ export class OutputPin extends BaseComponent {
         pinPosition = []
     ) {
         super(id, type, position, pinPosition);
-        this.inputs = [-1]; // 默认一个输入引脚，初始未连接
-        this.outputs = [];  // 输出引脚本身不产生输出
+        //this.inputs = [-1]; // 默认一个输入引脚，初始未连接
+        this.inputs.splice(0, this.inputs.length, -1); // 初始未连接状态
+        this.inputInverted.splice(0, this.inputInverted.length, false); // 清空输入
+        this.inputCount = 1; // 输入引脚数量
+        //this.outputs = [];  // 输出引脚本身不产生输出
+        this.outputs.splice(0, this.outputs.length); // 输出引脚不产生输出
         this.bitCount = 4;  // 默认4位
         this.height = 20;
         this.width = 20;
@@ -21,7 +25,8 @@ export class OutputPin extends BaseComponent {
     // 实现基类抽象方法：改变输入引脚值
     changeInput(idx: number, v: number): number[] {
         if (idx >= 0 && idx < this.inputs.length) {
-            this.inputs[idx] = v;
+            //this.inputs[idx] = v;
+            this.inputs.splice(idx, 1, v); // 替换idx位置的值
             this.updateBinaryValue();
         }
         return this.outputs; // 始终返回空数组
@@ -82,7 +87,8 @@ export class OutputPin extends BaseComponent {
             
             // 转换旧值到新位数
             if (this.inputs[0] >= 0) { // 只处理有效输入
-                this.inputs[0] = oldValue;
+                //this.inputs[0] = oldValue;
+                this.inputs.splice(0, 1, oldValue); 
                 this.updateBinaryValue();
             }
         }

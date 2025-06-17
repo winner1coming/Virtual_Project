@@ -84,7 +84,7 @@
   
   <script setup>
   import { ref, reactive, onMounted } from 'vue'
-  import AndGate from './AndGate.vue'
+  import AndGate from './AndGate.vue.bak'
   import OrGate from './OrGate.vue'
   import NotGate from './NotGate.vue'
   import NorGate from './NorGate.vue'
