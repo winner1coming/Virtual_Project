@@ -56,7 +56,7 @@ import { defineProps } from 'vue'
 
 import { useGateLayout } from '@/logic/usegates/useGateLayout'
 import { useCircuitStore } from '@/store/CircuitStore'
-import {useComponentsWatchers} from '@/module/useComponentsWatchers'
+import {watchComponentChanges} from '@/modules/useComponentsWatchers'
 
 // const inputCount = 8 // 输入引脚个数可调整
 
@@ -89,7 +89,7 @@ function setInputCount(newCount)
   maxY = Math.max(...inputYs.value);
 }
 
-const {unwatchInputCount } = useComponentsWatchers(andGate, setInputCount);
+const {unwatchInputCount } = watchComponentChanges(andGate, setInputCount);
 
 onUnmounted(() => {
   unwatchInputCount(); // 清理监听
