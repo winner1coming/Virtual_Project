@@ -14,7 +14,7 @@
         import {CircuitLogic} from "./CircuitLogic.js";
 
         function testConnect(){
-            let circuitLogic = new CircuitLogic();
+            let circuitLogic = CircuitLogic.getInstance();
              // 创建逻辑门实例
             let c1 = new AndGate(0, "And");
             let c2 = new OrGate(1, "Or");

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旗帜设计</title>
+</head>
+<body>
+    <canvas id="flagCanvas" width="500" height="700"></canvas>
+    <script>
+        const canvas = document.getElementById('flagCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // 背景颜色 - 浅蓝色或浅绿色
+        ctx.fillStyle = '#ADD8E6'; // 浅蓝色背景
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 画跑步者越过终点线
+        // 跑步者
+        ctx.fillStyle = '#000000'; // 黑色跑步者
+        ctx.beginPath();
+        ctx.arc(250, 350, 30, 0, Math.PI * 2); // 跑步者的头部
+        ctx.fill();
+
+        // 身体线条
+        ctx.beginPath();
+        ctx.moveTo(250, 380); // 身体开始
+        ctx.lineTo(250, 450); // 身体结束
+        ctx.moveTo(250, 420); // 腿部连接点
+        ctx.lineTo(220, 460); // 左腿
+        ctx.moveTo(250, 420); // 右腿
+        ctx.lineTo(280, 460); // 右腿
+        ctx.moveTo(250, 390); // 手臂连接点
+        ctx.lineTo(200, 350); // 左臂
+        ctx.moveTo(250, 390); // 右臂
+        ctx.lineTo(300, 330); // 右臂
+        ctx.stroke();
+
+        // 终点线
+        ctx.strokeStyle = '#000000'; // 终点线颜色
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(0, 550); // 起点
+        ctx.lineTo(500, 550); // 终点
+        ctx.stroke();
+
+        // 绘制SYSU SSE徽标（简化版）
+        const logoImage = new Image();
+        logoImage.src = 'https://example.com/syse-sse-logo.png'; // 这里放入中山大学软件工程系徽标的URL
+        logoImage.onload = function () {
+            ctx.drawImage(logoImage, 20, 20, 100, 100); // 将徽标放在左上角
+        };
+
+        // 下载按钮
+        const downloadLink = document.createElement('a');
+        downloadLink.href = canvas.toDataURL('image/png');
+        downloadLink.download = 'flag_design.png';
+        downloadLink.textContent = '点击下载旗帜设计';
+        document.body.appendChild(downloadLink);
+
+    </script>
+</body>
+</html>
