@@ -24,7 +24,7 @@ export function watchComponentChanges(
 
     // 返回 unwatch 函数，方便外部停止监听
     return () => {
-        unwatchInputCount();
-        //watchName();
+        unwatchInputCount;
+        //watchName;
     };
 }

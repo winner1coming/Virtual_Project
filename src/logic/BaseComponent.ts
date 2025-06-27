@@ -13,10 +13,11 @@ export abstract class BaseComponent{
     width: number;
     scale: number; // 缩放比例
     position: [number, number];
-    pinPosition: Array<[number, number]>;
+    InputPinPosition: Array<[number, number]>;
+    OutputPinPosition: Array<[number, number]>;
     direction: String; // 组件的方向，'east', 'west', 'north', 'south'
 
-    constructor(id: number, type: String, position:[number, number] = [0,0],  pinPosition = []) {
+    constructor(id: number, type: String, position:[number, number] = [0,0],  InputPinPosition = []) {
         this.id = id;
         this.type = type;
         this.name = "";    // todo
@@ -31,7 +32,8 @@ export abstract class BaseComponent{
         this.width = 1;
         this.scale = 1;    
         this.position = position;
-        this.pinPosition = pinPosition;
+        this.InputPinPosition =  reactive([[0,0], [0,0]]);  // 默认只有两个输入引脚
+        this.OutputPinPosition = reactive([[0,0]]); // 默认只有一个输出引脚
         this.direction = 'east';  // 默认方向为东
     };
 
@@ -58,6 +60,14 @@ export abstract class BaseComponent{
         this.inputCount = num;
         this.inputs.splice(0, this.inputs.length, ...Array(num).fill(-1));    // 将输入全部置-1
         this.inputInverted.splice(0, this.inputInverted.length, ...Array(num).fill(false)); // 初始化输入取反状态
+        this.InputPinPosition.splice(0, this.InputPinPosition.length, ...Array(num).fill([0,0]));
+    }
+
+    changeInputInverted(idx: number){
+        if(idx < 0 || idx >= this.inputCount){
+            throw new Error(`Input index ${idx} out of bounds for component ${this.type}`);
+        }
+        this.inputInverted.splice(idx, 1, !this.inputInverted[idx]); // 切换输入取反状态
     }
 
     getInputPinCount(): number{
