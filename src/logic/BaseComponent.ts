@@ -13,8 +13,8 @@ export abstract class BaseComponent{
     width: number;
     scale: number; // 缩放比例
     position: [number, number];
-    InputPinPosition: Array<[number, number]>;
-    OutputPinPosition: Array<[number, number]>;
+    InputPinPosition: Array<[number, number]>;   // todo! 默认为2，部分特殊文件中的这个还没改
+    OutputPinPosition: Array<[number, number]>;  // todo! 默认为2，部分特殊文件中的这个还没改
     direction: String; // 组件的方向，'east', 'west', 'north', 'south'
 
     constructor(id: number, type: String, position:[number, number] = [0,0],  InputPinPosition = []) {
@@ -76,5 +76,32 @@ export abstract class BaseComponent{
     }
     getOutputs(): number[]{
         return this.outputs;
+    }
+
+
+    getAllPorts(){
+        let result = {
+            id: this.id,
+            ports:[] as Array<{
+                id: number,
+                x: number,
+                y: number
+            }>
+        };
+        for(let i = 0; i < this.getInputPinCount(); i++){
+            result.ports.push({
+                id: i,
+                x: this.InputPinPosition[i][0],
+                y: this.InputPinPosition[i][1],
+            });
+        }  
+
+        for(let i = 0; i < this.outputs.length; i++){
+            result.ports.push({
+                id: i + this.getInputPinCount(),
+                x: this.OutputPinPosition[i][0],
+                y: this.OutputPinPosition[i][1],
+            });
+        }
     }
 }
