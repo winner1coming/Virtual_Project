@@ -6,15 +6,15 @@ export abstract class BaseComponent{
     name: String;
     inputs: number[];
     inputCount: number; // 输入引脚数量
-    inputInverted: boolean[]; // 输入引脚是否取反   todo 内部逻辑未实现
+    inputInverted: boolean[]; // 输入引脚是否取反   todo 内部逻辑未实现!
     outputs: number[];
     bitCount: number;
     height: number;
     width: number;
     scale: number; // 缩放比例
     position: [number, number];
-    InputPinPosition: Array<[number, number]>;
-    OutputPinPosition: Array<[number, number]>;
+    InputPinPosition: Array<[number, number]>;   // todo! 默认为2，部分特殊文件中的这个还没改
+    OutputPinPosition: Array<[number, number]>;  // todo! 默认为2，部分特殊文件中的这个还没改
     direction: String; // 组件的方向，'east', 'west', 'north', 'south'
 
     constructor(id: number, type: String, position:[number, number] = [0,0],  InputPinPosition = []) {
@@ -56,6 +56,7 @@ export abstract class BaseComponent{
         this.position = position;
     }
 
+    // 会清空输入与引脚的取反状态
     changeInputPinCount(num: number){
         this.inputCount = num;
         this.inputs.splice(0, this.inputs.length, ...Array(num).fill(-1));    // 将输入全部置-1
@@ -75,5 +76,32 @@ export abstract class BaseComponent{
     }
     getOutputs(): number[]{
         return this.outputs;
+    }
+
+
+    getAllPorts(){
+        let result = {
+            id: this.id,
+            ports:[] as Array<{
+                id: number,
+                x: number,
+                y: number
+            }>
+        };
+        for(let i = 0; i < this.getInputPinCount(); i++){
+            result.ports.push({
+                id: i,
+                x: this.InputPinPosition[i][0],
+                y: this.InputPinPosition[i][1],
+            });
+        }  
+
+        for(let i = 0; i < this.outputs.length; i++){
+            result.ports.push({
+                id: i + this.getInputPinCount(),
+                x: this.OutputPinPosition[i][0],
+                y: this.OutputPinPosition[i][1],
+            });
+        }
     }
 }
