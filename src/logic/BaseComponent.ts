@@ -6,7 +6,7 @@ export abstract class BaseComponent{
     name: String;
     inputs: number[];
     inputCount: number; // 输入引脚数量
-    inputInverted: boolean[]; // 输入引脚是否取反   todo 内部逻辑未实现
+    inputInverted: boolean[]; // 输入引脚是否取反   todo 内部逻辑未实现!
     outputs: number[];
     bitCount: number;
     height: number;
@@ -56,6 +56,7 @@ export abstract class BaseComponent{
         this.position = position;
     }
 
+    // 会清空输入与引脚的取反状态
     changeInputPinCount(num: number){
         this.inputCount = num;
         this.inputs.splice(0, this.inputs.length, ...Array(num).fill(-1));    // 将输入全部置-1

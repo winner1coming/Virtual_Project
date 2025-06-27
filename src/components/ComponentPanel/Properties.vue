@@ -85,6 +85,7 @@ const showPinCountOptions = computed(() => {
   const selectedComponent = circuitStore.getComponent(circuitStore.selectedId);
   return selectedComponent.type !== 'Not' && selectedComponent.type !== 'Clock' &&
         selectedComponent.type !== 'Input' && selectedComponent.type !== 'Output' &&
+        selectedComponent.type !== '7SegmentDisplay' && selectedComponent.type !== 'Tunnel' &&
          selectedComponent.type !== 'Power' && selectedComponent.type !== 'Ground';
 });
 
