@@ -11,6 +11,15 @@ export function createInputs(count) {
   )
 }
 
+export function createOutputs(count) {
+  return Array.from({ length: count }, (_, i) =>
+    reactive({
+      id: `out${i}`,
+      value: false,
+    })
+  )
+}
+
 export function setInputValue(gateRef, index, value, updateOutputFn) {
   if (index < 0 || index >= gateRef.inputs.length) return
   gateRef.inputs[index].value = value

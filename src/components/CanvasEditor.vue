@@ -9,6 +9,7 @@
       <button @click="startPlacingVueComponent('XOR')">XOR</button>
       <button @click="startPlacingVueComponent('NAND')">NAND</button>
       <button @click="startPlacingVueComponent('XNOR')">XNOR</button>
+      <button @click="startPlacingVueComponent('Splitter')">分离器</button>
       <button @click="clearComponents">清空</button>
       <button @click="undo">撤销</button>
       <button @click="redo">重做</button>
@@ -59,6 +60,7 @@ import NorGate from './NorGate.vue'
 import XorGate from './XorGate.vue'
 import NandGate from './NandGate.vue'
 import XnorGate from './XnorGate.vue'
+import Splitter from './Wiring/Splitter.vue'
 
 const canvasContainer = ref(null)
 const components = reactive([])
@@ -77,7 +79,8 @@ const componentMap = {
   NOR: NorGate,
   XOR: XorGate,
   NAND: NandGate,
-  XNOR: XnorGate
+  XNOR: XnorGate,
+  Splitter: Splitter,
 }
 
 function startPlacingVueComponent(type) {
