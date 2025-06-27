@@ -3,7 +3,7 @@ import { BaseComponent } from "../BaseComponent";
 export class InputPin extends BaseComponent {
     constructor(
         id: number, 
-        type: string = "InputPin", 
+        type: String = "InputPin", 
         position: [number, number] = [0, 0], 
         pinPosition = []
     ) {
