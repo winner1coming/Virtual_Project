@@ -5,6 +5,7 @@
     <NotGate />
     <OrGate />
     <NorGate />
+    <button @click=""/>
   </div>
 </template>
 

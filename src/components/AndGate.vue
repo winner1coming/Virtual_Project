@@ -56,7 +56,7 @@ import { defineProps } from 'vue'
 
 import { useGateLayout } from '@/logic/usegates/useGateLayout'
 import { useCircuitStore } from '@/store/CircuitStore'
-import {useComponentsWatchers} from '@/module/useComponentsWatchers'
+import {watchComponentChanges} from '@/modules/useComponentsWatchers'
 
 // const inputCount = 8 // 输入引脚个数可调整
 
@@ -67,14 +67,17 @@ const props = defineProps({
     required: true
   }
 })
-//  const id = circuitStore.addComponent('And', [0,0]);  debug
+const id = circuitStore.addComponent('And', [0,0]);  // debug
 
 const andGate = computed(() => {
-  // return circuitStore.getComponent(id);   debug
-  return circuitStore.getComponent(props.id);  
+  return circuitStore.getComponent(id);   //debug
+  // return circuitStore.getComponent(props.id);  
 });
 
 let inputYs = useGateLayout(andGate.value.inputCount)
+// let inputYs = computed(()=>{
+//   return 
+// });
 
 let minY = Math.min(...inputYs.value);
 let maxY = Math.max(...inputYs.value);
@@ -89,7 +92,7 @@ function setInputCount(newCount)
   maxY = Math.max(...inputYs.value);
 }
 
-const {unwatchInputCount } = useComponentsWatchers(andGate, setInputCount);
+const {unwatchInputCount } = watchComponentChanges(andGate, setInputCount);
 
 onUnmounted(() => {
   unwatchInputCount(); // 清理监听
@@ -118,6 +121,8 @@ onUnmounted(() => {
 // 测试用函数，后期删掉  todo
 function handleToggleInput(index) {
   //toggleInput(andGate, index, updateOutput)
+  // todotodo
+  setInputCount(5);
   if(andGate.value.inputs[index] === 0){
     andGate.value.changeInput(index, 1);
   }else{

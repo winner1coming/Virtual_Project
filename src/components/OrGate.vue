@@ -1,6 +1,6 @@
 <template>
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="300" height="300" style="overflow: visible;">
-    <g :transform="`translate(${orGate.x}, ${orGate.y}) scale(${orGate.scale})`" cursor="move">
+    <g :transform="`translate(${orGate.position[0]}, ${orGate.position[1]}) scale(${orGate.scale})`" cursor="move">
       <!-- OR 门图形 -->
       <path stroke="black" stroke-width="12" d="M145.999 181L315.999 181" />
       <path fill="none" stroke="black" stroke-width="12" d="M303.269 181.612C313.833 179.216 358.755 182.869 373.209 204.739" />
@@ -29,7 +29,7 @@
       <!-- 输入引脚 -->
       <template v-for="(input, index) in orGate.inputs" :key="input.id">
         <circle
-          v-if="input.inverted"
+          v-if="orGate.inputInverted[index]"
           :cx="`${getInputLine(index, inputYs[index], bezierYMin, bezierYMax).x2-26}`"
           :cy="inputYs[index]"
           r="16"
@@ -38,13 +38,13 @@
           fill="none"
         />
         <path
-          v-if="input.inverted"
+          v-if="orGate.inputInverted[index]"
           :d="`M${getInputLine(index, inputYs[index], bezierYMin, bezierYMax).x1} ${inputYs[index]}L${getInputLine(index, inputYs[index], bezierYMin, bezierYMax).x2-36} ${inputYs[index]}`"
           stroke="black"
           stroke-width="12"
           />
         <path
-          v-if="!input.inverted"
+          v-if="!orGate.inputInverted[index]"
           :d="`M${getInputLine(index, inputYs[index], bezierYMin, bezierYMax).x1} ${inputYs[index]}L${getInputLine(index, inputYs[index], bezierYMin, bezierYMax).x2} ${inputYs[index]}`"
           stroke="black"
           stroke-width="12"
@@ -52,7 +52,7 @@
         <InputPort
           :cx="92"
           :cy="inputYs[index]"
-          :active="input.value"
+          :active="input"
           @toggle="() => handleToggleInput(index)"
         />
       </template>
@@ -66,44 +66,83 @@
 </template>
 
 <script setup>
-import { reactive, computed, onMounted } from 'vue'
+// import {
+//   createInputs,
+//   setInputValue,
+//   toggleInput,
+//   setInputInverted,
+//   setScale
+// } from '@/logic/usegates/useLogicGates'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import InputPort from './InputPort.vue'
 import OutputPort from './OutputPort.vue'
-import {
-  createInputs,
-  setInputValue,
-  toggleInput,
-  setInputInverted,
-  setScale
-} from '@/logic/usegates/useLogicGates'
+import { defineProps } from 'vue'
+
 import { useGateLayout, getInputLine } from '@/logic/usegates/useGateLayout'
+import { useCircuitStore } from '@/store/CircuitStore'
+import {watchComponentChanges} from '@/modules/useComponentsWatchers'
+
 
 //const inputCount = 3
 //console.log(computedLineBottom, computedLineTop)
 
-const orGate = reactive({
-  x: 0,
-  y: 0,
-  scale: 1,
-  inputCount: 8,
-  inputs: [],
-  output: false,
+// const orGate = reactive({
+//   x: 0,
+//   y: 0,
+//   scale: 1,
+//   inputCount: 8,
+//   inputs: [],
+//   output: false,
+// })
+const circuitStore = useCircuitStore();
+const props = defineProps({
+  id: {
+    type: Number,
+    required: true
+  }
 })
+const id = circuitStore.addComponent('Or', [0,0]);  // debug
 
-let inputYs = useGateLayout(orGate.inputCount)
+const orGate = computed(() => {
+  return circuitStore.getComponent(id);   //debug
+  // return circuitStore.getComponent(props.id);  
+});
+
+let inputYs = useGateLayout(orGate.value.inputCount)
 const bezierYMin = 179.5;
 const bezierYMax = 397;
 let minY = Math.min(...inputYs.value);
 let maxY = Math.max(...inputYs.value);
 
+function setInputCount(newCount)
+{
+  orGate.value.changeInputPinCount(newCount);
+  inputYs = useGateLayout(orGate.value.inputCount)
+
+  minY = Math.min(...inputYs.value);
+  maxY = Math.max(...inputYs.value);
+}
+
+const {unwatchInputCount } = watchComponentChanges(orGate, setInputCount);
+
+onUnmounted(() => {
+  unwatchInputCount(); // 清理监听
+});
+
+
+// 以下调试用，后期删除  todo -----------------------------------------------------------
+
 // handleSetInputInverted(1, true);
 // handleSetScale(0.5)
 
 function handleToggleInput(index) {
-  toggleInput(orGate, index, updateOutput)
-  // setInputCount(9)
-  // handleSetInputInverted(index, true)
-  // handleSetScale(0.5)
+  // todotodo
+  setInputCount(5);
+  if(orGate.value.inputs[index] === 0){
+    orGate.value.changeInput(index, 1);
+  }else{
+    orGate.value.changeInput(index, 0);
+  }
 }
 
 function handleSetInputInverted(index, inverted) {
@@ -117,22 +156,13 @@ function handleSetScale(newscale)
 
 function updateOutput() {
   orGate.output = orGate.inputs.some(input =>
-    input.inverted ? !input.value : input.value
+    input.inverted ? !input : input
   )
 }
 
-function setInputCount(newCount)
-{
-  orGate.inputCount = newCount;
-  inputYs = useGateLayout(orGate.inputCount)
-
-  minY = Math.min(...inputYs.value);
-  maxY = Math.max(...inputYs.value);
-}
-
-onMounted(()=>{
- orGate.inputs = computed(()=>createInputs(orGate.inputCount));
-})
+// onMounted(()=>{
+//  orGate.inputs = computed(()=>createInputs(orGate.inputCount));
+// })
 
 </script>
 
