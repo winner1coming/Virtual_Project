@@ -154,17 +154,19 @@ import NotGate from './NotGate.vue'
 
 import { useHistory } from '@/modules/useHistory';
 import eventBus from '@/modules/useEventBus';
+import { useCircuitStore } from '@/store/CircuitStore';
 
 const canvasContainer = ref(null)
 const components = reactive([])
-// const undoStack = reactive([])// 历史操作栈
-// const redoStack = reactive([])// 重做栈
 const currentComponent = ref(null)
 const selectedComponent = ref(null)
 const isDragging = ref(false)
 const dragOffset = reactive({ x: 0, y: 0 })// 拖动偏移量
 const previewPos = reactive({ x: 0, y: 0 })// 预览的位置
 const connections = reactive([])// 全局连接列表
+const componentID = reactive({})// 全局组件ID
+const ports = [];// 存储单个元件的端口信息
+const Ports = [];// 每个元件和对应端口对的关系
 
 const { saveHistory, saveSnapshot } = useHistory(components) // 使用自定义的历史记录管理
 
@@ -181,7 +183,27 @@ const contextMenu = reactive({
 
 // 定义电线的两端
 const wireStart = ref(null) // 记录起始点
+const wireStartId = null // 记录起始点port的元件ID
 
+// 添加元件的端口对
+function addComponentPorts(componentId, portsArray) {
+  Ports.set(componentId, portsArray)
+}
+
+// 获取元件的端口信息
+function getComponentPorts(componentId) {
+  return Ports.get(componentId) || []
+}
+
+// 删除元件的端口信息
+function removeComponentPorts(componentId) {
+  Ports.delete(componentId)
+}
+
+// 修改元件的端口信息
+function updateComponentPorts(componentId, portsArray) {
+  Ports.set(componentId, portsArray)
+}
 
 // // 组件按钮对应图片选择
 // const expanded = reactive({ logic:true })// 逻辑门、IO、其他分类的展开状态
@@ -220,7 +242,7 @@ function updateComponentDirection() {
   drawConnections(ctx);// 绘制所有连线
 }
 
-
+// 这里只是点击了组件的按钮，开始渲染，但是还没下放
 function startPlacingVueComponent(type) {
   const Component = componentMap[type]
   if (Component) {
@@ -235,6 +257,7 @@ function startPlacingVueComponent(type) {
       //direction: 'east' // 默认方向
     }
   }
+  
   // components.push(currentComponent.value)// 将当前组件添加到组件列表
   saveHistory();
 }
@@ -465,10 +488,11 @@ function updateConnectionPaths() {
 // 修改 deleteComponent 以删除相关连线
 function deleteComponent() {
   if (contextMenu.targetIndex !== null) {
-    const component = components[contextMenu.targetIndex];
+    const component = components[contextMenu.targetIndex];// 获取删除的元件ID
     
     // 删除所有与该元件相关的连线
-    const componentId = contextMenu.targetIndex;
+    const componentId = contextMenu.targetIndex;// 元件ID
+    useCircuitStore.removeComponent(componentId)
     for (let i = connections.length - 1; i >= 0; i--) {
       if (connections[i].from.componentId === componentId || 
           connections[i].to.componentId === componentId) {
@@ -483,74 +507,6 @@ function deleteComponent() {
   }
 }
 
-// #region 移动到其他文件
-// // 保存当前状态为快照
-// function saveSnapshot() {
-//   //TODO
-//   undoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
-//   redoStack.length = 0// 清空重做栈
-// }
-
-// 修改后的应用快照的方法
-// function applySnapshot (snapshot) {
-//   //TODO
-//   components.splice(0, components.length, ...JSON.parse(JSON.stringify(snapshot)))
-// }
-
-// // 清空画布：支持撤销
-// function clearAll() {
-//   saveSnapshot()// 保存快照
-//   //TODO
-//   components.splice(0) // 清空组件
-//   saveHistory()
-// }
-
-// // 原函数：清空组件（可删除）
-// function clearComponents() {
-//   if (components.length > 0) {
-//     saveHistory()
-//     components.splice(0)
-//   }
-// }
-
-// // 原函数：保存历史（可删除）
-// function saveHistory() {
-//   if (undoStack.length >= 50) undoStack.shift()// 限制撤销栈的长度
-//   undoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
-//   redoStack.length = 0
-// }
-
-// 撤销
-// function undo() {
-//   // if (undoStack.length === 0) return
-//   // redoStack.push(JSON.stringify(components))
-//   // const prev = undoStack.pop()
-//   // Object.assign(components, JSON.parse(prev))
-//   // 保存当前状态到重做栈
-//   if (undoStack.length > 0) return
-//   // 保存当前状态到重做栈
-//   redoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
-//   // 获取上一个状态
-//   const prevState = undoStack.pop()
-//   applySnapshot(prevState)// 应用上一个状态
-// }
-
-// 重做
-// function redo() {
-//   // if (redoStack.length === 0) return
-//   // undoStack.push(JSON.stringify(components))
-//   // const next = redoStack.pop()
-//   // Object.assign(components, JSON.parse(next))
-//   // TODO
-//   if (redoStack.length === 0) return
-
-//   // 保存当前状态到重做栈
-//   undoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
-//   // 获取下一个状态
-//   const nextState = redoStack.pop()
-//   applySnapshot(nextState)// 应用下一个状态
-// }
-// #endregion 移动到其他文件
 
 function handleMouseDown(event) {
   if (event.button !== 0) return; // 只响应左键
@@ -560,40 +516,86 @@ function handleMouseDown(event) {
   const y = event.clientY - rect.top;
 
   // 若有当前元件，则放置元件
+  // 1：将元件的相关信息存放到components列表里
   if (currentComponent.value) {
     components.push({ 
       ...currentComponent.value, 
       x, 
       y 
     });
+    // TODO：这段代码有bug，不知道为什么放置时会默认多个元件，我真的绷不住了
+    //////////////////////////////////////////////////////////////////////////////
+    // 2：单独记录这个元件的ID
+    // 调用useCircuitStore()获取元件的ID
+    id = useCircuitStore().addComponent(currentComponent.value.componentType, [x, y]);
+    // 3：将元件ID存起来，方便后面查找各元件的引脚信息
+    componentID.push(id)
+    // 4：记录当前ID的端口信息
+    // 获取元件对应的id
+    const component = useCircuitStore().getComponent(id);
+    // 获取元件所有端口信息
+    ports.push(...component.getAllPorts(component));
+    // 新增元件端口信息
+    addComponentPorts(id, ports)
+    ports.clearRect()// 清空ports，方便下次使用
+    ///////////////////////////////////////////////////////////////////////////////////
     saveHistory();
     currentComponent.value = null;
     return; // 放置元件后不画线
   }
 
-  // 检查是否点击在端点上
-  const nearestPort = findNearestPort(x, y);
-  if (nearestPort) {
-    // 端口点击
-    handlePinMouseDown(nearestPort.component, {
-      pinType: nearestPort.type,
-      pinIndex: nearestPort.index
-    });
-    return; // 点击端口后不画线
-  }
+  // // 检查是否点击在端点上
+  // const nearestPort = findNearestPort(x, y);
+  // if (nearestPort) {
+  //   // 端口点击
+  //   handlePinMouseDown(nearestPort.component, {
+  //     pinType: nearestPort.type,
+  //     pinIndex: nearestPort.index
+  //   });
+  //   return; // 点击端口后不画线
+  // }
 
-  // 电线画线逻辑
+  // 电线画线逻辑：分起始点和终点两种情况
   if (!wireStart.value) {
-    wireStart.value = { x, y };
+    // 起点为空，记录起点，先不画线
+    // 找到距离点击点最近的port信息
+    let closestPort = findNearestPort(x, y, 20);
+    if (closestPort) {
+      // 这里是第一次点击：查找最近的端口作为电线终点
+      // 记录端口的位置和编号
+      const wireStart = {
+        x: closestPort.x,
+        y: closestPort.y,
+        componentId: closestPort.componentId,// 端口的元件ID
+        portId: closestPort.id,             // 端口的ID
+        portType:closestPort.type,          // 端口的类型 
+      };
+      wireStartId = wireStart.componentId;// 记录起点port对应的元件ID
+      return; // 点击端口后不画线
   } else {
-    const wireEnd = { x, y };
-    const newWire = createWirePath(wireStart.value, wireEnd);
-    connections.push(newWire);
-    wireStart.value = null;
+    // 找到距离点击点最近的port信息
+    let closestPort = findNearestPort(x, y, 20);
+
+    if (closestPort) {
+      // 这里是第二次点击：查找最近的端口作为电线终点
+      const wireEndPort = {
+        x: closestPort.x,
+        y: closestPort.y,
+        componentId: closestPort.componentId,// 端口的元件ID
+        portId: closestPort.id,             // 端口的ID
+        portType:closestPort.type,          // 端口的类型 
+      };
+      // 根据起始点画线
+      const newWire = createWirePath(wireStart.value, wireEndPort);
+      connections.push(newWire);
+      // 填写逻辑类，调用函数连接两个元件
+      useCircuitStore.connect(wireStartId, wireStart.Id, closestPort.componentId, closestPort.id)
+      wireStart.value = null;
+      wireStartId = null;
+    }
     saveSnapshot();
   }
 }
-
 
 // 创建电线路径
 function createWirePath(start, end) {
@@ -637,34 +639,60 @@ function handlePinMouseDown(component, { pinType, pinIndex }) {
   };
 }
 
-// 查找所有组件中距离点击点最近的端口，并返回该端口信息
+// 查找所有组件中距离点击点最近的端口，并返回该端口位置和对应的元件ID
 function findNearestPort(clickX, clickY, maxDistance = 20) {
-  const allPorts = getAllPortsFromAllComponents();
+  // 规定的容错范围为20
   let closest = null;
   let minDist = Infinity;
 
-  allPorts.forEach(port => {
-    const dx = clickX - port.x;
-    const dy = clickY - port.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < maxDistance && dist < minDist) {
-      closest = port;
-      minDist = dist;
+  // 遍历Ports映射（元件ID到端口数组）
+  for (const [compId, ports] of Ports) {
+    // 遍历当前元件的所有端口
+    for (const port of ports) {
+      const dx = clickX - port.x;
+      const dy = clickY - port.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      
+      // 检查距离是否小于最大距离且是目前找到的最近点
+      if (dist < maxDistance && dist < minDist) {
+        minDist = dist;
+        closest = {
+          ...port,         // 包含端口的所有属性（id, type, x, y等）
+          componentId: compId, // 添加元件ID
+          compId: compId,      // 别名（方便访问）
+          pinIndex: port.type === 'input' 
+            ? port.id.replace('input', '') // 输入引脚使用ID中的数字部分
+            : 0,                           // 输出引脚索引设为0
+          originalPort: port  // 保留原始端口引用
+        };
+      }
     }
-  });
+  }
 
   return closest;
 }
 
-function getAllPortsFromAllComponents() {
-  const ports = [];
-  components.forEach(component => {
-    if (component.getAllPorts) {
-      ports.push(...component.getAllPorts(component)); // component 是 Vue 实例 or 结构
-    }
-  });
-  return ports;
-}
+// // 根据componentID获取当前所有元件的端口信息
+// function getAllPortsFromAllComponents() {
+//   // const ports = [];
+//   // components.forEach(component => {
+//   //   if (component.getAllPorts) {
+//   //     ports.push(...component.getAllPorts(component)); // component 是 Vue 实例 or 结构
+//   //   }
+//   // });
+//   // return ports;
+//   const ports = [];// 存储单个元件的端口信息
+//   const Ports = [];// 每个元件和对应端口对的关系
+//   componentID.forEach(id => {
+//     // 1：获取当前id对应的元件
+//     const component  = useCircuitStore().getComponent(id)
+//     // 2：获取元件的所有端口
+//     ports.push(...component.getAllPorts(component));
+//     // 3：按元件存储每个元件的端口信息
+    
+//   })
+  
+// }
 
 function handleMouseUp() {
   if (isDragging.value) {// 拖动结束，保存状态
@@ -681,6 +709,8 @@ function selectComponent(item, event) {
   dragOffset.x = x - item.x
   dragOffset.y = y - item.y
   isDragging.value = true
+  // 选中元件：不影响操作
+  // useCircuitStore.selectComponent(item.value.componentType)
 }
 
 
@@ -792,7 +822,8 @@ onUnmounted(() => {
   eventBus.off('start-place-component');
   eventBus.off('updateComponentDirection');
 });
-</script>
+
+}</script>
 
 <style scoped>
 .editor-wrapper {
