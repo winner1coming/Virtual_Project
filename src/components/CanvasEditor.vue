@@ -596,7 +596,7 @@ function handleMouseDown(event) {
     saveSnapshot();
   }
 }
-
+}
 // 创建电线路径
 function createWirePath(start, end) {
   const midX = (start.x + end.x) / 2;
@@ -811,6 +811,7 @@ function toggleInput(component, index) {
 
 onMounted(() => {
   eventBus.on('start-place-component', (type) => {
+    console.log('开始放置组件:', type);
     startPlacingVueComponent(type);
   });  
   eventBus.on('updateComponentDirection', () => {
@@ -823,7 +824,7 @@ onUnmounted(() => {
   eventBus.off('updateComponentDirection');
 });
 
-}</script>
+</script>
 
 <style scoped>
 .editor-wrapper {
