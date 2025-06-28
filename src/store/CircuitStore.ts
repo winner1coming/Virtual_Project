@@ -9,19 +9,21 @@ import {NorGate} from '@/logic/components/NorGate';
 import {XorGate} from '@/logic/components/XorGate';
 import {Clock} from '@/logic/components/Clock';
 import { EventDrivenSimulator } from '@/logic/Simulator';
+import { InputPin } from '@/logic/components/InputPin';
+import { OutputPin } from '@/logic/components/OutputPin';
 
 
 export const useCircuitStore = defineStore('circuit', {
   state: () => ({
     components: new Map<number, BaseComponent>(),
     // wires: new Map<string, Wire>(),
-    selectedGateId: -1,   // 选中的组件ID，-1表示没有选中任何组件
+    selectedId: -1,   // 选中的组件ID，-1表示没有选中任何组件
     currentId: 0,
 
     undoStack:[] as any[],
     redoStack:[] as any[],
 
-    selectedComponent: null as BaseComponent | null,
+    //selectedComponent: null as BaseComponent | null,
     simulator: EventDrivenSimulator.getInstance(),
   }),
   actions: {
@@ -57,7 +59,12 @@ export const useCircuitStore = defineStore('circuit', {
         this.components.set(id, reactive(new XorGate(id, type, position)));
       }else if(type === "Clock"){
         this.components.set(id, reactive(new Clock(id, type, position)));
-      }else{
+      }else if(type === "Input"){
+        this.components.set(id, reactive(new InputPin(id, type, position))); 
+      }else if(type === "Output"){
+        this.components.set(id, reactive(new OutputPin(id, type, position))); 
+      }
+      else{
         throw new Error(`Unknown component type: ${type}`);
       }
       return id;
@@ -77,8 +84,8 @@ export const useCircuitStore = defineStore('circuit', {
       // });
       this.components.delete(id);
       // 如果删除的组件是当前选中的组件，则取消选中
-      if (this.selectedGateId === id) {
-        this.selectedGateId = -1;
+      if (this.selectedId === id) {
+        this.selectedId = -1;
       }
     },
 
@@ -95,13 +102,13 @@ export const useCircuitStore = defineStore('circuit', {
     // 选择组件
     selectComponent(id: number) {
       if (this.components.has(id)) {
-        this.selectedGateId = id;
+        this.selectedId = id;
       } else {
         throw new Error(`Component with id ${id} not found`);
       }
     },
     unselectComponent() {
-      this.selectedGateId = -1;
+      this.selectedId = -1;
     },
     // #endregion 组件相关操作
 

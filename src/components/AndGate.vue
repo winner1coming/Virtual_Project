@@ -61,16 +61,16 @@ import {watchComponentChanges} from '@/modules/useComponentsWatchers'
 // const inputCount = 8 // 输入引脚个数可调整
 
 const circuitStore = useCircuitStore();
-const props = defineProps({
-  id: {
-    type: Number,
-    required: true
-  }
-})
+// const props = defineProps({
+//   id: {
+//     type: Number,
+//     required: true
+//   }
+// })
 const id = circuitStore.addComponent('And', [0,0]);  // debug
 
 const andGate = computed(() => {
-  return circuitStore.getComponent(id);   //debug
+  return circuitStore.getComponent(id);   // debug
   // return circuitStore.getComponent(props.id);  
 });
 
@@ -82,17 +82,39 @@ let inputYs = useGateLayout(andGate.value.inputCount)
 let minY = Math.min(...inputYs.value);
 let maxY = Math.max(...inputYs.value);
 
+// 设置引脚位置
+andGate.value.InputPinPosition = andGate.value.InputPinPosition.map((pin, index) => {
+  return [
+    andGate.value.position[0] + 92 * andGate.value.scale,
+    andGate.value.position[1] + inputYs.value[index] * andGate.value.scale,
+  ];
+});
+andGate.value.OutputPinPosition = andGate.value.OutputPinPosition.map(pin => {
+  return [
+    andGate.value.position[0] + 497 * andGate.value.scale,
+    andGate.value.position[1] + 288 * andGate.value.scale,
+  ];
+});
+
 function setInputCount(newCount)
 {
-  andGate.value.changeInputPinCount(newCount);
+  andGate.value.changeInputPinCount(newCount);   // todo 这行应该之后要删
   // 更新输入引脚的布局
   inputYs = useGateLayout(andGate.value.inputCount)
 
   minY = Math.min(...inputYs.value);
   maxY = Math.max(...inputYs.value);
+
+  // 更新引脚位置
+  andGate.value.InputPinPosition = andGate.value.InputPinPosition.map((pin, index) => {
+    return [
+      andGate.value.position[0] + 92 * andGate.value.scale,
+      andGate.value.position[1] + inputYs.value[index] * andGate.value.scale,
+    ];
+  });
 }
 
-const {unwatchInputCount } = watchComponentChanges(andGate, setInputCount);
+const unwatchInputCount  = watchComponentChanges(andGate, setInputCount);
 
 onUnmounted(() => {
   unwatchInputCount(); // 清理监听
@@ -128,6 +150,10 @@ function handleToggleInput(index) {
   }else{
     andGate.value.changeInput(index, 0);
   }
+
+  // test
+  // this.setInputCount(4); // 更新输入引脚布局
+  andGate.value.changeInputInverted(index, !andGate.value.inputInverted[index]); // 切换输入引脚的反相状态
 }
 
 // function handleSetInputValue(index, value) {
@@ -156,7 +182,7 @@ function getAllPorts(gate) {
   const ports = [];
 
   // 输入引脚
-  gate.inputs.forEach((input, index) => {
+  gate.andGate.value.inputs.forEach((input, index) => {
     ports.push({
       id: input.id,
       type: 'input',

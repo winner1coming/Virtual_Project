@@ -1,45 +1,58 @@
 <template>
   <div class="component-properties">
     <h3>元件属性</h3>
-    <div v-if="selectedComponent">
+    <div v-if="circuitStore.selectedId !== -1">
       <!-- 修改名字 -->
       <div class="property-item">
         <label for="name">名字：</label>
         <input
           id="name"
           type="text"
-          v-model="selectedComponent.name"
-          placeholder="请输入名字"
+          v-model="circuitStore.getComponent(circuitStore.selectedId).name"
+          placeholder=""
         />
       </div>
 
       <!-- 修改朝向 -->
       <div class="property-item">
         <label for="orientation">朝向：</label>
-        <select
+        <n-select
           id="orientation"
-          v-model="selectedComponent.direction"  
-          @change="updateDirection"
+          v-model:value="circuitStore.getComponent(circuitStore.selectedId).direction.toString"  
+          :options="[
+            { label: '东', value: 'east' },
+            { label: '西', value: 'west' },
+            { label: '北', value: 'north' },
+            { label: '南', value: 'south' }
+          ]"
+          @update:value="updateDirection"
         >
-          <option value="east">东</option>
-          <option value="west">西</option>
-          <option value="north">北</option>
-          <option value="south">南</option>
-        </select>
+        </n-select>
       </div>
 
       <!-- 修改数据位宽 -->
       <div class="property-item">
         <label for="bitWidth">数据位宽：</label>
-        <select
+        <n-select
           id="bitWidth"
-          v-model="selectedComponent.bitCount"
+          v-model:value="circuitStore.getComponent(circuitStore.selectedId).bitCount"
+          :options="bitWidthOptions.map(width => ({ label: `${width} 位`, value: width }))"
         >
-          <option v-for="width in bitWidthOptions" :key="width" :value="width">
-            {{ width }} 位
+        </n-select>
+      </div>
+
+      <!-- 修改引脚数量-->
+      <div class="property-item" v-show="showPinCountOptions">
+        <label for="pinCount">引脚数量：</label>
+        <select
+          id="pinCount"
+          v-model="circuitStore.getComponent(circuitStore.selectedId).inputCount"
+        >
+          <option v-for="count in pinCountOptions" :key="count" :value="count">
+            {{ count }} 个
           </option>
         </select>
-      </div>
+       </div>
     </div>
     <div v-else>
       <p>未选中任何元件</p>
@@ -47,24 +60,36 @@
   </div>
 </template>
 
-<script setup>
-import { ref, watch } from 'vue';
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue';
 import { useCircuitStore } from '@/store/CircuitStore';
 import eventBus from '@/modules/useEventBus';
+import { NSelect } from 'naive-ui';
+import type { SelectOption } from 'naive-ui'
 
 const circuitStore = useCircuitStore();
 
 // 选中的元件
-const selectedComponent = circuitStore.selectedComponent;
 // const selectedComponent = ref({
 //     name: '',
 //     orientation: 'up',
 //     bitCount: 1
 // });
+
 // 数据位宽选项
 const bitWidthOptions = ref([1, 2, 4, 8, 16, 32, 64]);
+// 引脚数量选项
+const pinCountOptions = ref([2,3,4,5,6,7,8]);
+// 判断是否显示修改引脚数量的选项
+const showPinCountOptions = computed(() => {
+  const selectedComponent = circuitStore.getComponent(circuitStore.selectedId);
+  return selectedComponent.type !== 'Not' && selectedComponent.type !== 'Clock' &&
+        selectedComponent.type !== 'Input' && selectedComponent.type !== 'Output' &&
+        selectedComponent.type !== '7SegmentDisplay' && selectedComponent.type !== 'Tunnel' &&
+         selectedComponent.type !== 'Power' && selectedComponent.type !== 'Ground';
+});
 
-function updateDirection() {
+function updateDirection(value: string, option: SelectOption) {
   // 更新元件的方向
   eventBus.emit('updateComponentDirection');
 }

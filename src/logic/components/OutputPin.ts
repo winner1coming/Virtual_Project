@@ -5,7 +5,7 @@ export class OutputPin extends BaseComponent {
 
     constructor(
         id: number, 
-        type: string = "OutputPin", 
+        type: String = "OutputPin", 
         position: [number, number] = [0, 0], 
         pinPosition = []
     ) {
