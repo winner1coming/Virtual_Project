@@ -57,8 +57,8 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
-import InputPort from './InputPort.vue'
-import OutputPort from './OutputPort.vue'
+import InputPort from '@/components/Ports/InputPort.vue'
+import OutputPort from '@/components/Ports/OutputPort.vue'
 import { defineProps } from 'vue'
 
 import { useGateLayout } from '@/logic/usegates/useGateLayout'

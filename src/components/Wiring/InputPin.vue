@@ -43,7 +43,7 @@
   
   <script setup>
   import { ref, computed, watch } from 'vue'
-  import OutputPort from './OutputPort.vue'
+  import OutputPort from '@/components/Ports/OutputPort.vue'
   
   const props = defineProps({
     bitWidth: {

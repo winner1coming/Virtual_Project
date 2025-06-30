@@ -6,18 +6,20 @@
     <OrGate />
     <InputPin />
     <Constant />
+    <Clock />
     <button @click=""/>
   </div>
 </template>
 
 <script setup>
-import AndGate from '@/components/AndGate.vue'
-import NotGate from '@/components/NotGate.vue'
-import OrGate from '@/components/OrGate.vue'
-import NorGate from '@/components/NorGate.vue'
-import Tunnel from '@/components/Tunnel.vue'
-import InputPin from '@/components/InputPin.vue'
-import Constant from '@/components/Constant.vue'
+import AndGate from '@/components/Gates/AndGate.vue'
+import NotGate from '@/components/Gates/NotGate.vue'
+import OrGate from '@/components/Gates/OrGate.vue'
+import NorGate from '@/components/Gates/NorGate.vue'
+import Tunnel from '@/components/Wiring/Tunnel.vue'
+import InputPin from '@/components/Wiring/InputPin.vue'
+import Constant from '@/components/Wiring/Constant.vue'
+import Clock from '@/components/Wiring/Clock.vue'
 </script>
 
 <style>

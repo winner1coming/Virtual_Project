@@ -31,7 +31,7 @@
 <script setup>
 import { reactive, ref, computed, onMounted } from 'vue'
 import BitInputPort from '@/components/Ports/BitInputPort.vue'
-import OutputPort from '@/components/OutputPort.vue'
+import OutputPort from '@/components/Ports/OutputPort.vue'
 import { createOutputs, setScale } from '@/logic/usegates/useLogicGates'
 import { useGateLayout } from '@/logic/usegates/useGateLayout'
 

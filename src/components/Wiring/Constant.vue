@@ -35,8 +35,8 @@
   
 <script setup>
 import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
-import OutputPort from './OutputPort.vue'
-import InputPort from './InputPort.vue'
+import OutputPort from '@/components/Ports/OutputPort.vue'
+import InputPort from '@/components/Ports/InputPort.vue'
 import { defineProps } from 'vue'
 
 import { useCircuitStore } from '@/store/CircuitStore'
