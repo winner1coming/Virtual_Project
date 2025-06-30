@@ -45,23 +45,23 @@ export const useCircuitStore = defineStore('circuit', {
     addComponent(type: String, position: [number, number]): number {
       const id = this.currentId++;
       // const logic = createGate(type, id);
-      if(type === "And"){
+      if(type === "AND"){
         this.components.set(id, reactive(new AndGate(id, type, position)));
-      }else if(type === "Or"){
+      }else if(type === "OR"){
         this.components.set(id, reactive(new OrGate(id, type, position)));
-      }else if(type === "Not"){
+      }else if(type === "NOT"){
         this.components.set(id, reactive(new NotGate(id, type, position)));
-      }else if(type === "Nand"){
+      }else if(type === "NAND"){
         this.components.set(id, reactive(new NandGate(id, type, position)));
-      }else if(type === "Nor"){
+      }else if(type === "NOR"){
         this.components.set(id, reactive(new NorGate(id, type, position)));
-      }else if(type === "Xor"){
+      }else if(type === "XOR"){
         this.components.set(id, reactive(new XorGate(id, type, position)));
-      }else if(type === "Clock"){
+      }else if(type === "CLOCK"){
         this.components.set(id, reactive(new Clock(id, type, position)));
-      }else if(type === "Input"){
+      }else if(type === "INPUT"){
         this.components.set(id, reactive(new InputPin(id, type, position))); 
-      }else if(type === "Output"){
+      }else if(type === "OUTPUT"){
         this.components.set(id, reactive(new OutputPin(id, type, position))); 
       }
       else{
