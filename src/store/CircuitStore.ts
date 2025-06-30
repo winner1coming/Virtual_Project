@@ -11,6 +11,8 @@ import {Clock} from '@/logic/components/Clock';
 import { EventDrivenSimulator } from '@/logic/Simulator';
 import { InputPin } from '@/logic/components/InputPin';
 import { OutputPin } from '@/logic/components/OutputPin';
+import {Tunnel} from '@/logic/components/Tunnel';
+import { ConstantInput } from '@/logic/components/ConstantInput';
 
 
 export const useCircuitStore = defineStore('circuit', {
@@ -42,7 +44,7 @@ export const useCircuitStore = defineStore('circuit', {
     },
 
     // 添加一个组件，返回id
-    addComponent(type: String, position: [number, number]): number {
+    addComponent(type: String, position: [number, number]=[0,0]): number {
       const id = this.currentId++;
       // const logic = createGate(type, id);
       if(type === "AND"){
@@ -63,6 +65,10 @@ export const useCircuitStore = defineStore('circuit', {
         this.components.set(id, reactive(new InputPin(id, type, position))); 
       }else if(type === "OUTPUT"){
         this.components.set(id, reactive(new OutputPin(id, type, position))); 
+      }else if(type === "TUNNEL"){
+        this.components.set(id, reactive(new Tunnel(id, type, position, 'name')));  // 名字
+      }else if(type === "CONSTANT"){
+        this.components.set(id, reactive(new ConstantInput(id, type, position)));
       }
       else{
         throw new Error(`Unknown component type: ${type}`);

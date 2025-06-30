@@ -149,8 +149,8 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import AndGate from './Gates/AndGate.vue'
-import OrGate from './OrGate.vue'
-import NotGate from './NotGate.vue'
+import OrGate from './Gates/OrGate.vue'
+import NotGate from './Gates/NotGate.vue'
 
 import { useHistory } from '@/modules/useHistory';
 import eventBus from '@/modules/useEventBus';

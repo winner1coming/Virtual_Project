@@ -53,11 +53,17 @@
   import {watchComponentChanges} from '@/modules/useComponentsWatchers'
   
   const circuitStore = useCircuitStore();
-  const id = circuitStore.addComponent('And', [0,0]);  // debug
+  const props = defineProps({
+    id: {
+      type: Number,
+      required: true
+    }
+  });
+  //const id = circuitStore.addComponent('And', [0,0]);  // debug
   
   const clock = computed(() => {
-    return circuitStore.getComponent(id);   // debug
-    // return circuitStore.getComponent(props.id);  
+    // return circuitStore.getComponent(id);   // debug
+    return circuitStore.getComponent(props.id);  
   });
   
   // 调试 --todo---------------------------------------------------------------
