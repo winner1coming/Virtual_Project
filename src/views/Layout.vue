@@ -191,7 +191,20 @@
                 <CanvasEditor />
               </template>
               <template #2 v-if="showRightPDF">
-                <PDFViewer :pdfFile="currentPdfFile" />
+                <div class="pdf-wrapper">
+                  <n-button 
+                    quaternary
+                    circle
+                    size="small"
+                    class="close-button"
+                    @click="closePDF"
+                    >
+                    <template #icon>
+                      <n-icon><close /></n-icon>
+                    </template>
+                  </n-button>
+                  <PDFViewer :pdfFile="currentPdfFile" />
+                </div>
               </template>
             </n-split>
           </template>
@@ -231,7 +244,8 @@ import {
   CaretDownCircleOutline as downIcon,
   DocumentTextOutline as textoutline,
   CubeOutline as cube,
-  FolderOpenOutline as folder
+  FolderOpenOutline as folder,
+  CloseOutline as close
 } from '@vicons/ionicons5'
 
 const props = defineProps(['mode'])
@@ -304,6 +318,11 @@ const togglePDF = (file) => {
 }
 
 provide('togglePDF', togglePDF)
+
+const closePDF = () => {
+  CanvasSize.value = 1
+  showRightPDF.value = false
+}
 
 const saveProject = () => {
   console.log('保存项目')
@@ -493,6 +512,22 @@ const resumeSimulator = () => {
 .slide-fade-leave-to {
   transform: translateX(-20px);
   opacity: 0;
+}
+
+.pdf-wrapper{
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.close-button{
+  position: absolute;
+  top:10px;
+  left: 10px;
+  z-index:10;
+  background-color: aliceblue;
 }
 
 
