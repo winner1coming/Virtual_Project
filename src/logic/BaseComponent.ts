@@ -103,5 +103,6 @@ export abstract class BaseComponent{
                 y: this.OutputPinPosition[i][1],
             });
         }
+        return result;
     }
 }

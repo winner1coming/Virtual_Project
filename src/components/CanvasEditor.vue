@@ -149,8 +149,8 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import AndGate from './Gates/AndGate.vue'
-import OrGate from './OrGate.vue'
-import NotGate from './NotGate.vue'
+import OrGate from './Gates/OrGate.vue'
+import NotGate from './Gates/NotGate.vue'
 
 import { useHistory } from '@/modules/useHistory';
 import eventBus from '@/modules/useEventBus';
@@ -164,7 +164,7 @@ const isDragging = ref(false)
 const dragOffset = reactive({ x: 0, y: 0 })// 拖动偏移量
 const previewPos = reactive({ x: 0, y: 0 })// 预览的位置
 const connections = reactive([])// 全局连接列表
-const componentID = reactive({})// 全局组件ID
+const componentID = reactive([])// 全局组件ID
 const ports = [];// 存储单个元件的端口信息
 const Ports = [];// 每个元件和对应端口对的关系
 
@@ -527,7 +527,7 @@ function handleMouseDown(event) {
     //////////////////////////////////////////////////////////////////////////////
     // 2：单独记录这个元件的ID
     // 调用useCircuitStore()获取元件的ID
-    id = useCircuitStore().addComponent(currentComponent.value.componentType, [x, y]);
+    const id = useCircuitStore().addComponent(currentComponent.value.componentType, [x, y]);
     // 3：将元件ID存起来，方便后面查找各元件的引脚信息
     componentID.push(id)
     // 4：记录当前ID的端口信息
@@ -596,7 +596,7 @@ function handleMouseDown(event) {
     saveSnapshot();
   }
 }
-
+}
 // 创建电线路径
 function createWirePath(start, end) {
   const midX = (start.x + end.x) / 2;
@@ -811,6 +811,7 @@ function toggleInput(component, index) {
 
 onMounted(() => {
   eventBus.on('start-place-component', (type) => {
+    console.log('开始放置组件:', type);
     startPlacingVueComponent(type);
   });  
   eventBus.on('updateComponentDirection', () => {
@@ -823,7 +824,7 @@ onUnmounted(() => {
   eventBus.off('updateComponentDirection');
 });
 
-}</script>
+</script>
 
 <style scoped>
 .editor-wrapper {

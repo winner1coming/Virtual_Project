@@ -83,10 +83,10 @@ const pinCountOptions = ref([2,3,4,5,6,7,8]);
 // 判断是否显示修改引脚数量的选项
 const showPinCountOptions = computed(() => {
   const selectedComponent = circuitStore.getComponent(circuitStore.selectedId);
-  return selectedComponent.type !== 'Not' && selectedComponent.type !== 'Clock' &&
-        selectedComponent.type !== 'Input' && selectedComponent.type !== 'Output' &&
-        selectedComponent.type !== '7SegmentDisplay' && selectedComponent.type !== 'Tunnel' &&
-         selectedComponent.type !== 'Power' && selectedComponent.type !== 'Ground';
+  return selectedComponent.type !== 'NOT' && selectedComponent.type !== 'CLOCK' &&
+        selectedComponent.type !== 'INPUT' && selectedComponent.type !== 'OUTPUT' &&
+        selectedComponent.type !== 'SegmentDisplay' && selectedComponent.type !== 'TUNNEL' &&
+         selectedComponent.type !== 'POWER' && selectedComponent.type !== 'GROUND';
 });
 
 function updateDirection(value: string, option: SelectOption) {
