@@ -148,7 +148,7 @@
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
-import AndGate from './AndGate.vue'
+import AndGate from './Gates/AndGate.vue'
 import OrGate from './OrGate.vue'
 import NotGate from './NotGate.vue'
 

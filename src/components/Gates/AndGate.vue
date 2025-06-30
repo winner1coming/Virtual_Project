@@ -18,12 +18,21 @@
       <path stroke="black" stroke-width="12" d="M149 395L372 395" />
       <path stroke="black" stroke-width="12" d="M149 181L372 181" />
       <path
-        fill="none"
+        fill="transparent"
         stroke="black"
         stroke-width="12"
         d="M366.5 180C507 259.301 410.965 399.972 366.5 395"
       />
       <path stroke="black" stroke-width="12" d="M440 288L497 288" />
+
+      <!--填充透明区域以便拖拽-->
+      <rect
+        :x="149"
+        :y="181"
+        :width="223"
+        :height="218"
+        fill="transparent"
+      />
 
       <!-- 输入引脚 -->
       <template v-for="(input, index) in andGate.inputs" :key="index">
@@ -37,28 +46,24 @@
           fill="none"
         />
         <path v-if="!andGate.inputInverted[index]":d="`M92 ${inputYs[index]}L149 ${inputYs[index]}`" stroke="black" stroke-width="12" />
-        <!-- <path v-if="andGate.inputInverted[index]":d="`M${92 - 30} ${inputYs[index]}L${149 - 44} ${inputYs[index]}`" stroke="black" stroke-width="12" /> -->
-        <InputPort :cx="92" :cy="inputYs[index]" :active="input" @toggle="() => handleToggleInput(index)"/>
-        <!-- <InputPort v-if="input.inverted":cx="92-30" :cy="inputYs[index]" :active="input.value" @toggle="() => toggleInput(index)" /> -->
+        <InputPort :cx="92" :cy="inputYs[index]" :active="input" :bitWidth="andGate.width" @toggle="() => handleToggleInput(index)"/>
       </template>
 
       <!-- 输出状态 -->
-      <OutputPort :cx="497" :cy="288" :active="andGate.outputs[0]===1" />
+      <OutputPort :cx="497" :cy="288" :active="andGate.outputs[0]" />
     </g>
   </svg>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
-import InputPort from './InputPort.vue'
-import OutputPort from './OutputPort.vue'
+import InputPort from '@/components/Ports/InputPort.vue'
+import OutputPort from '@/components/Ports/OutputPort.vue'
 import { defineProps } from 'vue'
 
 import { useGateLayout } from '@/logic/usegates/useGateLayout'
 import { useCircuitStore } from '@/store/CircuitStore'
 import {watchComponentChanges} from '@/modules/useComponentsWatchers'
-
-// const inputCount = 8 // 输入引脚个数可调整
 
 const circuitStore = useCircuitStore();
 const props = defineProps({
@@ -76,6 +81,9 @@ const andGate = computed(() => {
 });
 
 let inputYs = useGateLayout(andGate.value.inputCount)
+// let inputYs = computed(()=>{
+//   return 
+// });
 
 let minY = Math.min(...inputYs.value);
 let maxY = Math.max(...inputYs.value);
@@ -141,6 +149,8 @@ onUnmounted(() => {
 // 测试用函数，后期删掉  todo
 function handleToggleInput(index) {
   //toggleInput(andGate, index, updateOutput)
+  // todotodo
+  setInputCount(5);
   if(andGate.value.inputs[index] === 0){
     andGate.value.changeInput(index, 1);
   }else{
