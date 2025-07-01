@@ -556,7 +556,6 @@ function handleMouseDown(event) {
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
 
-  console.log("元件类型:", currentComponent.value.componentType)
   // console.log("元件x:", x)
   // console.log("元件y:", y)
 
@@ -794,6 +793,7 @@ function handleMouseUp() {
 }
 
 function selectComponent(item, event) {
+  console.log("选中元件：", item)
   const rect = canvasContainer.value.getBoundingClientRect()
   const x = event.clientX - rect.left
   const y = event.clientY - rect.top
@@ -801,8 +801,8 @@ function selectComponent(item, event) {
   dragOffset.x = x - item.x
   dragOffset.y = y - item.y
   isDragging.value = true
-  // 选中元件：不影响操作
-  // useCircuitStore.selectComponent(item.value.componentType)
+  
+  useCircuitStore().selectComponent(item.ID);
 }
 
 

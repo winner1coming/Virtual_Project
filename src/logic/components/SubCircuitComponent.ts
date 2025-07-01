@@ -3,7 +3,7 @@ import { BaseComponent } from '../BaseComponent';
 import { useCircuitStore } from '@/store/CircuitStore';
 import { reactive } from 'vue';
 import { SubSimulator } from '../SubSimulator';
-import { ProjectManager } from '../ProjectManager';
+import { useProjectStore } from '@/store/ProjectStore';
 import { createComponentByType } from '@/modules/useComponentType';
 
 export class SubCircuitComponent extends BaseComponent {
@@ -24,16 +24,16 @@ export class SubCircuitComponent extends BaseComponent {
     this.name = name;
 
     const store = useCircuitStore();
-    const projectManager = ProjectManager.getInstance();
+    const projectStore = useProjectStore();
 
-    this.inputPins = projectManager.getProjectById(projectId).inputPins;
-    this.outputPins = projectManager.getProjectById(projectId).outputPins;
+    this.inputPins = projectStore.getProjectById(projectId).inputPins;
+    this.outputPins = projectStore.getProjectById(projectId).outputPins;
 
     this.inputs = reactive(Array(this.inputPins.length).fill(-1));
     this.outputs = reactive(Array(this.outputPins.length).fill(-1));
 
     // 根据id创建组件
-    projectManager.getProjectById(projectId).componentsId.forEach(id => {
+    projectStore.getProjectById(projectId).componentsId.forEach(id => {
       const comp = store.getComponent(id);
       if (comp) {
         this.componentIdMap.set(id, createComponentByType(id, comp.type, comp.position, comp.name));

@@ -15,7 +15,7 @@ export abstract class BaseComponent{
     position: [number, number];
     InputPinPosition: Array<[number, number]>;   // todo! 默认为2，部分特殊文件中的这个还没改
     OutputPinPosition: Array<[number, number]>;  // todo! 默认为2，部分特殊文件中的这个还没改
-    direction: String; // 组件的方向，'east', 'west', 'north', 'south'
+    direction: string; // 组件的方向，'east', 'west', 'north', 'south'
 
     constructor(id: number, type: String, position:[number, number] = [0,0],  InputPinPosition = []) {
         this.id = id;
@@ -31,7 +31,7 @@ export abstract class BaseComponent{
         this.height = 1;   // todo
         this.width = 1;
         this.scale = 1;    
-        this.position = position;
+        this.position = reactive(position); // 将 position 包装为 reactive
         this.InputPinPosition =  reactive([[0,0], [0,0]]);  // 默认只有两个输入引脚
         this.OutputPinPosition = reactive([[0,0]]); // 默认只有一个输出引脚
         this.direction = 'east';  // 默认方向为东
@@ -53,7 +53,8 @@ export abstract class BaseComponent{
         this.bitCount = bitCount;
     }
     setPosition(position: [number, number]) {
-        this.position = position;
+        this.position[0] = position[0]; 
+        this.position[1] = position[1];
         const [baseX, baseY] = position;
 
         // 🟢 更新输入引脚坐标
