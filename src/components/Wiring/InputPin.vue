@@ -36,7 +36,7 @@
         </text>
       </g>
       <!-- 输出 -->
-      <OutputPort :cx="svgWidth" :cy="svgHeight/2" active=1 />
+      <OutputPort :cx="svgWidth" :cy="svgHeight/2" :active="1" />
       </g>
     </svg>
   </template>

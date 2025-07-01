@@ -7,6 +7,7 @@
     <InputPin />
     <Constant />
     <Clock />
+    <SegmentDisplay />
     <button @click=""/>
   </div>
 </template>
@@ -20,6 +21,7 @@ import Tunnel from '@/components/Wiring/Tunnel.vue'
 import InputPin from '@/components/Wiring/InputPin.vue'
 import Constant from '@/components/Wiring/Constant.vue'
 import Clock from '@/components/Wiring/Clock.vue'
+import SegmentDisplay from '@/components/Input_OutPut/SegmentDisplay.vue'
 </script>
 
 <style>

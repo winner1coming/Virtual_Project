@@ -27,8 +27,8 @@
             {{ constant_value }}
             </text>
             <!-- 输出引脚 -->
-            <OutputPort :cx="218+rect_width" :cy="310" :active=true />
-            <InputPort :cx="200" :cy="310" :active=0 @toggle="() => handleToggleInput()"/><!--调试用，记得删这行 todo-->
+            <OutputPort :cx="218+rect_width" :cy="310" :active="1" />
+            <InputPort :cx="200" :cy="310" :active="0" @toggle="() => handleToggleInput()"/><!--调试用，记得删这行 todo-->
         </g>
     </svg>
 </template>

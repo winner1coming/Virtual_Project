@@ -26,13 +26,24 @@
       <path stroke="black" stroke-width="12" d="M440 288L497 288" />
 
       <!--填充透明区域以便拖拽-->
-      <rect
+      <!-- <rect
         :x="149"
         :y="181"
         :width="223"
         :height="218"
         fill="transparent"
-      />
+      /> -->
+
+      <!--选中方框-->
+      <!-- <rect
+        :x="144"
+        :y="176"
+        :width="233"
+        :height="228"
+        fill="transparent"
+        :stroke="circuitStore.selectedId === $props.id? 'black': 'transparent'"
+        stroke-width="12"
+      /> -->
 
       <!-- 输入引脚 -->
       <template v-for="(input, index) in andGate.inputs" :key="index">
@@ -128,23 +139,6 @@ onUnmounted(() => {
 
 // 以下为调试用代码，后期可删除---------------------------------------
 
-// andGate.value.changeInput(0, 0);   // todo debug
-// andGate.value.changeInput(1, 0);
-
-// 每个输入引脚都有唯一 id，方便用外部数据更新，比如 andGate.inputs.find(i => i.id === 'in2').value = true,
-// 日后可以扩展属性，比如 label, connected, position 等
-
-// function setInputValue(index, value) {
-//   if (index < 0 || index >= andGate.value.inputs.length) return
-//   andGate.value.inputs[index].value = value
-//   updateOutput()
-// }
-// 用法：setInputValue(0, true)  // 设置第 0 个引脚为高电平
-//      setInputValue(1, false) // 设置第 1 个引脚为低电平
-
-//handleSetInputInverted(0, true);
-// handleSetScale(1);   
-
 // 测试用函数，后期删掉  todo
 function handleToggleInput(index) {
   //toggleInput(andGate, index, updateOutput)
@@ -161,52 +155,8 @@ function handleToggleInput(index) {
   andGate.value.changeInputInverted(index, !andGate.value.inputInverted[index]); // 切换输入引脚的反相状态
 }
 
-// function handleSetInputValue(index, value) {
-//   setInputValue(andGate, index, value, updateOutput)
-// }
-
-// function handleSetInputInverted(index, inverted) {
-//   setInputInverted(andGate, index, inverted, updateOutput)
-// }
-
 function handleSetScale(newScale){
   andGate.value.scale = newScale;
-}
-
-
-
-
-// function updateOutput() {
-//   andGate.output = andGate.inputs.every(input =>
-//     input.inverted ? !input.value : input.value
-//   )
-// }
-
-// 提供所有元件端口的位置
-function getAllPorts(gate) {
-  const ports = [];
-
-  // 输入引脚
-  gate.andGate.value.inputs.forEach((input, index) => {
-    ports.push({
-      id: input.id,
-      type: 'input',
-      x: gate.x + 92 * gate.scale,
-      y: gate.y + inputYs.value[index] * gate.scale,
-      component: gate
-    });
-  });
-
-  // 输出引脚
-  ports.push({
-    id: 'output',
-    type: 'output',
-    x: gate.x + 497 * gate.scale,
-    y: gate.y + 288 * gate.scale,
-    component: gate
-  });
-
-  return ports;
 }
 
 </script>
