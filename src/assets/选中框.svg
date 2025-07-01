@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="600" viewBox="0 0 600 600" fill="none">
+<path     fill="#FFFFFF"  d="M0 600L600 600L600 0L0 0L0 600Z">
+</path>
+<rect x="92" y="175" width="393" height="251" stroke="rgba(179, 179, 179, 1)" stroke-width="3"   >
+</rect>
+<rect x="82" y="165" width="20" height="20" stroke="rgba(179, 179, 179, 1)" stroke-width="3"      fill="#FFFFFF" >
+</rect>
+<rect x="82" y="416" width="20" height="20" stroke="rgba(179, 179, 179, 1)" stroke-width="3"      fill="#FFFFFF" >
+</rect>
+<rect x="475" y="165" width="20" height="20" stroke="rgba(179, 179, 179, 1)" stroke-width="3"      fill="#FFFFFF" >
+</rect>
+<rect x="475" y="416" width="20" height="20" stroke="rgba(179, 179, 179, 1)" stroke-width="3"      fill="#FFFFFF" >
+</rect>
+</svg>
