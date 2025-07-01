@@ -15,7 +15,7 @@ export abstract class BaseComponent{
     position: [number, number];
     InputPinPosition: Array<[number, number]>;   // todo! 默认为2，部分特殊文件中的这个还没改
     OutputPinPosition: Array<[number, number]>;  // todo! 默认为2，部分特殊文件中的这个还没改
-    direction: String; // 组件的方向，'east', 'west', 'north', 'south'
+    direction: string; // 组件的方向，'east', 'west', 'north', 'south'
 
     constructor(id: number, type: String, position:[number, number] = [0,0],  InputPinPosition = []) {
         this.id = id;

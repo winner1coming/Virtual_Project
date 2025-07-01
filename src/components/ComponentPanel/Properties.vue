@@ -18,7 +18,7 @@
         <label for="orientation">朝向：</label>
         <n-select
           id="orientation"
-          v-model:value="circuitStore.getComponent(circuitStore.selectedId).direction.toString"  
+          v-model:value="circuitStore.getComponent(circuitStore.selectedId).direction"  
           :options="[
             { label: '东', value: 'east' },
             { label: '西', value: 'west' },
