@@ -148,13 +148,30 @@
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
-import AndGate from './AndGate.vue'
-import OrGate from './OrGate.vue'
-import NotGate from './NotGate.vue'
+// 元件建模
+import AndGate from './Gates/AndGate.vue'
+import OrGate from './Gates/OrGate.vue'
+import NotGate from './Gates/NotGate.vue'
 
+// 逻辑类建模
+import { AndGate as LogicAndGate } from '@/logic/components/AndGate.js'
+import { NandGate as LogicNandGate } from '@/logic/components/NandGate'
+import { OrGate as LogicOrGate } from '@/logic/components/OrGate.js'
+import { NorGate as LogicNorGate } from '@/logic/components/NorGate.js'
+import { NotGate as LogicNotGate } from '@/logic/components/NotGate.js'
+import {Clock as LogicClock} from '@/logic/components/Clock.js'
+import {Combiner as LogicCombiner} from '@/logic/components/Combiner.js'
+import {ConstantInput as LogicConstantInput} from '@/logic/components/ConstantInput.js'
+import {Ground as LogicGround} from '@/logic/components/Ground.js'
+import {Power as LogicPower} from '@/logic/components/Power.js'
+import { BaseComponent } from '@/logic/BaseComponent'
+
+// 其他
 import { useHistory } from '@/modules/useHistory';
 import eventBus from '@/modules/useEventBus';
 import { useCircuitStore } from '@/store/CircuitStore';
+import { nextTick } from 'vue'
+
 
 const canvasContainer = ref(null)
 const components = reactive([])
@@ -165,8 +182,14 @@ const dragOffset = reactive({ x: 0, y: 0 })// 拖动偏移量
 const previewPos = reactive({ x: 0, y: 0 })// 预览的位置
 const connections = reactive([])// 全局连接列表
 const componentID = reactive([])// 全局组件ID
+const vueComponentMap = new Map()// 存储 Vue 组件实例
 const ports = [];// 存储单个元件的端口信息
-const Ports = [];// 每个元件和对应端口对的关系
+// 全局端口管理对象：记录每个元件对应的端口数组
+// 纯 JavaScript 版本
+/** @type {Map<number, Array<{id: number, x:number, y:number, componentId:number, type: string}>>} */
+const Ports = new Map();
+
+
 // 定义电线的两端
 const wireStart = ref(null) // 记录起始点
 let wireStartId = null // 记录起始点port的元件ID
@@ -187,24 +210,32 @@ const contextMenu = reactive({
 
 
 // 添加元件的端口对
-function addComponentPorts(componentId, portsArray) {
-  Ports.set(componentId, portsArray)
+function addComponentPorts(componentId, portsInfo) {
+  const portList = portsInfo.ports.map((port, index) => {
+    const inputCount = portsInfo.ports.length - 1; // 假设最后一个是输出
+    return {
+      id: port.id,               // 原始端口编号
+      x: port.x,
+      y: port.y,
+      componentId,
+      type: index < inputCount ? 'input' : 'output'
+    };
+  });
+  Ports.set(componentId, portList);
 }
 
-// 获取元件的端口信息
 function getComponentPorts(componentId) {
-  return Ports.get(componentId) || []
+  return Ports.get(componentId) || [];
 }
 
-// 删除元件的端口信息
 function removeComponentPorts(componentId) {
-  Ports.delete(componentId)
+  Ports.delete(componentId);
 }
 
-// 修改元件的端口信息
 function updateComponentPorts(componentId, portsArray) {
-  Ports.set(componentId, portsArray)
+  Ports.set(componentId, portsArray);
 }
+
 
 // // 组件按钮对应图片选择
 // const expanded = reactive({ logic:true })// 逻辑门、IO、其他分类的展开状态
@@ -218,10 +249,10 @@ const componentMap = {
 }
 
 // 各组件的方法映射
-const COMPONENT_METHODS = {
-  AND: AndGate.methods, 
-  OR: OrGate.methods,
-  NOT: NotGate.methods
+const COMPONENT_LOGIC = {
+  AND: LogicAndGate, 
+  OR: LogicOrGate,
+  NOT: LogicNotGate
 }
 
 // 初始化各元件尺寸配置
@@ -525,6 +556,10 @@ function handleMouseDown(event) {
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
 
+  console.log("元件类型:", currentComponent.value.componentType)
+  // console.log("元件x:", x)
+  // console.log("元件y:", y)
+
   // 若有当前元件，则放置元件
   if (currentComponent.value) {
     // TODO：这段代码有bug，不知道为什么放置时会默认多个元件，我真的绷不住了
@@ -532,6 +567,7 @@ function handleMouseDown(event) {
     // 1：单独记录这个元件的ID
     // 调用useCircuitStore()获取元件的ID
     const id = useCircuitStore().addComponent(currentComponent.value.componentType, [x, y]);
+    console.log("元件ID：", id)
     // 2：创建元件配置对象，将元件的相关信息存放到components列表里
     components.push({ 
       ...currentComponent.value, 
@@ -541,18 +577,61 @@ function handleMouseDown(event) {
     });
     // 3：将元件ID存起来，方便后面查找各元件的引脚信息
     componentID.push(id)
+    // 获取组件类型对应的逻辑类
+    let componentLogic
+    switch (currentComponent.value.componentType) {
+      case 'AND':
+        componentLogic = new LogicAndGate(id, 'AND', [x, y])
+        break
+      case 'OR':
+        componentLogic = new LogicOrGate(id, 'OR', [x, y])
+        break
+      case 'NOT':
+        componentLogic = new LogicNotGate(id, 'NOT', [x, y])
+        break
+      default:
+        console.error("未知元件类型：", currentComponent.value.componentType)
+    }
+    // ⚠️ 触发引脚坐标更新（非常重要）
+    componentLogic.setPosition([x, y]);
+
+    // 创建Vue组件实例
+    const componentInstance = {
+      component: componentMap[currentComponent.value.componentType],
+      props: {id},
+      logic: componentLogic,
+    }
+
+    // 存储Vue实例引用
+    vueComponentMap.set(id, componentInstance);
+
     // 4：记录当前ID的端口信息
+    // 延迟4后获取端口信息，确保见组件挂载完成
+    nextTick(() => {
+      const logic = vueComponentMap.get(id)?.logic;
+      if(!logic) {
+        console.warn("逻辑类未找到，ID：", id)
+        return
+      }
+      const portsInfo = logic.getAllPorts()
+      console.log("端口信息1：", portsInfo)
+      addComponentPorts(id, portsInfo)
+      console.log("所有端口：", Ports)
+    })
     
     // 获取对应id的元件本体对象
-    const component = useCircuitStore().getComponent(id);
-    // 获取元件所有端口信息
-    ports.push(...component.getAllPorts(component));
-    // 新增元件端口信息
-    addComponentPorts(id, ports)
-    ports.clearRect()// 清空ports，方便下次使用
+    // const component = useCircuitStore().getComponent(id);
+    // 获取元件所有端口信息：此时获取的太早了
+    // const portsInfo = componentLogic.getAllPorts()
+
+    // console.log("端口信息：", portsInfo)
+    // 新增元件端口信息:注册到全局ports列表
+    
+    // ports.length = 0// 清空ports，方便下次使用
     ///////////////////////////////////////////////////////////////////////////////////
     saveHistory();
     currentComponent.value = null;
+    console.log("放置元件后，当前组件已清空:", currentComponent.value)
     return; // 放置元件后不画线
   }
 

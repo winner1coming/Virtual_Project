@@ -1,18 +1,11 @@
 import { reactive, computed } from 'vue';
 import { defineStore } from 'pinia'
 import { BaseComponent } from '@/logic/BaseComponent.js';
-import {AndGate} from '@/logic/components/AndGate';
-import {OrGate} from '@/logic/components/OrGate';
-import {NotGate} from '@/logic/components/NotGate';
-import {NandGate} from '@/logic/components/NandGate';
-import {NorGate} from '@/logic/components/NorGate';
-import {XorGate} from '@/logic/components/XorGate';
-import {Clock} from '@/logic/components/Clock';
 import { EventDrivenSimulator } from '@/logic/Simulator';
-import { InputPin } from '@/logic/components/InputPin';
-import { OutputPin } from '@/logic/components/OutputPin';
-import {Tunnel} from '@/logic/components/Tunnel';
-import { ConstantInput } from '@/logic/components/ConstantInput';
+
+import { ProjectManager } from '@/logic/ProjectManager';
+
+import {createComponentByType} from '@/modules/useComponentType';
 
 
 export const useCircuitStore = defineStore('circuit', {
@@ -27,6 +20,7 @@ export const useCircuitStore = defineStore('circuit', {
 
     //selectedComponent: null as BaseComponent | null,
     simulator: EventDrivenSimulator.getInstance(),
+    projectManager: ProjectManager.getInstance(),
   }),
   actions: {
     // #region 组件相关操作
@@ -44,35 +38,18 @@ export const useCircuitStore = defineStore('circuit', {
     },
 
     // 添加一个组件，返回id
-    addComponent(type: String, position: [number, number]=[0,0]): number {
+    addComponent(type: String, position: [number, number]=[0,0], name: String =""): number {
       const id = this.currentId++;
       // const logic = createGate(type, id);
-      if(type === "AND"){
-        this.components.set(id, reactive(new AndGate(id, type, position)));
-      }else if(type === "OR"){
-        this.components.set(id, reactive(new OrGate(id, type, position)));
-      }else if(type === "NOT"){
-        this.components.set(id, reactive(new NotGate(id, type, position)));
-      }else if(type === "NAND"){
-        this.components.set(id, reactive(new NandGate(id, type, position)));
-      }else if(type === "NOR"){
-        this.components.set(id, reactive(new NorGate(id, type, position)));
-      }else if(type === "XOR"){
-        this.components.set(id, reactive(new XorGate(id, type, position)));
-      }else if(type === "CLOCK"){
-        this.components.set(id, reactive(new Clock(id, type, position)));
-      }else if(type === "INPUT"){
-        this.components.set(id, reactive(new InputPin(id, type, position))); 
+      this.components.set(id, reactive(createComponentByType(id, type, position, name)));
+      // projectDate修改
+      this.projectManager.getCurrentProject().componentsId.push(id);
+      if(type === "INPUT"){
+        this.projectManager.getCurrentProject().inputPins.push(id);
       }else if(type === "OUTPUT"){
-        this.components.set(id, reactive(new OutputPin(id, type, position))); 
-      }else if(type === "TUNNEL"){
-        this.components.set(id, reactive(new Tunnel(id, type, position, 'name')));  // 名字
-      }else if(type === "CONSTANT"){
-        this.components.set(id, reactive(new ConstantInput(id, type, position)));
+        this.projectManager.getCurrentProject().outputPins.push(id);
       }
-      else{
-        throw new Error(`Unknown component type: ${type}`);
-      }
+      // 组件
       return id;
     },
     // 移除一个组件
@@ -92,6 +69,23 @@ export const useCircuitStore = defineStore('circuit', {
       // 如果删除的组件是当前选中的组件，则取消选中
       if (this.selectedId === id) {
         this.selectedId = -1;
+      }
+      // projectDate修改
+      const project = this.projectManager.getCurrentProject();
+      const index = project.componentsId.indexOf(id);
+      if (index !== -1) {
+        project.componentsId.splice(index, 1);
+      }
+      if (project.inputPins.includes(id)) {
+        const inputIndex = project.inputPins.indexOf(id);
+        if (inputIndex !== -1) {
+          project.inputPins.splice(inputIndex, 1);
+        }
+      }else if (project.outputPins.includes(id)) {
+        const outputIndex = project.outputPins.indexOf(id);
+        if (outputIndex !== -1) {
+          project.outputPins.splice(outputIndex, 1);
+        }
       }
     },
 
@@ -147,5 +141,24 @@ export const useCircuitStore = defineStore('circuit', {
     // 一次性刷新所有组件输出  todo  应该可以不用这个接口了
     simulateCircuit() {},
     // #endregion 模拟器逻辑
+  
+    // #region 项目管理
+    // 获取当前项目
+    getCurrentProject() {
+      return this.projectManager.getCurrentProject();
+    },
+    // // 创建新项目
+    // createProject(name: string) {
+    //   return this.projectManager.createProject(name);
+    // },
+    // // 选中项目
+    // selectProject(projectId: number) {
+    //   const project = this.projectManager.getAllProjects().find(p => p.projectId === projectId);
+    //   if (project) {
+    //     this.projectManager.loadProject(project);
+    //   } else {
+    //     throw new Error(`Project with id ${projectId} not found`);
+    //   }
+    // },
   }
 });
