@@ -1,12 +1,55 @@
 <template>
   <div>
     <h1>数字电路实验</h1>
-    <AndGate :id="andGateId"/>
-    <Tunnel :id="tunnelId"/>
+  <svg
+    viewBox="0 0 600 600"
+    width="300"
+    height="300"
+    style="overflow: visible;"
+  >
     <OrGate :id="orGateId"/>
+  </svg>
+  <svg
+    viewBox="0 0 600 600"
+    width="300"
+    height="300"
+    style="overflow: visible;"
+  >
     <InputPin :id="inputPinId"/>
+  </svg>
+  <svg
+    viewBox="0 0 600 600"
+    width="300"
+    height="300"
+    style="overflow: visible;"
+  >
+    <Tunnel :id="tunnelId"/>
+  </svg>
+  <svg
+    viewBox="0 0 600 600"
+    width="300"
+    height="300"
+    style="overflow: visible;"
+  >
+    <AndGate :id="andGateId"/>
+  </svg>
+  <svg
+    viewBox="0 0 600 600"
+    width="300"
+    height="300"
+    style="overflow: visible;"
+  >
     <Constant :id="constantId"/>
+  </svg>
+  <svg
+    viewBox="0 0 600 600"
+    width="300"
+    height="300"
+    style="overflow: visible;"
+  >
     <Clock :id="clockId"/>
+  </svg>
+  <Splitter />
   </div>
 </template>
 
@@ -19,6 +62,7 @@ import Tunnel from '@/components/Wiring/Tunnel.vue'
 import InputPin from '@/components/Wiring/InputPin.vue'
 import Constant from '@/components/Wiring/Constant.vue'
 import Clock from '@/components/Wiring/Clock.vue'
+import Splitter from '@/components/Wiring/Splitter.vue'
 
 import { useCircuitStore } from '@/store/CircuitStore.js'
 const circuitStore = useCircuitStore();

@@ -1,12 +1,4 @@
 <template>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 600 600"
-    width="300"
-    height="300"
-    style="overflow: visible;"
-    
-  >
     <g :transform="`translate(${andGate.position[0]}, ${andGate.position[1]}) scale(${andGate.scale})`" cursor="move">
       <!-- AND 门图形 -->
        <!--左侧竖线-->
@@ -24,27 +16,10 @@
         d="M366.5 180C507 259.301 410.965 399.972 366.5 395"
       />
       <path stroke="black" stroke-width="12" d="M440 288L497 288" />
-
-      <!--填充透明区域以便拖拽-->
-      <!-- <rect
-        :x="149"
-        :y="181"
-        :width="223"
-        :height="218"
-        fill="transparent"
-      /> -->
-
+      
       <!--选中方框-->
-      <!-- <rect
-        :x="144"
-        :y="176"
-        :width="233"
-        :height="228"
-        fill="transparent"
-        :stroke="circuitStore.selectedId === $props.id? 'black': 'transparent'"
-        stroke-width="12"
-      /> -->
-
+      <SelectedBox :x="82" :y="minY<181? minY-12: 175" :width="424" :height="minY<181? (maxY-minY+24): 226" :visible="true"/>
+      
       <!-- 输入引脚 -->
       <template v-for="(input, index) in andGate.inputs" :key="index">
         <circle
@@ -62,14 +37,15 @@
 
       <!-- 输出状态 -->
       <OutputPort :cx="497" :cy="288" :active="andGate.outputs[0]" />
+
     </g>
-  </svg>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import InputPort from '@/components/Ports/InputPort.vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
+import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 import { defineProps } from 'vue'
 
 import { useGateLayout } from '@/logic/usegates/useGateLayout'
@@ -144,7 +120,7 @@ onUnmounted(() => {
 function handleToggleInput(index) {
   //toggleInput(andGate, index, updateOutput)
   // todotodo
-  setInputCount(5);
+  setInputCount(10);
   if(andGate.value.inputs[index] === 0){
     andGate.value.changeInput(index, 1);
   }else{

@@ -1,10 +1,4 @@
 <template>
-    <svg
-        viewBox="0 0 600 600"
-        width="300"
-        height="300"
-        style="overflow: visible;"
-    >
       <g :transform="`translate(0, 0) scale(1)`" cursor="move">
       <!-- 背景矩形 -->
       <rect
@@ -17,6 +11,9 @@
         stroke-width="8"
         rx="6"
       />
+
+      <!--选中方框-->
+      <SelectedBox :x="-6" :y="-6" :width="svgWidth+12" :height="svgHeight+12" :visible="true"/>
   
       <!-- 每个 bit 位 -->
       <g
@@ -38,12 +35,12 @@
       <!-- 输出 -->
       <OutputPort :cx="svgWidth" :cy="svgHeight/2" :active="1" />
       </g>
-    </svg>
   </template>
   
   <script setup>
   import { ref, computed, watch } from 'vue'
   import OutputPort from '@/components/Ports/OutputPort.vue'
+  import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
   
   const props = defineProps({
     bitWidth: {

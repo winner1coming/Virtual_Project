@@ -1,51 +1,39 @@
 <template>
-    <svg
-      viewBox="0 0 600 600"
-      width="300"
-      height="300"
-      style="overflow: visible;"
-      
-    >
-      <g :transform="`translate(${clock.position[0]}, ${clock.position[1]}) scale(${clock.scale})`" cursor="move">
-        <!-- 图形 -->
-        <rect x="140" y="170" width="235" height="236" stroke="rgba(0, 0, 0, 1)" stroke-width="12"      fill="#FFFFFF" />
+    <g :transform="`translate(${clock.position[0]}, ${clock.position[1]}) scale(${clock.scale})`" cursor="move">
+      <!-- 图形 -->
+      <rect x="0" y="0" width="235" height="236" stroke="rgba(0, 0, 0, 1)" stroke-width="12" fill="#FFFFFF" />
 
-        <!--低电平-->
-        <path    :stroke="clock.outputs[0] === 1 ? 'transparent' : 'black'" stroke-width="12"    d="M173 329L264 329">
-        </path>
-        <path    :stroke="clock.outputs[0] === 1 ? 'transparent' : 'black'" stroke-width="12" d="M178 267.744L178 335">
-        </path>
-        <path    :stroke="clock.outputs[0] === 1 ? 'transparent' : 'black'"  stroke-width="12" d="M336.992 241L336.992 308.256">
-        </path>
-        <path    :stroke="clock.outputs[0] === 1 ? 'transparent' : 'black'"  stroke-width="12" d="M258 246L258 334">
-        </path>
-        <path    :stroke="clock.outputs[0] === 1 ? 'transparent' : 'black'"  stroke-width="12" d="M252 245.76L343 245.76" />
+      <!-- 低电平 -->
+      <path :stroke="clock.outputs[0] === 1 ? 'transparent' : 'black'" stroke-width="12" d="M33 159L124 159" />
+      <path :stroke="clock.outputs[0] === 1 ? 'transparent' : 'black'" stroke-width="12" d="M38 97.744L38 165" />
+      <path :stroke="clock.outputs[0] === 1 ? 'transparent' : 'black'" stroke-width="12" d="M196.992 71L196.992 138.256" />
+      <path :stroke="clock.outputs[0] === 1 ? 'transparent' : 'black'" stroke-width="12" d="M118 76L118 164" />
+      <path :stroke="clock.outputs[0] === 1 ? 'transparent' : 'black'" stroke-width="12" d="M112 75.76L203 75.76" />
 
-        <!-- 高电平 -->
-        <path    :stroke="clock.outputs[0] === 1 ? 'green' : 'transparent'" stroke-width="12" d="M173 247L263.5 247">
-        </path>
-        <path    :stroke="clock.outputs[0] === 1 ? 'green' : 'transparent'" stroke-width="12" d="M178 308.256L178 241">
-        </path>
-        <path    :stroke="clock.outputs[0] === 1 ? 'green' : 'transparent'" stroke-width="12" d="M336.992 335.5L336.992 267.744">
-        </path>
-        <path    :stroke="clock.outputs[0] === 1 ? 'green' : 'transparent'" stroke-width="12" d="M258 330L258 242">
-        </path>
-        <path    :stroke="clock.outputs[0] === 1 ? 'green' : 'transparent'" stroke-width="12" d="M252 330.24L342.5 330.24">
-        </path>
+      <!-- 高电平 -->
+      <path :stroke="clock.outputs[0] === 1 ? 'green' : 'transparent'" stroke-width="12" d="M33 77L123.5 77" />
+      <path :stroke="clock.outputs[0] === 1 ? 'green' : 'transparent'" stroke-width="12" d="M38 138.256L38 71" />
+      <path :stroke="clock.outputs[0] === 1 ? 'green' : 'transparent'" stroke-width="12" d="M196.992 165.5L196.992 97.744" />
+      <path :stroke="clock.outputs[0] === 1 ? 'green' : 'transparent'" stroke-width="12" d="M118 160L118 72" />
+      <path :stroke="clock.outputs[0] === 1 ? 'green' : 'transparent'" stroke-width="12" d="M112 160.24L202.5 160.24" />
 
-        <!-- 输出状态 -->
-        <OutputPort :cx="375" :cy="288" :active="clock.outputs[0]" />
+      <!--选中方框-->
+      <SelectedBox :x="-6" :y="-6" :width="235+12" :height="236+12" :visible="true"/>
 
-        <!--调试用  todo-->
-        <InputPort :cx="140" :cy="288" :active=0 @toggle="() => handleToggleInput()" />
-      </g>
-    </svg>
-  </template>
+      <!-- 输出状态 -->
+      <OutputPort :cx="235" :cy="118" :active="clock.outputs[0]" />
+
+      <!--调试用  todo-->
+      <InputPort :cx="140" :cy="288" :active=0 @toggle="() => handleToggleInput()" />
+    </g>
+</template>
+
   
   <script setup>
   import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
   import InputPort from '@/components/Ports/InputPort.vue'
   import OutputPort from '@/components/Ports/OutputPort.vue'
+  import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
   import { defineProps } from 'vue'
   
   import { useGateLayout } from '@/logic/usegates/useGateLayout'
@@ -69,10 +57,15 @@
   // 调试 --todo---------------------------------------------------------------
   function handleToggleInput()
   {
-    if(clock.value.outputs[0]===1)
-        clock.value.outputs[0] = 0;
-    else
+    console.log(1);
+    if(clock.value.outputs[0]==1){
+      clock.value.outputs[0] = 0;
+      console.log(2);
+    }
+    else{
         clock.value.outputs[0] = 1;
+        console.log(3);
+    }
   }
 
 </script>

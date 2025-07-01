@@ -1,42 +1,39 @@
 <template>
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 600 600"
-        width="300"
-        height="300"
-        style="overflow: visible;" 
-    >
-        <g :transform="`translate(${constant.position[0]}, ${constant.position[1]}) scale(${constant.scale})`" cursor="move">
-            <rect
-                x="218"
-                y="262"
-                :width="rect_width"
-                height="100"
-                fill="#D3D3D3"
-            />
-            <!-- 文本 -->
-            <text
-                :key="constant_value"
-                ref="constantTextBox"
-                :x="234"
-                :y="285 + 48"
-                font-family="Arial"
-                :font-size="48"
-                letter-spacing="5"
-            >
-            {{ constant_value }}
-            </text>
-            <!-- 输出引脚 -->
-            <OutputPort :cx="218+rect_width" :cy="310" :active="1" />
-            <InputPort :cx="200" :cy="310" :active="0" @toggle="() => handleToggleInput()"/><!--调试用，记得删这行 todo-->
-        </g>
-    </svg>
+    <g :transform="`translate(${constant.position[0]}, ${constant.position[1]}) scale(${constant.scale})`" cursor="move">
+        <rect
+            x="0"
+            y="0"
+            :width="rect_width"
+            height="100"
+            fill="#D3D3D3"
+        />
+        <!-- 文本 -->
+        <text
+            :key="constant_value"
+            ref="constantTextBox"
+            :x="16"
+            :y="71"
+            font-family="Arial"
+            :font-size="48"
+            letter-spacing="5"
+        >
+        {{ constant_value }}
+        </text>
+        
+        <!--选中方框-->
+        <SelectedBox :x="0" :y="0" :width="rect_width+12" :height="100" :visible="true"/>
+
+        <!-- 输出引脚 -->
+        <OutputPort :cx="rect_width" :cy="48" :active="1" />
+        <InputPort :cx="200" :cy="310" :active="0" @toggle="() => handleToggleInput()"/><!--调试用，记得删这行 todo-->
+    </g>
 </template>
   
 <script setup>
 import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import InputPort from '@/components/Ports/InputPort.vue'
+import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 import { defineProps } from 'vue'
 
 import { useCircuitStore } from '@/store/CircuitStore'
