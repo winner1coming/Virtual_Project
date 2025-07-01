@@ -998,8 +998,8 @@ onUnmounted(() => {
 }
 .component-canvas {
   position: relative;
-  width: 1600px;
-  height: 1200px;
+  width: 100%;
+  height: 100%;
   border: 1px solid #ccc;
   background-color: #f0f0f0;
   flex: 1;
@@ -1049,9 +1049,9 @@ onUnmounted(() => {
 
 /*画布*/
 svg {
-  width: 100%;
-  height: 100%;
-  min-width: 1600px;
-  min-height: 1200px;
+  width: 80%;
+  height: 90%;
+  min-width: 80%;
+  min-height: 80px;
 }
 </style>

@@ -76,7 +76,7 @@ onMounted(() => {
 
 <style scoped>
 .pdf-container {
-  height: 100vh;
+  height: 90vh;
   overflow-y: auto;
   padding: 10px;
   background-color: #f9f9f9;
