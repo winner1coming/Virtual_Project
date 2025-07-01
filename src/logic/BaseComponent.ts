@@ -52,9 +52,21 @@ export abstract class BaseComponent{
     setBitCount(bitCount: number){
         this.bitCount = bitCount;
     }
-    setPosition(position: [number, number]){
-        this.position = position;
+    setPosition(position: [number, number]) {
+    this.position = position;
+    const [baseX, baseY] = position;
+
+    // 🟢 更新输入引脚坐标（示例：非门左侧中点）
+    for (let i = 0; i < this.inputCount; i++) {
+        this.InputPinPosition[i] = [baseX - 20, baseY]; // 你可以微调这个相对偏移
     }
+
+    // 🟢 更新输出引脚坐标（示例：非门右侧中点）
+    for (let i = 0; i < this.outputs.length; i++) {
+        this.OutputPinPosition[i] = [baseX + 80, baseY]; // 同上，偏移值可改
+    }
+}
+
 
     // 会清空输入与引脚的取反状态
     changeInputPinCount(num: number){

@@ -11,7 +11,6 @@
   "dependencies": {
     "@vicons/ionicons5": "^0.13.0",
     "mitt": "^3.0.1",
-    "pdfjs-dist": "^5.3.31",
     "pinia": "^3.0.2",
     "typescript": "^5.8.3",
     "vue": "^3.5.13",
@@ -20,9 +19,9 @@
     "vue3-pdfjs": "^0.1.6"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.3",
+    "@vitejs/plugin-vue": "^6.0.0",
     "naive-ui": "^2.41.0",
     "vfonts": "^0.0.3",
-    "vite": "^6.3.5"
+    "vite": "^7.0.0"
   }
 }

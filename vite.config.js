@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
+      
       '@': fileURLToPath(new URL('./src', import.meta.url)) // 使用 @ 代替 src 目录
     },
     extensions: ['.js', '.vue', '.json', '.ts'] // 导入时可忽略的文件扩展名
