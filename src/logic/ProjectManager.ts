@@ -1,11 +1,11 @@
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import type { ProjectData } from './ProjectData';
 
 export class ProjectManager {
   private static instance: ProjectManager;
   allProjects = reactive(new Map<number, ProjectData>()); // 使用 Map 存储 id 与 ProjectData 的映射
   currentProjectId = 0;
-  selectedProjectId: number; // 当前选中的项目 ID
+  selectedProjectId = ref<number>(-1); // 当前选中的项目 ID
 
   constructor() {
     const defaultProject: ProjectData = {
@@ -16,7 +16,7 @@ export class ProjectManager {
       outputPins: []
     };
     this.allProjects.set(defaultProject.projectId, defaultProject);
-    this.selectedProjectId = defaultProject.projectId;
+    this.selectedProjectId.value = defaultProject.projectId;
   }
 
   static getInstance(): ProjectManager {
@@ -35,20 +35,20 @@ export class ProjectManager {
       outputPins: []
     };
     this.allProjects.set(newProject.projectId, newProject); 
-    this.selectedProjectId = newProject.projectId; 
+    this.selectedProjectId.value = newProject.projectId; 
     return newProject;
   }
 
   loadProject(projectId: number) {
     if (this.allProjects.has(projectId)) {
-      this.selectedProjectId = projectId; // 更新选中的项目 ID
+      this.selectedProjectId.value = projectId; // 更新选中的项目 ID
     } else {
       throw new Error(`Project with ID ${projectId} not found.`);
     }
   }
 
   getCurrentProject(): ProjectData{
-    return this.allProjects.get(this.selectedProjectId)!;
+    return this.allProjects.get(this.selectedProjectId.value)!;
   }
 
   getProjectById(projectId: number): ProjectData{
@@ -65,8 +65,8 @@ export class ProjectManager {
   deleteProject(projectId: number): boolean {
     if (this.allProjects.has(projectId)) {
       this.allProjects.delete(projectId);
-      if (this.selectedProjectId === projectId) {
-        this.selectedProjectId = -1; // 如果删除的是当前选中的项目，清空选中状态
+      if (this.selectedProjectId.value === projectId) {
+        this.selectedProjectId.value = -1; // 如果删除的是当前选中的项目，清空选中状态
       }
       return true;
     }

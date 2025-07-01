@@ -147,6 +147,9 @@ export const useCircuitStore = defineStore('circuit', {
     getCurrentProject() {
       return this.projectManager.getCurrentProject();
     },
+    getCurrentProjectId(): number {
+      return this.projectManager.selectedProjectId;
+    },
     // // 创建新项目
     // createProject(name: string) {
     //   return this.projectManager.createProject(name);
