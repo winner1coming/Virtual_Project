@@ -21,6 +21,7 @@ interface WorkItem {
 export class EventDrivenSimulator {
   private static instance: EventDrivenSimulator | null = null;
   private connectionManager: ConnectionManager;
+  private connManagerMap: Map<number, ConnectionManager> = new Map(); // 用于存储每个项目的连接管理器
   private circuitStore = useCircuitStore();
   private workQueue: WorkItem[] = [];
   private inQueue: Set<string> = new Set();
@@ -30,8 +31,11 @@ export class EventDrivenSimulator {
   // 隧道维护
   public tunnelNameMap: Map<String, number[]> = new Map(); // 存储隧道名字与id
   public InputTunnelMap: Map<String, number[]> = new Map(); // 记录接受输入的隧道
+  private projectTunnel: Map<number, [Map<String, number[]>, Map<String, number[]>]> = new Map(); // 存储每个项目的隧道信息
   private constructor() {
     this.connectionManager = new ConnectionManager();
+    this.connManagerMap.set(0, this.connectionManager); // 默认项目的连接管理器
+    this.projectTunnel.set(0, [this.tunnelNameMap, this.InputTunnelMap]); // 默认项目的隧道信息
   }
 
   static getInstance(): EventDrivenSimulator {
@@ -40,6 +44,7 @@ export class EventDrivenSimulator {
     }
     return EventDrivenSimulator.instance;
   }
+
   // 启用模拟器
   enable() {
     this.enableSimulator = true;
@@ -107,10 +112,10 @@ export class EventDrivenSimulator {
         outputIdx = otherPinIndex - otherComp.getInputPinCount();
       }
     }
-    // 判断位宽是否合法
-    if(comp1.bitCount !== comp2.bitCount) {
-      legal = false;
-    }
+    // 判断位宽是否合法   // todo 放在元件的compute方法中判断
+    // if(comp1.bitCount !== comp2.bitCount) {
+    //   legal = false;
+    // }
     this.connectionManager.addConnection(inputId, inputIdx, outputId, outputIdx, legal);
 
     const outputVal = this.circuitStore.getComponent(inputId).getOutputs()[inputIdx];
@@ -287,8 +292,21 @@ export class EventDrivenSimulator {
     return a.every((v, i) => v === b[i]);
   }
 
-  getConnectionManager(): ConnectionManager {
-    return this.connectionManager;
+  getConnectionManager(id: number): ConnectionManager {
+    return this.connManagerMap.get(id)!;
+  }
+  getProjectTunnel(id: number): [Map<String, number[]>, Map<String, number[]>] {
+    return this.projectTunnel.get(id)!;
+  }
+  changeProject(id: number): void {
+    if (!this.connManagerMap.has(id)) {
+      this.connManagerMap.set(id, new ConnectionManager());
+      this.projectTunnel.set(id, [new Map(), new Map()]); // 初始化该项目的隧道信息
+    }
+    this.connectionManager = this.connManagerMap.get(id)!;
+    const [tunnelNameMap, inputTunnelMap] = this.projectTunnel.get(id)!;
+    this.tunnelNameMap = tunnelNameMap;
+    this.InputTunnelMap = inputTunnelMap;
   }
 }
 

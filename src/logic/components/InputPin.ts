@@ -56,7 +56,8 @@ export class InputPin extends BaseComponent {
     }
 
     changeInput(idx: number, v: number): number[] {
-        // InputPin不应该有输入引脚，所以这里返回当前输出
+        // 该函数是在有外部输入时调用
+        this.outputs.splice(0, this.outputs.length, v); // 更新输出为输入值
         return this.outputs;
     }
 
