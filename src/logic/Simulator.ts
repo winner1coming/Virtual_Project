@@ -10,6 +10,7 @@
 import { ConnectionManager, Conn } from './ConnectionManager';
 import { useCircuitStore } from '@/store/CircuitStore';
 import { BaseComponent } from './BaseComponent';
+import { Tunnel } from './components/Tunnel';
 
 interface WorkItem {
   id: number;
@@ -25,6 +26,10 @@ export class EventDrivenSimulator {
   private inQueue: Set<string> = new Set();
   private enableSimulator: Boolean = false; // 是否启用模拟器
   private pause: Boolean = false; // 是否暂停模拟器
+
+  // 隧道维护
+  public tunnelNameMap: Map<String, number[]> = new Map(); // 存储隧道名字与id
+  public InputTunnelMap: Map<String, number[]> = new Map(); // 记录接受输入的隧道
   private constructor() {
     this.connectionManager = new ConnectionManager();
   }
@@ -63,24 +68,49 @@ export class EventDrivenSimulator {
     let outputId: number, outputIdx: number, inputId: number, inputIdx: number;
     let legal = true;
 
-    // 组件的引脚从0开始编号，前n位为输入
-    // 当pinIndex1为输出引脚，则其对电线为输入端
-    if (pinIndex1 >= comp1.getInputPinCount()) {
-      // inputId 对应电线输入端，即其实际上为该元件的输出引脚
-      inputId = id1;
-      inputIdx = pinIndex1 - comp1.getInputPinCount();
-      outputId = id2;
-      outputIdx = pinIndex2;
-      
-      if (pinIndex2 >= comp2.getInputPinCount()) legal = false;
-    } else {
-      outputId = id1;
-      outputIdx = pinIndex1;
-      inputId = id2;
-      inputIdx = pinIndex2 - comp2.getInputPinCount();
-      if (pinIndex2 < comp2.getInputPinCount()) legal = false;
+    // 当不是隧道时
+    if(comp1.type !== 'TUNNEL' && comp2.type !== 'TUNNEL') {
+      // 组件的引脚从0开始编号，前n位为输入
+      // 当pinIndex1为输出引脚，则其对电线为输入端
+      if (pinIndex1 >= comp1.getInputPinCount()) {
+        // inputId 对应电线输入端，即其实际上为该元件的输出引脚
+        inputId = id1;
+        inputIdx = pinIndex1 - comp1.getInputPinCount();
+        outputId = id2;
+        outputIdx = pinIndex2;
+        
+        if (pinIndex2 >= comp2.getInputPinCount()) legal = false;
+      } else {
+        outputId = id1;
+        outputIdx = pinIndex1;
+        inputId = id2;
+        inputIdx = pinIndex2 - comp2.getInputPinCount();
+        if (pinIndex2 < comp2.getInputPinCount()) legal = false;
+      }
+    } else{
+      const tunnelComp = comp1.type === 'TUNNEL' ? comp1 : comp2;
+      const tunnelPinIndex = comp1.type === 'TUNNEL' ? pinIndex1 : pinIndex2;
+      const otherComp = comp1.type === 'TUNNEL' ? comp2 : comp1;
+      const otherPinIndex = comp1.type === 'TUNNEL' ? pinIndex2 : pinIndex1;
+      // 假如另一组件是输出电流的  todo 没有考虑两个都是隧道的情况
+      if(otherPinIndex >= otherComp.getInputPinCount()) {
+        // inputId 对应电线输入端，即其实际上为该元件的输出引脚
+        outputId = tunnelComp.id;
+        outputIdx = tunnelPinIndex;
+        inputId = otherComp.id;
+        inputIdx = otherPinIndex - otherComp.getInputPinCount();
+        this.InputTunnelMap.get(tunnelComp.name)?.push(tunnelComp.id); // 记录隧道输入
+      }else {
+        inputId = tunnelComp.id;
+        inputIdx = tunnelPinIndex;
+        outputId = otherComp.id;
+        outputIdx = otherPinIndex - otherComp.getInputPinCount();
+      }
     }
-
+    // 判断位宽是否合法
+    if(comp1.bitCount !== comp2.bitCount) {
+      legal = false;
+    }
     this.connectionManager.addConnection(inputId, inputIdx, outputId, outputIdx, legal);
 
     const outputVal = this.circuitStore.getComponent(inputId).getOutputs()[inputIdx];
@@ -91,7 +121,7 @@ export class EventDrivenSimulator {
     this.processQueue();
   }
 
-  // 注意考虑多条连线连到同一引脚的情况
+  // todo 注意考虑多条连线连到同一引脚的情况
   disconnect(id1: number, pinIndex1: number, id2: number, pinIndex2: number) {
     const comp1 = this.circuitStore.getComponent(id1);
     const comp2 = this.circuitStore.getComponent(id2);
@@ -99,19 +129,43 @@ export class EventDrivenSimulator {
 
     let outputId: number, outputIdx: number, inputId: number, inputIdx: number;
 
-    // 组件的引脚从0开始编号，前n位为输入
-    // 当pinIndex1为输出引脚，则其对电线为输入端
-    if (pinIndex1 >= comp1.getInputPinCount()) {
-      // inputId 对应电线输入端，即其实际上为该元件的输出引脚
-      inputId = id1;
-      inputIdx = pinIndex1 - comp1.getInputPinCount();
-      outputId = id2;
-      outputIdx = pinIndex2;
-    } else {
-      outputId = id1;
-      outputIdx = pinIndex1;
-      inputId = id2;
-      inputIdx = pinIndex2 - comp2.getInputPinCount();
+    // 当不是隧道时
+    if(comp1.type !== 'TUNNEL' && comp2.type !== 'TUNNEL') {
+      // 组件的引脚从0开始编号，前n位为输入
+      // 当pinIndex1为输出引脚，则其对电线为输入端
+      if (pinIndex1 >= comp1.getInputPinCount()) {
+        // inputId 对应电线输入端，即其实际上为该元件的输出引脚
+        inputId = id1;
+        inputIdx = pinIndex1 - comp1.getInputPinCount();
+        outputId = id2;
+        outputIdx = pinIndex2;
+      } else {
+        outputId = id1;
+        outputIdx = pinIndex1;
+        inputId = id2;
+        inputIdx = pinIndex2 - comp2.getInputPinCount();
+      }
+    } else{
+      const tunnelComp = comp1.type === 'TUNNEL' ? comp1 : comp2;
+      const tunnelPinIndex = comp1.type === 'TUNNEL' ? pinIndex1 : pinIndex2;
+      const otherComp = comp1.type === 'TUNNEL' ? comp2 : comp1;
+      const otherPinIndex = comp1.type === 'TUNNEL' ? pinIndex2 : pinIndex1;
+      // 假如另一组件是输出电流的  todo 没有考虑两个都是隧道的情况
+      if(otherPinIndex >= otherComp.getInputPinCount()) {
+        // inputId 对应电线输入端，即其实际上为该元件的输出引脚
+        outputId = tunnelComp.id;
+        outputIdx = tunnelPinIndex;
+        inputId = otherComp.id;
+        inputIdx = otherPinIndex - otherComp.getInputPinCount();
+        this.InputTunnelMap.get(tunnelComp.name)!
+          .splice(this.InputTunnelMap.get(tunnelComp.name)!.indexOf(tunnelComp.id, 1)); 
+        this.enqueue(tunnelComp.id, 0, -1);
+      }else {
+        inputId = tunnelComp.id;
+        inputIdx = tunnelPinIndex;
+        outputId = otherComp.id;
+        outputIdx = otherPinIndex - otherComp.getInputPinCount();
+      }
     }
 
     this.connectionManager.removeConnection(inputId, inputIdx, outputId, outputIdx);
@@ -120,7 +174,7 @@ export class EventDrivenSimulator {
     const component = this.circuitStore.getComponent(outputId);
     if (!component) return false;
     const oldOutputs = [...component.getOutputs()];
-    component.changeInput(outputIdx, -1); // 清除输入
+    component.changeInput(outputIdx, -1); 
     const newOutputs = component.getOutputs();
     // 如果输出没有变化，则不需要通知其他组件
     if(oldOutputs === newOutputs) return;
@@ -140,6 +194,30 @@ export class EventDrivenSimulator {
     }
   }
 
+  // 维护隧道
+  // 添加隧道
+  addTunnel(name: String, id: number) {
+    if (!this.tunnelNameMap.has(name)) {
+      this.tunnelNameMap.set(name, []);
+      this.InputTunnelMap.set(name, []);
+    }
+    this.tunnelNameMap.get(name)!.push(id);
+  }
+  // 删除隧道
+  removeTunnel(name: String, id: number) {
+    if (!this.tunnelNameMap.has(name)) return;
+    const tunnels = this.tunnelNameMap.get(name)!;
+    const index = tunnels.indexOf(id);
+    if (index !== -1) {
+      tunnels.splice(index, 1);
+      if (tunnels.length === 0) {
+        this.tunnelNameMap.delete(name);
+        this.InputTunnelMap.delete(name);
+      }
+    }
+  }
+
+
   // 全局处理输入改变的情况
   // 参数：id :输入改变的组件的id
   //      idx: 该组件的改变输入的引脚
@@ -149,6 +227,28 @@ export class EventDrivenSimulator {
     if (this.inQueue.has(key)) return;
     this.workQueue.push({ id, idx, value });
     this.inQueue.add(key);
+
+
+    // 处理tunnel同步
+    const comp = this.circuitStore.getComponent(id);
+    if (comp?.type === 'TUNNEL') {
+      const name = comp.name;
+      const tunnelIds = this.tunnelNameMap.get(name);
+      const inputTunnels = this.InputTunnelMap.get(name);
+      if (tunnelIds) {
+        for (const tunnelId of tunnelIds) {
+          if (tunnelId !== id) {
+            if (inputTunnels && inputTunnels.length > 1) {
+              this.enqueue(tunnelId, 0, -2); // 强制传播给其他 tunnel
+            }else if(inputTunnels && inputTunnels.length === 1){
+              this.enqueue(tunnelId, 0, this.circuitStore.getComponent(inputTunnels[0]).outputs[0]);
+            }else{
+              this.enqueue(tunnelId, 0, -1); 
+            }
+          }
+        }
+      }
+    }
   }
 
   processQueue(): void {

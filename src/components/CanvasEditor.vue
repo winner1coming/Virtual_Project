@@ -148,7 +148,7 @@
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
-import AndGate from './Gates/AndGate.vue'
+import AndGate from './AndGate.vue'
 import OrGate from './OrGate.vue'
 import NotGate from './NotGate.vue'
 
@@ -164,9 +164,12 @@ const isDragging = ref(false)
 const dragOffset = reactive({ x: 0, y: 0 })// 拖动偏移量
 const previewPos = reactive({ x: 0, y: 0 })// 预览的位置
 const connections = reactive([])// 全局连接列表
-const componentID = reactive({})// 全局组件ID
+const componentID = reactive([])// 全局组件ID
 const ports = [];// 存储单个元件的端口信息
 const Ports = [];// 每个元件和对应端口对的关系
+// 定义电线的两端
+const wireStart = ref(null) // 记录起始点
+let wireStartId = null // 记录起始点port的元件ID
 
 const { saveHistory, saveSnapshot } = useHistory(components) // 使用自定义的历史记录管理
 
@@ -181,9 +184,7 @@ const contextMenu = reactive({
   targetIndex: null
 })
 
-// 定义电线的两端
-const wireStart = ref(null) // 记录起始点
-const wireStartId = null // 记录起始点port的元件ID
+
 
 // 添加元件的端口对
 function addComponentPorts(componentId, portsArray) {
@@ -214,6 +215,13 @@ const componentMap = {
   AND: AndGate,
   OR: OrGate,
   NOT: NotGate
+}
+
+// 各组件的方法映射
+const COMPONENT_METHODS = {
+  AND: AndGate.methods, 
+  OR: OrGate.methods,
+  NOT: NotGate.methods
 }
 
 // 初始化各元件尺寸配置
@@ -411,8 +419,7 @@ function isConnectionValid(startPin, endPin) {
 
 function updateComponentConnection(startPin, endPin) {
   // 将输出元件的输出值连接到输入元件的输入值
-  endPin.component.inputs[endPin.pinIndex].value = 
-    startPin.component.output;
+  endPin.component.inputs[endPin.pinIndex].value = startPin.component.output;
   
   // 根据连接更新逻辑门状态
   updateComponentState(endPin.component);
@@ -445,6 +452,8 @@ function generateConnectionPath(start, end) {
 
 // 修改 handleMouseMove 以支持连线拖动
 function handleMouseMove(event) {
+
+  
   const rect = canvasContainer.value.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
@@ -488,11 +497,12 @@ function updateConnectionPaths() {
 // 修改 deleteComponent 以删除相关连线
 function deleteComponent() {
   if (contextMenu.targetIndex !== null) {
-    const component = components[contextMenu.targetIndex];// 获取删除的元件ID
+    const component = components[contextMenu.targetIndex];// 获取删除的元件本体
     
     // 删除所有与该元件相关的连线
     const componentId = contextMenu.targetIndex;// 元件ID
-    useCircuitStore.removeComponent(componentId)
+    useCircuitStore.removeComponent(componentId)// 调用函数删除组件
+    // 删除画布上各组件的连接关系
     for (let i = connections.length - 1; i >= 0; i--) {
       if (connections[i].from.componentId === componentId || 
           connections[i].to.componentId === componentId) {
@@ -516,22 +526,24 @@ function handleMouseDown(event) {
   const y = event.clientY - rect.top;
 
   // 若有当前元件，则放置元件
-  // 1：将元件的相关信息存放到components列表里
   if (currentComponent.value) {
+    // TODO：这段代码有bug，不知道为什么放置时会默认多个元件，我真的绷不住了
+    //////////////////////////////////////////////////////////////////////////////
+    // 1：单独记录这个元件的ID
+    // 调用useCircuitStore()获取元件的ID
+    const id = useCircuitStore().addComponent(currentComponent.value.componentType, [x, y]);
+    // 2：创建元件配置对象，将元件的相关信息存放到components列表里
     components.push({ 
       ...currentComponent.value, 
       x, 
-      y 
+      y,
+      ID: id// 记录元件ID
     });
-    // TODO：这段代码有bug，不知道为什么放置时会默认多个元件，我真的绷不住了
-    //////////////////////////////////////////////////////////////////////////////
-    // 2：单独记录这个元件的ID
-    // 调用useCircuitStore()获取元件的ID
-    id = useCircuitStore().addComponent(currentComponent.value.componentType, [x, y]);
     // 3：将元件ID存起来，方便后面查找各元件的引脚信息
     componentID.push(id)
     // 4：记录当前ID的端口信息
-    // 获取元件对应的id
+    
+    // 获取对应id的元件本体对象
     const component = useCircuitStore().getComponent(id);
     // 获取元件所有端口信息
     ports.push(...component.getAllPorts(component));
@@ -610,6 +622,7 @@ function createWirePath(start, end) {
     hasArrow: false     // 无箭头
   };
 }
+}
 
 function drawConnections(ctx) {
   ctx.save();
@@ -657,9 +670,9 @@ function findNearestPort(clickX, clickY, maxDistance = 20) {
       if (dist < maxDistance && dist < minDist) {
         minDist = dist;
         closest = {
-          ...port,         // 包含端口的所有属性（id, type, x, y等）
+          ...port,         // 包含端口的所有属性（id, type, x, y）
           componentId: compId, // 添加元件ID
-          compId: compId,      // 别名（方便访问）
+          compId: compId,      // 别名
           pinIndex: port.type === 'input' 
             ? port.id.replace('input', '') // 输入引脚使用ID中的数字部分
             : 0,                           // 输出引脚索引设为0
@@ -823,7 +836,7 @@ onUnmounted(() => {
   eventBus.off('updateComponentDirection');
 });
 
-}</script>
+</script>
 
 <style scoped>
 .editor-wrapper {

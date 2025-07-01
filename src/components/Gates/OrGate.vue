@@ -116,11 +116,11 @@ const props = defineProps({
     required: true
   }
 })
-const id = circuitStore.addComponent('Or', [0,0]);  // debug
+// const id = circuitStore.addComponent('Or', [0,0]);  // debug
 
 const orGate = computed(() => {
-  return circuitStore.getComponent(id);   //debug
-  // return circuitStore.getComponent(props.id);  
+  // return circuitStore.getComponent(id);   //debug
+  return circuitStore.getComponent(props.id);  
 });
 
 let inputYs = useGateLayout(orGate.value.inputCount)

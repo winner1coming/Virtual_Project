@@ -6,7 +6,7 @@ export class ConstantInput extends BaseComponent {
 
     constructor(
         id: number,
-        type: string = "ConstantInput", 
+        type: String = "ConstantInput", 
         position: [number, number] = [0, 0],
         pinPosition = [],
         maxValue = 1
