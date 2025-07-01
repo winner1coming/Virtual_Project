@@ -1,13 +1,12 @@
 <template>
   <div>
     <h1>数字电路实验</h1>
-    <AndGate :id="circuitStore.addComponent('AND')"/>
-    <Tunnel :id="circuitStore.addComponent('TUNNEL')"/>
-    <OrGate :id="circuitStore.addComponent('OR')"/>
-    <InputPin :id="circuitStore.addComponent('INPUT')"/>
-    <Constant :id="circuitStore.addComponent('CONSTANT')"/>
-    <Clock :id="circuitStore.addComponent('CLOCK')"/>
-    <button @click=""/>
+    <AndGate :id="andGateId"/>
+    <Tunnel :id="tunnelId"/>
+    <OrGate :id="orGateId"/>
+    <InputPin :id="inputPinId"/>
+    <Constant :id="constantId"/>
+    <Clock :id="clockId"/>
   </div>
 </template>
 
@@ -23,6 +22,14 @@ import Clock from '@/components/Wiring/Clock.vue'
 
 import { useCircuitStore } from '@/store/CircuitStore.js'
 const circuitStore = useCircuitStore();
+
+// 预先添加组件并保存 ID
+const andGateId = circuitStore.addComponent('AND');
+const tunnelId = circuitStore.addComponent('TUNNEL');
+const orGateId = circuitStore.addComponent('OR');
+const inputPinId = circuitStore.addComponent('INPUT');
+const constantId = circuitStore.addComponent('CONSTANT');
+const clockId = circuitStore.addComponent('CLOCK');
 </script>
 
 <style>
