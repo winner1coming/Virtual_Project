@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { BaseComponent } from '@/logic/BaseComponent.js';
 import { EventDrivenSimulator } from '@/logic/Simulator';
 
-import { ProjectManager } from '@/logic/ProjectManager';
+import { useProjectStore } from './ProjectStore';
 
 import {createComponentByType} from '@/modules/useComponentType';
 
@@ -20,7 +20,7 @@ export const useCircuitStore = defineStore('circuit', {
 
     //selectedComponent: null as BaseComponent | null,
     simulator: EventDrivenSimulator.getInstance(),
-    projectManager: ProjectManager.getInstance(),
+    projectStore: useProjectStore(), // 获取项目管理器实例
   }),
   actions: {
     // #region 组件相关操作
@@ -43,11 +43,11 @@ export const useCircuitStore = defineStore('circuit', {
       // const logic = createGate(type, id);
       this.components.set(id, reactive(createComponentByType(id, type, position, name)));
       // projectDate修改
-      this.projectManager.getCurrentProject().componentsId.push(id);
+      this.projectStore.getCurrentProject().componentsId.push(id);
       if(type === "INPUT"){
-        this.projectManager.getCurrentProject().inputPins.push(id);
+        this.projectStore.getCurrentProject().inputPins.push(id);
       }else if(type === "OUTPUT"){
-        this.projectManager.getCurrentProject().outputPins.push(id);
+        this.projectStore.getCurrentProject().outputPins.push(id);
       }
       // 组件
       return id;
@@ -71,7 +71,7 @@ export const useCircuitStore = defineStore('circuit', {
         this.selectedId = -1;
       }
       // projectDate修改
-      const project = this.projectManager.getCurrentProject();
+      const project = this.projectStore.getCurrentProject();
       const index = project.componentsId.indexOf(id);
       if (index !== -1) {
         project.componentsId.splice(index, 1);
@@ -145,10 +145,10 @@ export const useCircuitStore = defineStore('circuit', {
     // #region 项目管理
     // 获取当前项目
     getCurrentProject() {
-      return this.projectManager.getCurrentProject();
+      return this.projectStore.getCurrentProject();
     },
     getCurrentProjectId(): number {
-      return this.projectManager.selectedProjectId;
+      return this.projectStore.selectedProjectId;
     },
     // // 创建新项目
     // createProject(name: string) {
