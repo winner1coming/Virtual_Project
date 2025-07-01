@@ -1,23 +1,22 @@
-// 负责项目创建、加载、保存、导出，统一管理 ProjectData
-import { reactive, ref, Ref } from 'vue';
+import { reactive } from 'vue';
 import type { ProjectData } from './ProjectData';
 
-export class ProjectManager{
+export class ProjectManager {
   private static instance: ProjectManager;
-  allProjects = reactive<ProjectData[]>([]);
+  allProjects = reactive(new Map<number, ProjectData>()); // 使用 Map 存储 id 与 ProjectData 的映射
   currentProjectId = 0;
-  selectedProject = reactive<ProjectData>(
-    {
+  selectedProjectId: number; // 当前选中的项目 ID
+
+  constructor() {
+    const defaultProject: ProjectData = {
       projectId: this.currentProjectId++,
-      name : "新项目",
+      name: "新项目",
       componentsId: [],
       inputPins: [],
       outputPins: []
-    }
-  );
-
-  constructor() {
-    this.allProjects.push(this.selectedProject);
+    };
+    this.allProjects.set(defaultProject.projectId, defaultProject);
+    this.selectedProjectId = defaultProject.projectId;
   }
 
   static getInstance(): ProjectManager {
@@ -35,24 +34,42 @@ export class ProjectManager{
       inputPins: [],
       outputPins: []
     };
-    this.allProjects.push(newProject);
-    this.selectedProject = newProject;
+    this.allProjects.set(newProject.projectId, newProject); 
+    this.selectedProjectId = newProject.projectId; 
     return newProject;
   }
 
-  loadProject(project: ProjectData) {
-    this.selectedProject = project;
+  loadProject(projectId: number) {
+    if (this.allProjects.has(projectId)) {
+      this.selectedProjectId = projectId; // 更新选中的项目 ID
+    } else {
+      throw new Error(`Project with ID ${projectId} not found.`);
+    }
   }
 
-  getCurrentProject() {
-    return this.selectedProject;
+  getCurrentProject(): ProjectData{
+    return this.allProjects.get(this.selectedProjectId)!;
   }
 
   getProjectById(projectId: number): ProjectData{
-    return this.allProjects.find(project => project.projectId === projectId)!;
+    if(!this.allProjects.has(projectId)) {
+      throw new Error(`Project with ID ${projectId} not found.`);
+    }
+    return this.allProjects.get(projectId)!;
   }
 
-  getAllProjects() {
-    return this.allProjects;
+  getAllProjects(): ProjectData[] {
+    return Array.from(this.allProjects.values()); // 返回所有项目的数组
+  }
+
+  deleteProject(projectId: number): boolean {
+    if (this.allProjects.has(projectId)) {
+      this.allProjects.delete(projectId);
+      if (this.selectedProjectId === projectId) {
+        this.selectedProjectId = -1; // 如果删除的是当前选中的项目，清空选中状态
+      }
+      return true;
+    }
+    return false;
   }
 }
