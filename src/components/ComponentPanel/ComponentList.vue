@@ -34,7 +34,6 @@ const components = [
   { type: 'XOR', name: '异或门' },
   { type: 'AND', name: '与门' },
   { type: 'OR', name: '或门' },
-  { type: 'NOT', name: '非门' },
   { type: 'XOR', name: '异或门' },
   
 ];
