@@ -2,15 +2,16 @@ import { BaseComponent } from "../BaseComponent";
 export class AndGate extends BaseComponent{
 	constructor(id: number, type: String, position:[number, number] = [0,0],  pinPosition = []){
 		super(id, type, position, pinPosition);
-		this.updatePinPosition();
+		this.changeInputPinCount(2); // 初始化输入引脚数量为2
+		//this.updatePinPosition();
 		////is.inputs = [-1, -1];  
 	}
 
   updatePinPosition() {
     this.outputPinPosition = this.outputPinPosition.map(pin => {
       return [
-        this.position[0] + 497 * this.scale,
-        this.position[1] + 288 * this.scale,
+        0 + 497 * this.scale,
+        0 + 288 * this.scale,
       ];
     });
   }
