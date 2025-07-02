@@ -3,10 +3,7 @@ import { BaseComponent } from "../BaseComponent.js";
 export class NotGate extends BaseComponent {
     constructor(id: number, type: String, position:[number, number] = [0,0],  pinPosition = []){
         super(id, type, position, pinPosition);
-        //this.inputs = [-1];  // 输入引脚1个
-        this.inputs.splice(0, this.inputs.length, -1); // 清空输入引脚并设置默认值
-        this.inputCount = 1; // 输入引脚数量
-        this.inputInverted.splice(0, this.inputInverted.length, false); 
+        this.changeInputPinCount(1); // NotGate只有一个输入引脚
     }
     compute() {
         // 非门只有一个输入
