@@ -70,7 +70,7 @@
           :cx="92"
           :cy="inputYs[index]"
           :active="input"
-          :bitWidth="orGate.width"
+          :bitWidth="orGate.bitWidth"
           @toggle="() => handleToggleInput(index)"
         />
       </template>

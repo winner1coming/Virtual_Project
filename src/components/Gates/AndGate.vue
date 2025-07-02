@@ -32,7 +32,7 @@
           fill="none"
         />
         <path v-if="!andGate.inputInverted[index]":d="`M92 ${inputYs[index]}L149 ${inputYs[index]}`" stroke="black" stroke-width="12" />
-        <InputPort :cx="92" :cy="inputYs[index]" :active="input" :bitWidth="andGate.width" @toggle="() => handleToggleInput(index)"/>
+        <InputPort :cx="92" :cy="inputYs[index]" :active="input" :bitWidth="andGate.bitWidth" @toggle="() => handleToggleInput(index)"/>
       </template>
 
       <!-- 输出状态 -->

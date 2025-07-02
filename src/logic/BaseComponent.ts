@@ -8,7 +8,7 @@ export abstract class BaseComponent{
     inputCount: number; // 输入引脚数量
     inputInverted: boolean[]; // 输入引脚是否取反   todo 内部逻辑未实现!
     outputs: number[];
-    bitCount: number;
+    bitWidth: number;
     height: number;
     width: number;
     scale: number; // 缩放比例
@@ -27,7 +27,7 @@ export abstract class BaseComponent{
         this.inputInverted = reactive([false, false]);   // 默认两个引脚
 
         this.outputs = reactive([-1]);  // 输出初始值为-1 未连接
-        this.bitCount = 1;
+        this.bitWidth = 1;
         this.height = 1;   // todo
         this.width = 1;
         this.scale = 1;    
@@ -49,8 +49,8 @@ export abstract class BaseComponent{
         this.name = name;
     }
 
-    setBitCount(bitCount: number){
-        this.bitCount = bitCount;
+    setBitCount(bitWidth: number){
+        this.bitWidth = bitWidth;
     }
     setPosition(position: [number, number]) {
         this.position[0] = position[0]; 
