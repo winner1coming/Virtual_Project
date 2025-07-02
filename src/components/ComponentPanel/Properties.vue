@@ -53,6 +53,22 @@
         >
         </n-select>
        </div>
+
+      <!-- 修改scale-->
+      <div class="property-item">
+        <label for="scale">大小：</label>
+        <n-select
+          id="scale"
+          v-model:value="circuitStore.getComponent(circuitStore.selectedId).scale"
+          :options="[
+            { label: '小', value: 0.25 },
+            { label: '中', value: 0.5 },
+            { label: '大', value: 1 },
+          ]"
+        >
+        </n-select>
+      </div>
+
     </div>
     <div v-else>
       <p>未选中任何元件</p>
@@ -68,13 +84,6 @@ import { NSelect } from 'naive-ui';
 import type { SelectOption } from 'naive-ui'
 
 const circuitStore = useCircuitStore();
-
-// 选中的元件
-// const selectedComponent = ref({
-//     name: '',
-//     orientation: 'up',
-//     bitWidth: 1
-// });
 
 // 数据位宽选项
 const bitWidthOptions = ref([1, 2, 4, 8, 16, 32, 64]);

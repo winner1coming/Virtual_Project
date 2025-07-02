@@ -1,55 +1,56 @@
 <template>
   <div>
     <h1>数字电路实验</h1>
-  <svg
-    viewBox="0 0 600 600"
-    width="300"
-    height="300"
-    style="overflow: visible;"
-  >
-    <OrGate :id="orGateId"/>
-  </svg>
-  <svg
-    viewBox="0 0 600 600"
-    width="300"
-    height="300"
-    style="overflow: visible;"
-  >
-    <InputPin :id="inputPinId"/>
-  </svg>
-  <svg
-    viewBox="0 0 600 600"
-    width="300"
-    height="300"
-    style="overflow: visible;"
-  >
-    <Tunnel :id="tunnelId"/>
-  </svg>
-  <svg
-    viewBox="0 0 600 600"
-    width="300"
-    height="300"
-    style="overflow: visible;"
-  >
-    <AndGate :id="andGateId"/>
-  </svg>
-  <svg
-    viewBox="0 0 600 600"
-    width="300"
-    height="300"
-    style="overflow: visible;"
-  >
-    <Constant :id="constantId"/>
-  </svg>
-  <svg
-    viewBox="0 0 600 600"
-    width="300"
-    height="300"
-    style="overflow: visible;"
-  >
-    <Clock :id="clockId"/>
-  </svg>
-  <Splitter />
+    <svg
+      viewBox="0 0 600 600"
+      width="300"
+      height="300"
+      style="overflow: visible;"
+    >
+      <OrGate :id="orGateId"/>
+    </svg>
+    <svg
+      viewBox="0 0 600 600"
+      width="300"
+      height="300"
+      style="overflow: visible;"
+    >
+      <InputPin :id="inputPinId"/>
+    </svg>
+    <!-- <svg
+      viewBox="0 0 600 600"
+      width="300"
+      height="300"
+      style="overflow: visible;"
+    >
+      <Tunnel :id="tunnelId"/>
+    </svg> -->
+    <svg
+      viewBox="0 0 600 600"
+      width="300"
+      height="300"
+      style="overflow: visible;"
+    >
+      <AndGate :id="andGateId"/>
+    </svg>
+    <!-- <svg
+      viewBox="0 0 600 600"
+      width="300"
+      height="300"
+      style="overflow: visible;"
+    >
+      <Constant :id="constantId"/>
+    </svg> -->
+    <!-- <svg
+      viewBox="0 0 600 600"
+      width="300"
+      height="300"
+      style="overflow: visible;"
+    >
+      <Clock :id="clockId"/>
+    </svg> -->
+    <!-- <Splitter /> -->
+    <button @click="toggleInputPin"> 改InputPin的位宽 </button>
   </div>
 </template>
 
@@ -74,6 +75,11 @@ const orGateId = circuitStore.addComponent('OR');
 const inputPinId = circuitStore.addComponent('INPUT');
 const constantId = circuitStore.addComponent('CONSTANT');
 const clockId = circuitStore.addComponent('CLOCK');
+
+function toggleInputPin()
+{
+  circuitStore.getComponent(inputPinId).setBitCount(32);
+}
 </script>
 
 <style>

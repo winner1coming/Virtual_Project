@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${orGate.position[0]}, ${orGate.position[1]}) scale(${orGate.scale})`" cursor="move">
+    <g :transform="`translate(${-280*orGate.scale}, ${-280*orGate.scale}) scale(${orGate.scale})`" cursor="move">
       <!-- OR 门图形 -->
       <path stroke="black" stroke-width="12" d="M145.999 181L315.999 181" /> <!--上下两条横线-->
       <path stroke="black" stroke-width="12" d="M146 395.115L316 395.115" />
@@ -10,7 +10,7 @@
       <path stroke="black" stroke-width="12" d="M368.227 377.23L450.775 284" /> <!--右下角的斜直线-->
       <path fill="none" stroke="black" stroke-width="12" d="M149 179.5C188.3 212.65 273.5 295 149 397" /> <!--左侧曲线-->
       <!--填充透明区域-->
-      <!-- <path
+      <path
         fill="transparent"
         d="
           M145.999 181
@@ -23,7 +23,7 @@
           L146 395.115
           C273.5 295 188.3 212.65 149 179.5
           Z"
-      /> -->
+      />
 
       <!-- 上方引脚竖线 -->
       <path
@@ -41,14 +41,14 @@
       />
 
       <!--选中方框-->
-      <SelectedBox :x="82" :y="minY<181? minY-12: 175" :width="424" :height="minY<181? (maxY-minY+24): 226" :visible="true"/>
+      <SelectedBox :x="82" :y="minY<181? minY-12: 175" :width="424" :height="minY<181? (maxY-minY+24): 226" :visible="circuitStore.selectedId===props.id"/>
 
       <!-- 输入引脚 -->
       <template v-for="(input, index) in orGate.inputs" :key="input.id">
         <circle
           v-if="orGate.inputInverted[index]"
-          :cx="`${getInputLine(index, inputYs[index], bezierYMin, bezierYMax).x2-26}`"
-          :cy="inputYs[index]"
+          :cx="`${getInputLine(index, orGate.inputPinPosition.map(pin => pin[1])[index], bezierYMin, bezierYMax).x2-26}`"
+          :cy="orGate.inputPinPosition.map(pin => pin[1])[index]"
           r="16"
           stroke="black"
           stroke-width="12"
@@ -56,21 +56,21 @@
         />
         <path
           v-if="orGate.inputInverted[index]"
-          :d="`M${getInputLine(index, inputYs[index], bezierYMin, bezierYMax).x1} ${inputYs[index]}L${getInputLine(index, inputYs[index], bezierYMin, bezierYMax).x2-36} ${inputYs[index]}`"
+          :d="`M${getInputLine(index, orGate.inputPinPosition.map(pin => pin[1])[index], bezierYMin, bezierYMax).x1} ${orGate.inputPinPosition.map(pin => pin[1])[index]}L${getInputLine(index, orGate.inputPinPosition.map(pin => pin[1])[index], bezierYMin, bezierYMax).x2-36} ${orGate.inputPinPosition.map(pin => pin[1])[index]}`"
           stroke="black"
           stroke-width="12"
           />
         <path
           v-if="!orGate.inputInverted[index]"
-          :d="`M${getInputLine(index, inputYs[index], bezierYMin, bezierYMax).x1} ${inputYs[index]}L${getInputLine(index, inputYs[index], bezierYMin, bezierYMax).x2} ${inputYs[index]}`"
+          :d="`M${getInputLine(index, orGate.inputPinPosition.map(pin => pin[1])[index], bezierYMin, bezierYMax).x1} ${orGate.inputPinPosition.map(pin => pin[1])[index]}L${getInputLine(index, orGate.inputPinPosition.map(pin => pin[1])[index], bezierYMin, bezierYMax).x2} ${orGate.inputPinPosition.map(pin => pin[1])[index]}`"
           stroke="black"
           stroke-width="12"
         />
         <InputPort
           :cx="92"
-          :cy="inputYs[index]"
+          :cy="orGate.inputPinPosition.map(pin => pin[1])[index]"
           :active="input"
-          :bitWidth="orGate.width"
+          :bitWidth="orGate.bitWidth"
           @toggle="() => handleToggleInput(index)"
         />
       </template>
@@ -126,26 +126,36 @@ const orGate = computed(() => {
   return circuitStore.getComponent(props.id);  
 });
 
-let inputYs = useGateLayout(orGate.value.inputCount)
+// let inputYs = useGateLayout(orGate.value.inputCount)
 const bezierYMin = 179.5;
 const bezierYMax = 397;
-let minY = Math.min(...inputYs.value);
-let maxY = Math.max(...inputYs.value);
+// let minY = Math.min(...inputYs.value);
+// let maxY = Math.max(...inputYs.value);
+let minY = computed(()=>Math.min(...orGate.value.inputPinPosition.map(pin => pin[1])));
+let maxY = computed(()=>Math.max(...orGate.value.inputPinPosition.map(pin => pin[1])));
 
-function setInputCount(newCount)
-{
-  orGate.value.changeInputPinCount(newCount);
-  inputYs = useGateLayout(orGate.value.inputCount)
+// function setInputCount(newCount)
+// {
+//   // 更新输入引脚的布局
+//   //inputYs = useGateLayout(orGate.value.inputCount)
 
-  minY = Math.min(...inputYs.value);
-  maxY = Math.max(...inputYs.value);
-}
+//   minY = Math.min(...orGate.value.inputPinPosition.map(pin => pin[1]));
+//   maxY = Math.max(...orGate.value.inputPinPosition.map(pin => pin[1]));
 
-const {unwatchInputCount } = watchComponentChanges(orGate, setInputCount);
+//   // 更新引脚位置
+//   orGate.value.inputPinPosition = orGate.value.inputPinPosition.map((pin, index) => {
+//     return [
+//       orGate.value.position[0] + 92 * orGate.value.scale,
+//       orGate.value.position[1] + orGate.value.inputPinPosition.map(pin => pin[1])[index] * orGate.value.scale,
+//     ];
+//   });
+// }
 
-onUnmounted(() => {
-  unwatchInputCount; // 清理监听
-});
+// const {unwatchInputCount } = watchComponentChanges(orGate, setInputCount);
+
+// onUnmounted(() => {
+//   unwatchInputCount; // 清理监听
+// });
 
 
 // 以下调试用，后期删除  todo -----------------------------------------------------------
@@ -153,30 +163,30 @@ onUnmounted(() => {
 // handleSetInputInverted(1, true);
 // handleSetScale(0.5)
 
-function handleToggleInput(index) {
-  // todotodo
-  setInputCount(8);
-  if(orGate.value.inputs[index] === 0){
-    orGate.value.changeInput(index, 1);
-  }else{
-    orGate.value.changeInput(index, 0);
-  }
-}
+// function handleToggleInput(index) {
+//   // todotodo
+//   setInputCount(8);
+//   if(orGate.value.inputs[index] === 0){
+//     orGate.value.changeInput(index, 1);
+//   }else{
+//     orGate.value.changeInput(index, 0);
+//   }
+// }
 
-function handleSetInputInverted(index, inverted) {
-  setInputInverted(orGate, index, inverted, updateOutput)
-}
+// function handleSetInputInverted(index, inverted) {
+//   setInputInverted(orGate, index, inverted, updateOutput)
+// }
 
-function handleSetScale(newscale)
-{
-  setScale(orGate, newscale)
-}
+// function handleSetScale(newscale)
+// {
+//   setScale(orGate, newscale)
+// }
 
-function updateOutput() {
-  orGate.output = orGate.inputs.some(input =>
-    input.inverted ? !input : input
-  )
-}
+// function updateOutput() {
+//   orGate.output = orGate.inputs.some(input =>
+//     input.inverted ? !input : input
+//   )
+// }
 
 // onMounted(()=>{
 //  orGate.inputs = computed(()=>createInputs(orGate.inputCount));
