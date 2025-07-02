@@ -63,15 +63,15 @@ export abstract class BaseComponent{
 		this.position[1] = position[1];
 		const [baseX, baseY] = position;
 
-		// 🟢 更新输入引脚坐标
-		for (let i = 0; i < this.inputCount; i++) {
-			this.inputPinPosition[i] = [baseX - 20, baseY]; 
-		}
+		// // 🟢 更新输入引脚坐标
+		// for (let i = 0; i < this.inputCount; i++) {
+		// 	this.inputPinPosition[i] = [baseX - 20, baseY]; 
+		// }
 
-		// 🟢 更新输出引脚坐标
-		for (let i = 0; i < this.outputs.length; i++) {
-			this.outputPinPosition[i] = [baseX + 80, baseY]; 
-		}
+		// // 🟢 更新输出引脚坐标
+		// for (let i = 0; i < this.outputs.length; i++) {
+		// 	this.outputPinPosition[i] = [baseX + 80, baseY]; 
+		// }
 
     this.updatePinPosition(); // 更新引脚位置
 	}
@@ -94,8 +94,8 @@ export abstract class BaseComponent{
     this.inputPinPosition.splice(0, this.inputPinPosition.length,
       ...inputYs.map((pin, index): [number, number] => {
         return [
-          this.position[0] + 92 * this.scale,
-          this.position[1] + inputYs[index] * this.scale,
+          92 * this.scale,
+          inputYs[index] * this.scale,
         ];
     }));
 
