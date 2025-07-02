@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${andGate.position[0]}, ${andGate.position[1]}) scale(${andGate.scale})`" cursor="move">
+    <g :transform="`scale(${andGate.scale})`" cursor="move">
       <!-- AND 门图形 -->
        <!--左侧竖线-->
       <path

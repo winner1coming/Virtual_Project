@@ -1,11 +1,4 @@
 <template>
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 600 600"
-      width="300"
-      height="300"
-      style="overflow: visible;"
-    >
       <g :transform="`translate(${notGate.x}, ${notGate.y}) scale(${notGate.scale})`" cursor="move">
         <!-- NOT门主体（三角形） -->
         <path
@@ -41,7 +34,6 @@
         <!-- 输出状态端口 -->
         <OutputPort :cx="497" :cy="286" :active="notGate.output" />
       </g>
-    </svg>
 </template>
   
 <script setup>
