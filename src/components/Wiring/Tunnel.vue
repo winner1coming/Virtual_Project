@@ -26,7 +26,7 @@
       <SelectedBox :x="175" :y="255" :width="x_right-178+12" :height="112" :visible="true"/>
 
       <!-- 输入引脚 -->
-      <InputPort :cx="183.98" :cy="310" :active="1" @toggle="() => handleToggleInput()"/>
+      <InputPort :cx="183.98" :cy="310" :active="1" :bitWidth="tunnel.bitCount" @toggle="() => handleToggleInput()"/>
       <!--填充透明区域-->
       <path
         fill="transparent"

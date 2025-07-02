@@ -6,7 +6,7 @@
     height="300"
     style="overflow: visible;"
   >
-    <g :transform="`translate(${splitter.x}, ${splitter.y}) scale(${splitter.scale})`" cursor="move">
+    <g :transform="`translate(${splitter.position[0]}, ${splitter.position[1]}) scale(${splitter.scale})`" cursor="move">
       <!-- 分离器图形 -->
       <!--选中方框-->
       <SelectedBox :x="94" :y="minY<246? minY-6: 246" :width="206-100+12" :height="minY<246? maxY-minY+48: 401-246+48" :visible="true"/>
@@ -39,15 +39,28 @@ import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 import { createOutputs, setScale } from '@/logic/usegates/useLogicGates'
 import { useGateLayout } from '@/logic/usegates/useGateLayout'
 
+import { useCircuitStore } from '@/store/CircuitStore'
 
-const splitter = reactive({
-  x: 0,
-  y: 0,
-  scale: 1,
-  outputCount: 4,
-  input: 0,
-  outputs: [],
+const circuitStore = useCircuitStore();
+const props = defineProps({
+  id: {
+    type: Number,
+    required: true
+  }
 })
+
+// const splitter = reactive({
+//   x: 0,
+//   y: 0,
+//   scale: 1,
+//   outputCount: 4,
+//   input: 0,
+//   outputs: [],
+// })
+const splitter = computed(() => {
+  // return circuitStore.getComponent(id);   // debug
+  return circuitStore.getComponent(props.id);  
+});
 
 let outputYs = useGateLayout(splitter.outputCount)
 
