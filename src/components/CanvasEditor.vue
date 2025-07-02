@@ -47,7 +47,7 @@
       @contextmenu.prevent="handleRightClick"
     >
       <!-- 渲染 Vue 元件组件 -->
-      <svg width="800" height="600" >
+      <svg width="800" height="600" style="overflow: visible;">
         <!-- 渲染所有连线 -->
         <g v-for="(connection, index) in connections" :key="'conn-'+index">
           <path
