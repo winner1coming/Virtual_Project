@@ -21,6 +21,7 @@ const emit = defineEmits(['dragstart']);
 
 
 const components = [
+  {type: 'TUNNEL', name: '隧道'},
   { type: 'INPUT', name: '输入端' },
   { type: 'OUTPUT', name: '输出端' },
   { type: 'CLOCK', name: '时钟' },
@@ -34,7 +35,8 @@ const components = [
   { type: 'AND', name: '与门' },
   { type: 'OR', name: '或门' },
   { type: 'NOT', name: '非门' },
-  { type: 'XOR', name: '异或门' }
+  { type: 'XOR', name: '异或门' },
+  
 ];
 
 

@@ -85,6 +85,7 @@
             :height="item.size.height"
             :inputs="item.inputs"
             :output="item.output"
+            :id="item.ID"
             :onToggleInput="(i) => toggleInput(item, i)"
             @pin-mousedown="(data) => handlePinMouseDown(item, data)"
             @pin-mouseup="(data) => handlePinMouseUp(item, data)"
@@ -152,6 +153,9 @@ import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import AndGate from './Gates/AndGate.vue'
 import OrGate from './Gates/OrGate.vue'
 import NotGate from './Gates/NotGate.vue'
+import Tunnel from './Wiring/Tunnel.vue'
+import InputPin from './Wiring/InputPin.vue'
+
 
 // 逻辑类建模
 import { AndGate as LogicAndGate } from '@/logic/components/AndGate.js'
@@ -164,6 +168,8 @@ import {Combiner as LogicCombiner} from '@/logic/components/Combiner.js'
 import {ConstantInput as LogicConstantInput} from '@/logic/components/ConstantInput.js'
 import {Ground as LogicGround} from '@/logic/components/Ground.js'
 import {Power as LogicPower} from '@/logic/components/Power.js'
+import { Tunnel as LogicTunnel} from '@/logic/components/Tunnel'
+import { InputPin as LogicInputPin} from '@/logic/components/InputPin'
 import { BaseComponent } from '@/logic/BaseComponent'
 
 // 其他
@@ -245,14 +251,18 @@ function updateComponentPorts(componentId, portsArray) {
 const componentMap = {
   AND: AndGate,
   OR: OrGate,
-  NOT: NotGate
+  NOT: NotGate,
+  TUNNEL: Tunnel,
+  INPUT_PIN: InputPin,
 }
 
 // 各组件的方法映射
 const COMPONENT_LOGIC = {
   AND: LogicAndGate, 
   OR: LogicOrGate,
-  NOT: LogicNotGate
+  NOT: LogicNotGate,
+  TUNNEL: LogicTunnel,
+  INPUT_PIN: LogicInputPin,
 }
 
 // 初始化各元件尺寸配置
@@ -266,7 +276,9 @@ const COMPONENT_SIZES = {
 const IMAGE_MAP = {
   AND: new Image(),
   OR: new Image(),
-  NOT: new Image()
+  NOT: new Image(),
+  TUNNEL: new Image(),
+  INPUT_PIN: new Image(),
 }
 
 // 初始化图片资源
@@ -587,6 +599,12 @@ function handleMouseDown(event) {
         break
       case 'NOT':
         componentLogic = new LogicNotGate(id, 'NOT', [x, y])
+        break
+      case 'TUNNEL':
+        componentLogic = new LogicTunnel(id, 'TUNNEL', [x, y])
+        break
+      case 'INPUT_PIN':
+        componentLogic = new LogicInputPin(id, 'INPUT_PIN', [x, y])
         break
       default:
         console.error("未知元件类型：", currentComponent.value.componentType)
