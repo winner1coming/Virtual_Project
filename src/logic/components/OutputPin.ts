@@ -11,14 +11,10 @@ export class OutputPin extends BaseComponent {
     ) {
         super(id, type, position, pinPosition);
         //this.inputs = [-1]; // 默认一个输入引脚，初始未连接
-        this.inputs.splice(0, this.inputs.length, -1); // 初始未连接状态
-        this.inputInverted.splice(0, this.inputInverted.length, false); // 清空输入
-        this.inputCount = 1; // 输入引脚数量
+        this.changeInputPinCount(1); 
         //this.outputs = [];  // 输出引脚本身不产生输出
         this.outputs.splice(0, this.outputs.length); // 输出引脚不产生输出
         this.bitWidth = 4;  // 默认4位
-        this.height = 20;
-        this.width = 20;
         this.binaryValue = new Array(this.bitWidth).fill(0); // 内部二进制表示
     }
 

@@ -3,9 +3,7 @@ export class SegmentDisplay extends BaseComponent{
   constructor(id: number, type: String, position:[number, number] = [0,0],  pinPosition = []){
     super(id, type, position, pinPosition);
     this.outputs.splice(0, this.outputs.length); 
-    this.inputCount = 8;
-    this.inputs.splice(0, this.inputs.length, ...Array(this.inputCount).fill(-1)); 
-    this.inputInverted.splice(0, this.inputInverted.length, ...Array(this.inputCount).fill(false)); 
+    this.changeInputPinCount(8); // SegmentDisplay有8个输入引脚
   }
 
   compute(){   // 返回输出(int)

@@ -6,8 +6,7 @@ export class Clock extends BaseComponent {
 
     constructor(id: number, type: String, position: [number, number] = [0, 0], pinPosition = [], period: number = 1000) {
         super(id, type, position, pinPosition);
-        this.inputs = []; // 时钟没有输入
-        this.outputs = [0]; // 初始输出为低电平
+        this.changeInputPinCount(0); // 时钟没有输入引脚
         this.period = period;
 
         this.start(); // 启动时钟
