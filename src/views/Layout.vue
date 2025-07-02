@@ -394,11 +394,16 @@ const resumeSimulator = () => {
   width: 100vw;
   display: flex;
   flex-direction: column;
+  background: #F6F8FA;
+  color: #2C3E50;
+  font-family: 'Segoe UI','Helvetica Neue', Arial, sans-serif;
 }
 
 /* 导航栏容器 */
 .navbar-container {
-  background: #95bfe8;
+  background: #ffffff;
+  border-bottom: 1px solid #E0E6ED;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   color: white;
 }
 
@@ -406,7 +411,7 @@ const resumeSimulator = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 1rem;
+  padding: 0.8rem 1.2rem;
 }
 
 .nav-left {
@@ -428,9 +433,9 @@ const resumeSimulator = () => {
 .toolbar {
   display: flex;
   justify-content: flex-start;
-  padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.6rem 1.2rem;
+  background: #F6F8FA;
+  border-top: 1px solid #E0E6ED;
 }
 
 /* 以下样式保持不变 */
@@ -442,17 +447,17 @@ const resumeSimulator = () => {
 /* 工具区 - 抽屉式 */
 .toolbox {
   display: flex;
-  width: 50px; /* 增加宽度以适应内容 */
-  background: #b7daf1;
-  border-right: 1px solid #ddd;
+  width: 54px; /* 增加宽度以适应内容 */
+  background: #ffffff;
+  border-right: 1px solid #E0E6ED;
 }
 
 .drawer-buttons {
   display: flex;
   flex-direction: column;
-  padding: 1rem 0.5rem;
+  padding: 0.8rem 0.5rem;
   gap: 0.5rem;
-  background: #98d5e0;
+  background: #ffffff;
   border-right: 1px solid #ddd;
 }
 
@@ -462,6 +467,12 @@ const resumeSimulator = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.drawer-button:hover{
+  background-color: #E0E6ED;
 }
 
 .drawer-content {
@@ -473,8 +484,8 @@ const resumeSimulator = () => {
 /* 自定义抽屉区域 */
 .local-drawer {
   height: 100%;
-  background: #dfb8b8;
-  border-right: 1px solid #ddd;
+  background: #ffffff;
+  border-right: 1px solid #E0E6ED;
   padding: 0;
   overflow-y: auto;
   box-sizing: border-box;
@@ -494,13 +505,13 @@ const resumeSimulator = () => {
 
 /* 调整分割条样式 */
 :deep(.n-split-trigger) {
-  background-color: #95bfe8;
-  width: 8px;
+  background-color: #E0E6ED;
+  width: 6px;
   transition: background-color 0.3s;
 }
 
 :deep(.n-split-trigger:hover) {
-  background-color: #7aa3cc;
+  background-color: #CBD5E1;
 }
 
 /* 动画效果 */
@@ -520,6 +531,8 @@ const resumeSimulator = () => {
   width: 100%;
   display: flex;
   flex-direction: column;
+  background: #ffffff;
+  border-left: 1px solid #E0E6ED;
 }
 
 .close-button{
@@ -527,7 +540,7 @@ const resumeSimulator = () => {
   top:10px;
   left: 10px;
   z-index:10;
-  background-color: aliceblue;
+  background-color: #E0E6ED;
 }
 
 
@@ -538,11 +551,16 @@ const resumeSimulator = () => {
 }
 
 .toolbox-item {
-  padding: 1rem;
+  padding: 0.8rem;
   margin: 0.5rem 0;
-  background: white;
-  border: 1px solid #ddd;
+  background: #ffffff;
+  border: 1px solid #E0E6ED;
   border-radius: 4px;
   cursor: move;
+  transition: box-shadow 0.3s ease;
+}
+
+.toolbox-item:hover {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 </style>

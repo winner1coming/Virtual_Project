@@ -117,13 +117,13 @@ onMounted(() => {
   padding: 8px;
   margin: 5px 0;
   background: white;
-  border: 1px solid #ddd;
+  border: 1px solid #E0E6ED;
   border-radius: 4px;
   cursor: pointer;
 }
 .project-item.selected {
-  background-color: #e0f7fa;
-  border-color: #80deea;
+  background-color: #E0E6ED;
+  border-color: #E0E6ED;
 }
 
 .project-item:hover {
