@@ -6,14 +6,14 @@ export class OrGate extends BaseComponent {
 		this.changeInputPinCount(2); // 初始化输入引脚数量为2
         
     }
-    updatePinPosition() {
-        this.outputPinPosition = this.outputPinPosition.map(pin => {
-          return [
-            0 + 497 * this.scale,
-            0 + 288 * this.scale,
-          ];
-        });
-    }
+    // updatePinPosition() {
+    //     this.outputPinPosition = this.outputPinPosition.map(pin => {
+    //       return [
+    //         0 + 497 * this.scale,
+    //         0 + 288 * this.scale,
+    //       ];
+    //     });
+    // }
     compute() {
         let hasConnected = false;
         for(const value of this.inputs){
