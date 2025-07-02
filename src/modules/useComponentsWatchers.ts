@@ -4,14 +4,14 @@ import type { BaseComponent } from '@/logic/BaseComponent';
 
 export function watchComponentChanges(
     comp: BaseComponent,
-    inputCountCb: (count: number) => void = () => {},   // callback
+    inputCountCb: () => void = () => {},   // callback
     inputInvertedCb: (idx: number) => void = () => {},
     nameCb: (name: String) => void = () => {}
 ) {
     const unwatchInputCount = watch(
         () => comp.inputCount,
         (newVal, oldVal) => {
-            inputCountCb(newVal);
+            inputCountCb();
         }
     );
 
