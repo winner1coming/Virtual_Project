@@ -54,7 +54,7 @@
           <path
             :d="connection.path"
             stroke="black"
-            stroke-width="2"
+            stroke-width="12"
             fill="none"
           />
         </g>
@@ -659,7 +659,7 @@ function createWirePath(start, end) {
     to: end, 
     path: d,
     color: "#999",       // 明确指定灰色
-    strokeWidth: 2,      // 线宽
+    strokeWidth: 12,      // 线宽
     hasArrow: false     // 无箭头
   };
 }
