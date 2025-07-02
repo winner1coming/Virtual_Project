@@ -57,9 +57,7 @@ import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 import { defineProps } from 'vue'
 
-import { useGateLayout } from '@/logic/usegates/useGateLayout'
 import { useCircuitStore } from '@/store/CircuitStore'
-import {watchComponentChanges} from '@/modules/useComponentsWatchers'
 
 const circuitStore = useCircuitStore();
 const props = defineProps({
@@ -76,50 +74,11 @@ const andGate = computed(() => {
   return circuitStore.getComponent(props.id);  
 });
 
-// let inputYs = useGateLayout(andGate.value.inputCount)
-// let inputYs = computed(()=>{
-//   return 
-// });
-
 let minY = computed(()=>Math.min(...andGate.value.inputPinPosition.map(pin => pin[1])));
 let maxY = computed(()=>Math.max(...andGate.value.inputPinPosition.map(pin => pin[1])));
 
 
 // 以下为调试用代码，后期可删除---------------------------------------
-
-// 设置引脚位置
-// andGate.value.inputPinPosition = andGate.value.inputPinPosition.map((pin, index) => {
-//   return [
-//     andGate.value.position[0] + 92 * andGate.value.scale,
-//     andGate.value.position[1] + inputYs.value[index] * andGate.value.scale,
-//   ];
-// });
-
-
-// function setInputCount()
-// {
-//   // 更新输入引脚的布局
-//   //inputYs = useGateLayout(andGate.value.inputCount)
-
-//   minY = Math.min(...andGate.value.inputPinPosition.map(pin => pin[1]));
-//   maxY = Math.max(...andGate.value.inputPinPosition.map(pin => pin[1]));
-
-//   // 更新引脚位置
-//   andGate.value.inputPinPosition = andGate.value.inputPinPosition.map((pin, index) => {
-//     return [
-//       andGate.value.position[0] + 92 * andGate.value.scale,
-//       andGate.value.position[1] + andGate.value.inputPinPosition.map(pin => pin[1])[index] * andGate.value.scale,
-//     ];
-//   });
-// }
-
-// const unwatchInputCount  = watchComponentChanges(andGate, setInputCount);
-
-// onUnmounted(() => {
-//   unwatchInputCount(); // 清理监听
-// });
-
-
 
 // 测试用函数，后期删掉  todo
 // function handleToggleInput(index) {

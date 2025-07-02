@@ -41,7 +41,8 @@
     <div
       class="component-canvas"
       ref="canvasContainer"
-      @mousedown="handleMouseDown"
+      @mousedown="handleMouseDown"    
+      @click="handleLeftClick"        
       @mousemove="handleMouseMove"
       @mouseup="handleMouseUp"
       @contextmenu.prevent="handleRightClick"
@@ -53,7 +54,7 @@
           <path
             :d="connection.path"
             stroke="black"
-            stroke-width="2"
+            stroke-width="12"
             fill="none"
           />
         </g>
@@ -177,6 +178,7 @@ import { useHistory } from '@/modules/useHistory';
 import eventBus from '@/modules/useEventBus';
 import { useCircuitStore } from '@/store/CircuitStore';
 import { nextTick } from 'vue'
+import { convertCompilerOptionsFromJson } from 'typescript'
 
 
 const canvasContainer = ref(null)
@@ -216,13 +218,13 @@ const contextMenu = reactive({
 
 
 // 添加元件的端口对
-function addComponentPorts(componentId, portsInfo) {
+function addComponentPorts(componentId, portsInfo, index_x, index_y) {
   const portList = portsInfo.ports.map((port, index) => {
     const inputCount = portsInfo.ports.length - 1; // 假设最后一个是输出
     return {
       id: port.id,               // 原始端口编号
-      x: port.x,
-      y: port.y,
+      x: port.x + index_x - 280,       // 端口X坐标=相对坐标x+元件坐标
+      y: port.y + index_y - 280,       // 端口Y坐标=相对坐标y+元件坐标
       componentId,
       type: index < inputCount ? 'input' : 'output'
     };
@@ -267,7 +269,7 @@ const COMPONENT_LOGIC = {
 
 // 初始化各元件尺寸配置
 const COMPONENT_SIZES = {
-  AND: { width: 100, height: 100 },
+  AND: { width: LogicAndGate.width, height: LogicAndGate.height },
   OR: { width: 150, height: 150 },
   NOT: { width: 60, height: 60 },
   TUNNEL: { width: 50, height: 50 },
@@ -564,9 +566,13 @@ function deleteComponent() {
   }
 }
 
-
+// 鼠标点击（左键右键中轴）：触发电线连接
 function handleMouseDown(event) {
-  if (event.button !== 0) return; // 只响应左键
+  event.stopPropagation(); // 阻止事件冒泡
+  event.preventDefault();  // 防止默认行为
+
+  console.log("画布鼠标按下事件触发")
+  // if (event.button !== 0) return; // 只响应左键
 
   const rect = canvasContainer.value.getBoundingClientRect();
   const x = event.clientX - rect.left;
@@ -575,10 +581,199 @@ function handleMouseDown(event) {
   // console.log("元件x:", x)
   // console.log("元件y:", y)
 
+  handleWireConnection(x, y)// 处理连线逻辑
+
+  console.log("处理完连线逻辑了！")
+
+  saveSnapshot();
+}
+
+// 连线逻辑
+function handleWireConnection(x, y) {
+  console.log("开始创建电路了！")
+  console.log("电线起点：",wireStart.value)
+  // 电线画线逻辑：分起始点和终点两种情况
+  if (!wireStart.value) {
+    console.log("没有起点")
+    // 起点为空，记录起点，先不画线
+    // 找到距离点击点最近的port信息
+    let closestPort = findNearestPort(x, y, 50);
+    // console.log("找到了最近的port！")
+    console.log("调用findNearestPort，返回结果：", closestPort)
+    // console.log("最近的元件ID是否不为空:", closestPort.componentId != null)
+    // console.log("最近的端口ID是否不为空:", closestPort.id != null)
+    if (closestPort.componentId != null && closestPort.id != null) {
+      // 这里是第一次点击：查找最近的端口作为电线终点
+      // 记录端口的位置和编号
+      wireStart.value = {
+        x: closestPort.x,
+        y: closestPort.y,
+        componentId: closestPort.componentId,// 端口的元件ID
+        portId: closestPort.id,             // 端口的ID
+        portType:closestPort.type,          // 端口的类型 
+      };
+      wireStartId = closestPort.componentId;// 记录起点port对应的元件ID
+      console.log("距离最近的元件ID:", wireStartId)
+      return; // 点击端口后不画线
+    }
+  }
+
+  console.log("电线起点：", wireStart.value, "现在开始找终点！")
+
+  // 找到距离点击点最近的port信息
+  let endPort = findNearestPort(x, y, 50);
+  if (!endPort) {
+    console.log("未找到终点端口");
+    // 不需要重置
+    // wireStart.value = null; // 重置起点
+    return;
+  }
+
+  // 创建新连线
+  console.log("设置终点：", endPort)
+  if (endPort) {
+    // 这里是第二次点击：查找最近的端口作为电线终点
+    const wireEndPort = {
+      x: endPort.x,
+      y: endPort.y,
+      componentId: endPort.componentId,// 端口的元件ID
+      portId: endPort.id,             // 端口的ID
+      portType:endPort.type,          // 端口的类型 
+    };
+    // 根据起始点画线
+    const newWire = createWirePath(wireStart.value, wireEndPort);
+    connections.push(newWire);
+    // 填写逻辑类，调用函数连接两个元件
+    useCircuitStore.connect(wireStartId, wireStart.portId, wireEndPort.componentId, wireEndPort.portId)
+    wireStart.value = null;// 重置起点
+    wireStartId = null;
+  }
+}
+
+// 创建电线路径
+function createWirePath(start, end) {
+  const midX = (start.x + end.x) / 2;
+  const d = `M ${start.x} ${start.y} L ${midX} ${start.y} L ${midX} ${end.y} L ${end.x} ${end.y}`;
+  return { 
+    from: start, 
+    to: end, 
+    path: d,
+    color: "#999",       // 明确指定灰色
+    strokeWidth: 12,      // 线宽
+    hasArrow: false     // 无箭头
+  };
+}
+
+function drawConnections(ctx) {
+  ctx.save();
+  ctx.setLineDash([]);  // 设置为实线
+
+  connections.forEach(wire => {
+    // 使用电线对象中的样式属性
+    ctx.strokeStyle = wire.color || "#999";  // 优先使用电线对象的颜色
+    ctx.lineWidth = wire.strokeWidth || 2;   // 优先使用电线对象的线宽
+    
+    // 创建路径并绘制
+    const path = new Path2D(wire.path);
+    ctx.stroke(path);
+  });
+
+  ctx.restore();
+}
+
+
+function handlePinMouseDown(component, { pinType, pinIndex }) {
+  const pinPos = getPinPosition(component, pinType, pinIndex);
+  startPin = { component, pinType, pinIndex, x: pinPos.x, y: pinPos.y };
+  
+  // 开始绘制临时连线
+  tempWire.value = {
+    path: `M${pinPos.x},${pinPos.y} L${pinPos.x},${pinPos.y}`
+  };
+}
+
+// 查找所有组件中距离点击点最近的端口，并返回该端口位置和对应的元件ID
+function findNearestPort(clickX, clickY, maxDistance = 500) {
+  // 存储最近端口信息
+  let closestPort = null;
+  let minDistance = 10000000;
+
+  console.log("开始查找最近引脚信息，全局Ports：", Ports)
+  console.log("点击位置：x:", clickX, "y:", clickY)
+  
+  // 遍历所有元件的所有端口
+  Ports.forEach((ports, componentId) => {
+    ports.forEach(port => {
+      // 计算点击点到端口的欧几里得距离
+      const dx = clickX - port.x;
+      const dy = clickY - port.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      console.log("元件ID:", componentId, "引脚ID:", port.id,"距离：", distance)
+      
+      // 检查是否在有效范围内且比当前最近端口更近
+      if (distance < minDistance && distance < maxDistance) {
+        minDistance = distance;
+        
+        // 构建完整的端口信息对象
+        closestPort = {
+          // 端口基本信息
+          id: port.id,                 // 端口ID（在元件内的唯一标识）
+          x: port.x,                   // 端口X坐标
+          y: port.y,                   // 端口Y坐标
+          type: port.type,             // 端口类型（input/output）
+          
+          // 元件关联信息
+          componentId: componentId,    // 所属元件ID
+        };
+        console.log("更新最近端口信息：x：", closestPort.x, "y:", closestPort.y, "ID:", closestPort.id, "type:", 
+        closestPort.type, "componentId:", closestPort.componentId)
+      }
+    });
+  });
+  console.log("最近端口信息：", closestPort)
+  
+  return closestPort;
+}
+
+
+function handleMouseUp() {
+  if (isDragging.value) {// 拖动结束，保存状态
+    saveHistory()
+  }
+  isDragging.value = false
+}
+
+function selectComponent(item, event) {
+  console.log("选中元件：", item)
+  const rect = canvasContainer.value.getBoundingClientRect()
+  const x = event.clientX - rect.left
+  const y = event.clientY - rect.top
+  selectedComponent.value = item
+  dragOffset.x = x - item.x
+  dragOffset.y = y - item.y
+  isDragging.value = true
+  
+  useCircuitStore().selectComponent(item.ID);
+}
+
+// 鼠标左键且currentComponent不为null（处于元件下方状态）：触发元件放置
+function handleLeftClick(event) {
+
+  if (!currentComponent.value) {
+    console.log("当前没有元件，无法放置")
+    return; // 没有元件时不处理
+  }
+
+  event.preventDefault();
+
+  const rect = canvasContainer.value.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+
   // 若有当前元件，则放置元件
   if (currentComponent.value) {
-    // TODO：这段代码有bug，不知道为什么放置时会默认多个元件，我真的绷不住了
-    //////////////////////////////////////////////////////////////////////////////
+    console.log("放置元件，鼠标左键：x:", x, "y:", y)
+    // TODO：(已完成)
     // 1：单独记录这个元件的ID
     // 调用useCircuitStore()获取元件的ID
     const id = useCircuitStore().addComponent(currentComponent.value.componentType, [x, y]);
@@ -636,195 +831,15 @@ function handleMouseDown(event) {
       }
       const portsInfo = logic.getAllPorts()
       console.log("端口信息1：", portsInfo)
-      addComponentPorts(id, portsInfo)
+      addComponentPorts(id, portsInfo, x, y);
       console.log("所有端口：", Ports)
     })
-    
-    // 获取对应id的元件本体对象
-    // const component = useCircuitStore().getComponent(id);
-    // 获取元件所有端口信息：此时获取的太早了
-    // const portsInfo = componentLogic.getAllPorts()
 
-    // console.log("端口信息：", portsInfo)
-    // 新增元件端口信息:注册到全局ports列表
-    
-    // ports.length = 0// 清空ports，方便下次使用
-    ///////////////////////////////////////////////////////////////////////////////////
     saveHistory();
     currentComponent.value = null;
     console.log("放置元件后，当前组件已清空:", currentComponent.value)
     return; // 放置元件后不画线
   }
-
-  // // 检查是否点击在端点上
-  // const nearestPort = findNearestPort(x, y);
-  // if (nearestPort) {
-  //   // 端口点击
-  //   handlePinMouseDown(nearestPort.component, {
-  //     pinType: nearestPort.type,
-  //     pinIndex: nearestPort.index
-  //   });
-  //   return; // 点击端口后不画线
-  // }
-
-  // 电线画线逻辑：分起始点和终点两种情况
-  if (!wireStart.value) {
-    // 起点为空，记录起点，先不画线
-    // 找到距离点击点最近的port信息
-    let closestPort = findNearestPort(x, y, 20);
-    if (closestPort) {
-      // 这里是第一次点击：查找最近的端口作为电线终点
-      // 记录端口的位置和编号
-      const wireStart = {
-        x: closestPort.x,
-        y: closestPort.y,
-        componentId: closestPort.componentId,// 端口的元件ID
-        portId: closestPort.id,             // 端口的ID
-        portType:closestPort.type,          // 端口的类型 
-      };
-      wireStartId = wireStart.componentId;// 记录起点port对应的元件ID
-      return; // 点击端口后不画线
-  } else {
-    // 找到距离点击点最近的port信息
-    let closestPort = findNearestPort(x, y, 20);
-
-    if (closestPort) {
-      // 这里是第二次点击：查找最近的端口作为电线终点
-      const wireEndPort = {
-        x: closestPort.x,
-        y: closestPort.y,
-        componentId: closestPort.componentId,// 端口的元件ID
-        portId: closestPort.id,             // 端口的ID
-        portType:closestPort.type,          // 端口的类型 
-      };
-      // 根据起始点画线
-      const newWire = createWirePath(wireStart.value, wireEndPort);
-      connections.push(newWire);
-      // 填写逻辑类，调用函数连接两个元件
-      useCircuitStore.connect(wireStartId, wireStart.Id, closestPort.componentId, closestPort.id)
-      wireStart.value = null;
-      wireStartId = null;
-    }
-    saveSnapshot();
-  }
-}
-
-// 创建电线路径
-function createWirePath(start, end) {
-  const midX = (start.x + end.x) / 2;
-  const d = `M ${start.x} ${start.y} L ${midX} ${start.y} L ${midX} ${end.y} L ${end.x} ${end.y}`;
-  return { 
-    from: start, 
-    to: end, 
-    path: d,
-    color: "#999",       // 明确指定灰色
-    strokeWidth: 2,      // 线宽
-    hasArrow: false     // 无箭头
-  };
-}
-}
-
-function drawConnections(ctx) {
-  ctx.save();
-  ctx.setLineDash([]);  // 设置为实线
-
-  connections.forEach(wire => {
-    // 使用电线对象中的样式属性
-    ctx.strokeStyle = wire.color || "#999";  // 优先使用电线对象的颜色
-    ctx.lineWidth = wire.strokeWidth || 2;   // 优先使用电线对象的线宽
-    
-    // 创建路径并绘制
-    const path = new Path2D(wire.path);
-    ctx.stroke(path);
-  });
-
-  ctx.restore();
-}
-
-
-function handlePinMouseDown(component, { pinType, pinIndex }) {
-  const pinPos = getPinPosition(component, pinType, pinIndex);
-  startPin = { component, pinType, pinIndex, x: pinPos.x, y: pinPos.y };
-  
-  // 开始绘制临时连线
-  tempWire.value = {
-    path: `M${pinPos.x},${pinPos.y} L${pinPos.x},${pinPos.y}`
-  };
-}
-
-// 查找所有组件中距离点击点最近的端口，并返回该端口位置和对应的元件ID
-function findNearestPort(clickX, clickY, maxDistance = 20) {
-  // 规定的容错范围为20
-  let closest = null;
-  let minDist = Infinity;
-
-  // 遍历Ports映射（元件ID到端口数组）
-  for (const [compId, ports] of Ports) {
-    // 遍历当前元件的所有端口
-    for (const port of ports) {
-      const dx = clickX - port.x;
-      const dy = clickY - port.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      
-      // 检查距离是否小于最大距离且是目前找到的最近点
-      if (dist < maxDistance && dist < minDist) {
-        minDist = dist;
-        closest = {
-          ...port,         // 包含端口的所有属性（id, type, x, y）
-          componentId: compId, // 添加元件ID
-          compId: compId,      // 别名
-          pinIndex: port.type === 'input' 
-            ? port.id.replace('input', '') // 输入引脚使用ID中的数字部分
-            : 0,                           // 输出引脚索引设为0
-          originalPort: port  // 保留原始端口引用
-        };
-      }
-    }
-  }
-
-  return closest;
-}
-
-// // 根据componentID获取当前所有元件的端口信息
-// function getAllPortsFromAllComponents() {
-//   // const ports = [];
-//   // components.forEach(component => {
-//   //   if (component.getAllPorts) {
-//   //     ports.push(...component.getAllPorts(component)); // component 是 Vue 实例 or 结构
-//   //   }
-//   // });
-//   // return ports;
-//   const ports = [];// 存储单个元件的端口信息
-//   const Ports = [];// 每个元件和对应端口对的关系
-//   componentID.forEach(id => {
-//     // 1：获取当前id对应的元件
-//     const component  = useCircuitStore().getComponent(id)
-//     // 2：获取元件的所有端口
-//     ports.push(...component.getAllPorts(component));
-//     // 3：按元件存储每个元件的端口信息
-    
-//   })
-  
-// }
-
-function handleMouseUp() {
-  if (isDragging.value) {// 拖动结束，保存状态
-    saveHistory()
-  }
-  isDragging.value = false
-}
-
-function selectComponent(item, event) {
-  console.log("选中元件：", item)
-  const rect = canvasContainer.value.getBoundingClientRect()
-  const x = event.clientX - rect.left
-  const y = event.clientY - rect.top
-  selectedComponent.value = item
-  dragOffset.x = x - item.x
-  dragOffset.y = y - item.y
-  isDragging.value = true
-  
-  useCircuitStore().selectComponent(item.ID);
 }
 
 
@@ -834,6 +849,8 @@ function handleRightClick(event) {
   const rect = canvasContainer.value.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
+
+  console.log("鼠标右键：x:", x, "y:", y)
 
   // 先判断是否点击在线上（允许误差）
   const wireIndex = connections.findIndex(wire => {
@@ -930,6 +947,8 @@ onMounted(() => {
   eventBus.on('updateComponentDirection', () => {
     updateComponentDirection();
   });
+  // 确保画布元素可聚焦
+  canvasContainer.value.focus();
 });
 
 onUnmounted(() => {
