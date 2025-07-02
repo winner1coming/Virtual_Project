@@ -177,6 +177,7 @@ import { useHistory } from '@/modules/useHistory';
 import eventBus from '@/modules/useEventBus';
 import { useCircuitStore } from '@/store/CircuitStore';
 import { nextTick } from 'vue'
+import AndGate from './Gates/AndGate.vue'
 
 
 const canvasContainer = ref(null)
@@ -267,7 +268,7 @@ const COMPONENT_LOGIC = {
 
 // 初始化各元件尺寸配置
 const COMPONENT_SIZES = {
-  AND: { width: 100, height: 100 },
+  AND: { width: LogicAndGate.width, height: LogicAndGate.height },
   OR: { width: 150, height: 150 },
   NOT: { width: 60, height: 60 },
   TUNNEL: { width: 50, height: 50 },
