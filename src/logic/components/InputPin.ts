@@ -13,14 +13,14 @@ export class InputPin extends BaseComponent {
         this.inputCount = 0; // 输入引脚数量为0
         this.inputInverted.splice(0, this.inputInverted.length);
         //this.outputs = [-1]; // 初始输出为未连接状态
-        this.outputs.splice(0, this.outputs.length, -1); 
-        this.bitCount = 1; // 默认为1位
+        this.outputs.splice(0, this.outputs.length, 0); 
+        this.bitWidth = 1; // 默认为1位
     }
 
     // 切换某一位的值 (0变1，1变0)
     toggleBit(index: number): void {
-        if (index >= 0 && index < this.bitCount) {
-            if (this.bitCount === 1) {
+        if (index >= 0 && index < this.bitWidth) {
+            if (this.bitWidth === 1) {
                 // this.outputs[0] = this.outputs[0] === 0 ? 1 : 
                 //                  this.outputs[0] === 1 ? 0 : 
                 //                  this.outputs[0]; // 保持-1或-2不变
@@ -28,9 +28,9 @@ export class InputPin extends BaseComponent {
                                       this.outputs[0] === 1 ? 0 :
                                         this.outputs[0]); // 保持-1或-2不变
             } else {
-                if (this.outputs.length !== this.bitCount) {
-                    //this.outputs = new Array(this.bitCount).fill(-1);
-                    this.outputs.splice(0, this.outputs.length, ...Array(this.bitCount).fill(-1));
+                if (this.outputs.length !== this.bitWidth) {
+                    //this.outputs = new Array(this.bitWidth).fill(-1);
+                    this.outputs.splice(0, this.outputs.length, ...Array(this.bitWidth).fill(-1));
                 }
                 // this.outputs[index] = this.outputs[index] === 0 ? 1 : 
                 //                       this.outputs[index] === 1 ? 0 : 
@@ -44,7 +44,7 @@ export class InputPin extends BaseComponent {
 
     compute(): number[] {
         // InputPin的计算逻辑简单，主要是确保输出状态正确
-        if (this.bitCount > 1) {
+        if (this.bitWidth > 1) {
             // 检查所有输出是否有效
             for (const val of this.outputs) {
                 if (val === -2) {
@@ -61,12 +61,12 @@ export class InputPin extends BaseComponent {
         return this.outputs;
     }
 
-    setBitCount(bitCount: number): void {
-        if (bitCount !== this.bitCount) {
-            this.bitCount = bitCount;
+    setBitWidth(bitWidth: number): void {
+        if (bitWidth !== this.bitWidth) {
+            this.bitWidth = bitWidth;
             // 保留原有的有效值，其余填充-1
-            const newOutputs = new Array(bitCount).fill(-1);
-            const copyLength = Math.min(bitCount, this.outputs.length);
+            const newOutputs = new Array(bitWidth).fill(-1);
+            const copyLength = Math.min(bitWidth, this.outputs.length);
             
             for (let i = 0; i < copyLength; i++) {
                 if (this.outputs[i] !== undefined) {
@@ -81,14 +81,14 @@ export class InputPin extends BaseComponent {
 
     // 获取当前值（十进制表示，适用于多bit）
     getDecimalValue(): number {
-        if (this.bitCount === 1) {
+        if (this.bitWidth === 1) {
             return this.outputs[0];
         }
         
         // 多bit转换为十进制
         return this.outputs.reduce((acc, val, index) => {
             if (val === 1) {
-                return acc + Math.pow(2, this.bitCount - 1 - index);
+                return acc + Math.pow(2, this.bitWidth - 1 - index);
             }
             return acc;
         }, 0);

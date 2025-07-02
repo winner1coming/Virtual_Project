@@ -18,7 +18,7 @@ export class ConstantInput extends BaseComponent {
         this.inputInverted.splice(0, this.inputInverted.length); // 清空输入反转状态
         //this.outputs = [0]; // 初始输出值为0
         this.outputs.splice(0, this.outputs.length, 0); 
-        this.bitCount = 1; // 默认1位
+        this.bitWidth = 1; // 默认1位
         this.height = 30;
         this.width = 30;
         this.currentValue = 0;
@@ -65,14 +65,14 @@ export class ConstantInput extends BaseComponent {
     // 获取二进制表示
     getBinaryValue(): number[] {
         const binaryStr = this.currentValue.toString(2);
-        const paddedStr = binaryStr.padStart(this.bitCount, '0');
+        const paddedStr = binaryStr.padStart(this.bitWidth, '0');
         return paddedStr.split('').map(bit => parseInt(bit, 10));
     }
 
     // 覆盖基类方法：设置位数
-    setBitCount(bitCount: number): void {
-        if (bitCount > 0 && bitCount !== this.bitCount) {
-            super.setBitCount(bitCount);
+    setBitWidth(bitWidth: number): void {
+        if (bitWidth > 0 && bitWidth !== this.bitWidth) {
+            super.setBitWidth(bitWidth);
             this.updateMaxValue();
             
             // 调整当前值以适应新的位数
@@ -86,6 +86,6 @@ export class ConstantInput extends BaseComponent {
 
     // 更新最大可表示值
     private updateMaxValue(): void {
-        this.maxValue = Math.pow(2, this.bitCount) - 1;
+        this.maxValue = Math.pow(2, this.bitWidth) - 1;
     }
 }
