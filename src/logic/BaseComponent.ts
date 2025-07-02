@@ -62,36 +62,43 @@ export abstract class BaseComponent{
     this.position[0] = position[0]; 
     this.position[1] = position[1];
 
-    this.updatePinPosition(); // 更新引脚位置
+    // this.updatePinPosition(); // 更新引脚位置
   }
   setScale(scale: number) {
     this.scale = scale;
     this.updatePinPosition(); 
   }
 
-  updatePinPosition(): void{} // 更新引脚位置
-
+  // 更新引脚位置
+  updatePinPosition(): void{
+    // 适用于与门、或门
+    // 修改输入
+    const inputYs = calcInputYs(this.inputCount);
+    this.inputPinPosition.splice(0, this.inputPinPosition.length,
+      ...inputYs.map((pin, index): [number, number] => {
+        return [
+          // 0 + 92 * this.scale,
+          // 0 + pin * this.scale,
+          92,
+          pin,
+        ];
+    }));
+    // 修改输出
+    this.outputPinPosition = this.outputPinPosition.map(pin => {
+      return [
+        0 + 497,
+        0 + 288,
+      ];
+    });
+  
+  }
   // 会清空输入与引脚的取反状态
   changeInputPinCount(num: number){
     this.inputCount = num;
     this.inputs.splice(0, this.inputs.length, ...Array(num).fill(-1));    // 将输入全部置-1
     this.inputInverted.splice(0, this.inputInverted.length, ...Array(num).fill(false)); // 初始化输入取反状态
 
-    // 修改引脚位置
-    const inputYs = calcInputYs(num);
-
-    this.inputPinPosition.splice(0, this.inputPinPosition.length,
-      ...inputYs.map((pin, index): [number, number] => {
-        // return [
-        //   this.position[0] + 92 * this.scale,
-        //   this.position[1] + inputYs[index] * this.scale,
-        // ];
-        return [
-          0 + 92 * this.scale,
-          0 + pin * this.scale,
-        ];
-    }));
-
+    this.updatePinPosition();
   }
 
   changeInputInverted(idx: number){
