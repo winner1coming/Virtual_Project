@@ -61,7 +61,7 @@ export abstract class BaseComponent{
 	setPosition(position: [number, number]) {
 		this.position[0] = position[0]; 
 		this.position[1] = position[1];
-		const [baseX, baseY] = position;
+		// const [baseX, baseY] = position;
 
 		// // 🟢 更新输入引脚坐标
 		// for (let i = 0; i < this.inputCount; i++) {
@@ -93,13 +93,16 @@ export abstract class BaseComponent{
 
     this.inputPinPosition.splice(0, this.inputPinPosition.length,
       ...inputYs.map((pin, index): [number, number] => {
-        return [
-          92 * this.scale,
-          inputYs[index] * this.scale,
-        ];
+        // return [
+        //   this.position[0] + 92 * this.scale,
+        //   this.position[1] + inputYs[index] * this.scale,
+        // ];
+		return [
+			0 + 92 * this.scale,
+			0 + pin * this.scale,
+		];
     }));
 
-    console.log(`inputPinPosition updated: ${JSON.stringify(this.inputPinPosition)}`);
 	}
 
 	changeInputInverted(idx: number){
