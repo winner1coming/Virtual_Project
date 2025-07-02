@@ -13,7 +13,7 @@ export class InputPin extends BaseComponent {
         this.inputCount = 0; // 输入引脚数量为0
         this.inputInverted.splice(0, this.inputInverted.length);
         //this.outputs = [-1]; // 初始输出为未连接状态
-        this.outputs.splice(0, this.outputs.length, -1); 
+        this.outputs.splice(0, this.outputs.length, 0); 
         this.bitWidth = 1; // 默认为1位
     }
 

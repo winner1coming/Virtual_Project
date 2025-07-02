@@ -269,7 +269,9 @@ const COMPONENT_LOGIC = {
 const COMPONENT_SIZES = {
   AND: { width: 100, height: 100 },
   OR: { width: 150, height: 150 },
-  NOT: { width: 60, height: 60 }
+  NOT: { width: 60, height: 60 },
+  TUNNEL: { width: 50, height: 50 },
+  INPUT_PIN: { width: 30, height: 30 },
 }
  
 // 按钮图片资源映射表
@@ -285,6 +287,8 @@ const IMAGE_MAP = {
 IMAGE_MAP.AND.src = '/assets/AND.png'
 IMAGE_MAP.OR.src = '/assets/OR.png'
 IMAGE_MAP.NOT.src = '/assets/NOT.png'
+IMAGE_MAP.TUNNEL.src = '/assets/TUNNEL.png'
+IMAGE_MAP.INPUT_PIN.src = '/assets/INPUT_PIN.png'
 
 function updateComponentDirection() {
   // 更新完方向后重新绘制画布

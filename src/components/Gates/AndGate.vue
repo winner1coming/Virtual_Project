@@ -25,14 +25,14 @@
         <circle
           v-if="andGate.inputInverted[index]"
           :cx="149 - 26"
-          :cy="inputYs[index]"
+          :cy="andGate.inputPinPosition[index][1]"
           r="16"
           stroke="black"
           stroke-width="12"
           fill="none"
         />
-        <path v-if="!andGate.inputInverted[index]":d="`M92 ${inputYs[index]}L149 ${inputYs[index]}`" stroke="black" stroke-width="12" />
-        <InputPort :cx="92" :cy="inputYs[index]" :active="input" :bitWidth="andGate.bitWidth" @toggle="() => handleToggleInput(index)"/>
+        <path v-if="!andGate.inputInverted[index]":d="`M92 ${andGate.inputPinPosition[index][1]}L149 ${andGate.inputPinPosition[index][1]}`" stroke="black" stroke-width="12" />
+        <InputPort :cx="92" :cy="andGate.inputPinPosition[index][1]" :active="input" :bitWidth="andGate.bitWidth" @toggle="() => handleToggleInput(index)"/>
       </template>
 
       <!-- 输出状态 -->
@@ -67,27 +67,22 @@ const andGate = computed(() => {
   return circuitStore.getComponent(props.id);  
 });
 
-let inputYs = useGateLayout(andGate.value.inputCount)
+// let inputYs = useGateLayout(andGate.value.inputCount)
 // let inputYs = computed(()=>{
 //   return 
 // });
 
-let minY = Math.min(...inputYs.value);
-let maxY = Math.max(...inputYs.value);
+let minY = computed(()=>Math.min(...andGate.value.inputPinPosition.map(pin => pin[1])));
+let maxY = computed(()=>Math.max(...andGate.value.inputPinPosition.map(pin => pin[1])));
 
 // 设置引脚位置
-andGate.value.InputPinPosition = andGate.value.InputPinPosition.map((pin, index) => {
-  return [
-    andGate.value.position[0] + 92 * andGate.value.scale,
-    andGate.value.position[1] + inputYs.value[index] * andGate.value.scale,
-  ];
-});
-andGate.value.OutputPinPosition = andGate.value.OutputPinPosition.map(pin => {
-  return [
-    andGate.value.position[0] + 497 * andGate.value.scale,
-    andGate.value.position[1] + 288 * andGate.value.scale,
-  ];
-});
+// andGate.value.inputPinPosition = andGate.value.inputPinPosition.map((pin, index) => {
+//   return [
+//     andGate.value.position[0] + 92 * andGate.value.scale,
+//     andGate.value.position[1] + inputYs.value[index] * andGate.value.scale,
+//   ];
+// });
+
 
 function setInputCount()
 {
@@ -98,7 +93,7 @@ function setInputCount()
   maxY = Math.max(...inputYs.value);
 
   // 更新引脚位置
-  andGate.value.InputPinPosition = andGate.value.InputPinPosition.map((pin, index) => {
+  andGate.value.inputPinPosition = andGate.value.inputPinPosition.map((pin, index) => {
     return [
       andGate.value.position[0] + 92 * andGate.value.scale,
       andGate.value.position[1] + inputYs.value[index] * andGate.value.scale,
