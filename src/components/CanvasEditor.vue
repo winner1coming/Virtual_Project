@@ -613,7 +613,7 @@ function handleMouseDown(event) {
       default:
         console.error("未知元件类型：", currentComponent.value.componentType)
     }
-    // ⚠️ 触发引脚坐标更新（非常重要）
+    // 触发引脚坐标更新（非常重要）
     componentLogic.setPosition([x, y]);
 
     // 创建Vue组件实例
