@@ -9,7 +9,7 @@ export class Tunnel extends BaseComponent {
     // 只支持输出，隧道输入的逻辑放在模拟器中全局判断
     this.inputCount = 0;
     this.inputs.splice(0, this.inputs.length);       // 0个输入
-    this.InputPinPosition.splice(0, this.InputPinPosition.length, [0,0]);
+    this.inputPinPosition.splice(0, this.inputPinPosition.length, [0,0]);
     this.setName(name); // 设置 tunnel 名称
     EventDrivenSimulator.getInstance().addTunnel(name, id);
   }

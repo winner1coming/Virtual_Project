@@ -85,6 +85,7 @@
             :height="item.size.height"
             :inputs="item.inputs"
             :output="item.output"
+            :id="item.ID"
             :onToggleInput="(i) => toggleInput(item, i)"
             @pin-mousedown="(data) => handlePinMouseDown(item, data)"
             @pin-mouseup="(data) => handlePinMouseUp(item, data)"
@@ -152,6 +153,9 @@ import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import AndGate from './Gates/AndGate.vue'
 import OrGate from './Gates/OrGate.vue'
 import NotGate from './Gates/NotGate.vue'
+import Tunnel from './Wiring/Tunnel.vue'
+import InputPin from './Wiring/InputPin.vue'
+
 
 // 逻辑类建模
 import { AndGate as LogicAndGate } from '@/logic/components/AndGate.js'
@@ -164,6 +168,8 @@ import {Combiner as LogicCombiner} from '@/logic/components/Combiner.js'
 import {ConstantInput as LogicConstantInput} from '@/logic/components/ConstantInput.js'
 import {Ground as LogicGround} from '@/logic/components/Ground.js'
 import {Power as LogicPower} from '@/logic/components/Power.js'
+import { Tunnel as LogicTunnel} from '@/logic/components/Tunnel'
+import { InputPin as LogicInputPin} from '@/logic/components/InputPin'
 import { BaseComponent } from '@/logic/BaseComponent'
 
 // 其他
@@ -245,34 +251,44 @@ function updateComponentPorts(componentId, portsArray) {
 const componentMap = {
   AND: AndGate,
   OR: OrGate,
-  NOT: NotGate
+  NOT: NotGate,
+  TUNNEL: Tunnel,
+  INPUT_PIN: InputPin,
 }
 
 // 各组件的方法映射
 const COMPONENT_LOGIC = {
   AND: LogicAndGate, 
   OR: LogicOrGate,
-  NOT: LogicNotGate
+  NOT: LogicNotGate,
+  TUNNEL: LogicTunnel,
+  INPUT_PIN: LogicInputPin,
 }
 
 // 初始化各元件尺寸配置
 const COMPONENT_SIZES = {
   AND: { width: 100, height: 100 },
   OR: { width: 150, height: 150 },
-  NOT: { width: 60, height: 60 }
+  NOT: { width: 60, height: 60 },
+  TUNNEL: { width: 50, height: 50 },
+  INPUT_PIN: { width: 30, height: 30 },
 }
  
 // 按钮图片资源映射表
 const IMAGE_MAP = {
   AND: new Image(),
   OR: new Image(),
-  NOT: new Image()
+  NOT: new Image(),
+  TUNNEL: new Image(),
+  INPUT_PIN: new Image(),
 }
 
 // 初始化图片资源
 IMAGE_MAP.AND.src = '/assets/AND.png'
 IMAGE_MAP.OR.src = '/assets/OR.png'
 IMAGE_MAP.NOT.src = '/assets/NOT.png'
+IMAGE_MAP.TUNNEL.src = '/assets/TUNNEL.png'
+IMAGE_MAP.INPUT_PIN.src = '/assets/INPUT_PIN.png'
 
 function updateComponentDirection() {
   // 更新完方向后重新绘制画布
@@ -587,6 +603,12 @@ function handleMouseDown(event) {
         break
       case 'NOT':
         componentLogic = new LogicNotGate(id, 'NOT', [x, y])
+        break
+      case 'TUNNEL':
+        componentLogic = new LogicTunnel(id, 'TUNNEL', [x, y])
+        break
+      case 'INPUT_PIN':
+        componentLogic = new LogicInputPin(id, 'INPUT_PIN', [x, y])
         break
       default:
         console.error("未知元件类型：", currentComponent.value.componentType)

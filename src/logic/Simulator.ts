@@ -113,7 +113,7 @@ export class EventDrivenSimulator {
       }
     }
     // 判断位宽是否合法   // todo 放在元件的compute方法中判断
-    // if(comp1.bitCount !== comp2.bitCount) {
+    // if(comp1.bitWidth !== comp2.bitWidth) {
     //   legal = false;
     // }
     this.connectionManager.addConnection(inputId, inputIdx, outputId, outputIdx, legal);

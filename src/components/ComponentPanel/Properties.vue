@@ -35,8 +35,9 @@
         <label for="bitWidth">数据位宽：</label>
         <n-select
           id="bitWidth"
-          v-model:value="circuitStore.getComponent(circuitStore.selectedId).bitCount"
+          v-model:value="circuitStore.getComponent(circuitStore.selectedId).bitWidth"
           :options="bitWidthOptions.map(width => ({ label: `${width} 位`, value: width }))"
+          @update:value="updateBitWidth"
         >
         </n-select>
       </div>
@@ -44,14 +45,13 @@
       <!-- 修改引脚数量-->
       <div class="property-item" v-show="showPinCountOptions">
         <label for="pinCount">引脚数量：</label>
-        <select
+        <n-select
           id="pinCount"
-          v-model="circuitStore.getComponent(circuitStore.selectedId).inputCount"
+          v-model:value="circuitStore.getComponent(circuitStore.selectedId).inputCount"
+          :options="pinCountOptions.map(count => ({ label: `${count} 个`, value: count }))"
+          @update:value="updateInputCount"
         >
-          <option v-for="count in pinCountOptions" :key="count" :value="count">
-            {{ count }} 个
-          </option>
-        </select>
+        </n-select>
        </div>
     </div>
     <div v-else>
@@ -73,7 +73,7 @@ const circuitStore = useCircuitStore();
 // const selectedComponent = ref({
 //     name: '',
 //     orientation: 'up',
-//     bitCount: 1
+//     bitWidth: 1
 // });
 
 // 数据位宽选项
@@ -94,6 +94,14 @@ function updateDirection(value: string, option: SelectOption) {
   eventBus.emit('updateComponentDirection');
 }
 
+function updateBitWidth(value: number, option: SelectOption) {
+  // 更新元件的数据位宽
+  eventBus.emit('updateComponentBitWidth');
+}
+
+function updateInputCount(value: number) {
+  circuitStore.getComponent(circuitStore.selectedId).changeInputPinCount(value);
+}
 </script>
 
 <style scoped>
