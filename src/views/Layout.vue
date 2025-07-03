@@ -257,8 +257,8 @@ const router = useRouter()
 const MaterialPanel = defineAsyncComponent(() => import('./Freedom/MaterialPanel.vue'))
 const ComponentPanel = defineAsyncComponent(() => import('./Freedom/ComponentPanel.vue'))
 const ProjectFilePanel = defineAsyncComponent(() => import('./Freedom/ProjectFilePanel.vue'))
-const activeDrawer = ref(null)
-const drawerSize = ref(0);
+const activeDrawer = ref('component'); // 默认显示元件抽屉
+const drawerSize = ref(0.08);
 const CanvasSize = ref(1);
 const showRightPDF = ref(false)
 const currentPdfFile = ref(null)

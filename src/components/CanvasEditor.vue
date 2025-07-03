@@ -254,7 +254,7 @@ const componentMap = {
   OR: OrGate,
   NOT: NotGate,
   TUNNEL: Tunnel,
-  INPUT_PIN: InputPin,
+  INPUT: InputPin,
 }
 
 // 各组件的方法映射
@@ -263,7 +263,7 @@ const COMPONENT_LOGIC = {
   OR: LogicOrGate,
   NOT: LogicNotGate,
   TUNNEL: LogicTunnel,
-  INPUT_PIN: LogicInputPin,
+  INPUT: LogicInputPin,
 }
 
 // 初始化各元件尺寸配置
@@ -272,7 +272,7 @@ const COMPONENT_SIZES = {
   OR: { width: 150, height: 150 },
   NOT: { width: 60, height: 60 },
   TUNNEL: { width: 50, height: 50 },
-  INPUT_PIN: { width: 30, height: 30 },
+  INPUT: { width: 30, height: 30 },
 }
  
 // 按钮图片资源映射表
@@ -281,7 +281,7 @@ const IMAGE_MAP = {
   OR: new Image(),
   NOT: new Image(),
   TUNNEL: new Image(),
-  INPUT_PIN: new Image(),
+  INPUT: new Image(),
 }
 
 // 初始化图片资源
@@ -289,7 +289,7 @@ IMAGE_MAP.AND.src = '/assets/AND.png'
 IMAGE_MAP.OR.src = '/assets/OR.png'
 IMAGE_MAP.NOT.src = '/assets/NOT.png'
 IMAGE_MAP.TUNNEL.src = '/assets/TUNNEL.png'
-IMAGE_MAP.INPUT_PIN.src = '/assets/INPUT_PIN.png'
+IMAGE_MAP.INPUT.src = '/assets/INPUT.png'
 
 function updateComponentDirection() {
   // 更新完方向后重新绘制画布
@@ -534,8 +534,8 @@ function handleMouseMove(event) {
       case 'TUNNEL':
         componentLogic = new LogicTunnel(ID, 'TUNNEL', [selectedComponent.value.x, selectedComponent.value.y])
         break
-      case 'INPUT_PIN':
-        componentLogic = new LogicInputPin(ID, 'INPUT_PIN', [selectedComponent.value.x, selectedComponent.value.y])
+      case 'INPUT':
+        componentLogic = new LogicInputPin(ID, 'INPUT', [selectedComponent.value.x, selectedComponent.value.y])
         break
       default:
         console.error("未知元件类型：", selectedComponent.value.componentType)
@@ -869,8 +869,8 @@ function handleLeftClick(event) {
       case 'TUNNEL':
         componentLogic = new LogicTunnel(id, 'TUNNEL', [x, y])
         break
-      case 'INPUT_PIN':
-        componentLogic = new LogicInputPin(id, 'INPUT_PIN', [x, y])
+      case 'INPUT':
+        componentLogic = new LogicInputPin(id, 'INPUT', [x, y])
         break
       default:
         console.error("未知元件类型：", currentComponent.value.componentType)

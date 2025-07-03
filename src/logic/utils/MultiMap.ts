@@ -1,4 +1,4 @@
-class MultiMap<K, V> {
+export class MultiMap<K, V> {
     private map: Map<K, V[]>;
 
     constructor() {

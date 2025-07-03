@@ -38,6 +38,23 @@ export class InputPin extends BaseComponent {
         }
     }
 
+    // 返回bits数组
+    getBits(): number[] {
+        const bits: number[] = [];
+        if (this.bitWidth <= 0) {
+            return bits; // 如果位宽为 0，返回空数组
+        }
+
+        let value = this.outputs[0]; 
+
+        for (let i = 0; i < this.bitWidth; i++) {
+            // 提取每一位（从高位到低位）
+            bits.unshift(value & 1); // 取最低位
+            value = value >> 1; // 右移 1 位
+        }
+        return bits;
+    }
+
     compute(): number[] {
         // InputPin的计算逻辑简单，主要是确保输出状态正确
         if (this.bitWidth > 1) {
