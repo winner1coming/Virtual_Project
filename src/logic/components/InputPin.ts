@@ -6,9 +6,8 @@ export class InputPin extends BaseComponent {
         id: number, 
         type: String = "InputPin", 
         position: [number, number] = [0, 0], 
-        pinPosition = []
     ) {
-        super(id, type, position, pinPosition);
+        super(id, type, position);
         this.changeInputPinCount(0); // InputPin没有输入引脚
         this.outputs.splice(0, this.outputs.length, 0); 
         this.outputPinPosition.splice(0, this.outputPinPosition.length, [80, 80]); 

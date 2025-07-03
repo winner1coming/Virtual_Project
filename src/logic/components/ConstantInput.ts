@@ -8,10 +8,9 @@ export class ConstantInput extends BaseComponent {
         id: number,
         type: String = "ConstantInput", 
         position: [number, number] = [0, 0],
-        pinPosition = [],
         maxValue = 1
     ) {
-        super(id, type, position, pinPosition);
+        super(id, type, position);
         //this.inputs = []; // 常量输入没有输入引脚
         this.inputs.splice(0, this.inputs.length); // 清空输入引脚
         this.inputCount = 0; 

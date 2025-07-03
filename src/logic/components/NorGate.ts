@@ -1,8 +1,8 @@
 import { BaseComponent } from "../BaseComponent";
 
 export class NorGate extends BaseComponent {
-    constructor(id: number, type: String, position: [number, number] = [0, 0], pinPosition = []) {
-        super(id, type, position, pinPosition);
+    constructor(id: number, type: String, position: [number, number] = [0, 0]) {
+        super(id, type, position);
     }
 
     compute(): number[] {
