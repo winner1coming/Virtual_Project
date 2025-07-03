@@ -96,6 +96,7 @@ export const useCircuitStore = defineStore('circuit', {
       if (!component) {
         throw new Error(`Component with id ${id} not found`);
       }
+      // console.log("移动组件：ID:", id, "新位置:", newPosition);
       component.setPosition(newPosition);
       // 更新组件位置后，可能需要更新电线的位置 todo
     },
