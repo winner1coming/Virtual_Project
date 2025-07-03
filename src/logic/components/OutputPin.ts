@@ -7,9 +7,8 @@ export class OutputPin extends BaseComponent {
         id: number, 
         type: String = "OutputPin", 
         position: [number, number] = [0, 0], 
-        pinPosition = []
     ) {
-        super(id, type, position, pinPosition);
+        super(id, type, position);
         //this.inputs = [-1]; // 默认一个输入引脚，初始未连接
         this.changeInputPinCount(1); 
         //this.outputs = [];  // 输出引脚本身不产生输出
