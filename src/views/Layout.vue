@@ -170,7 +170,7 @@
         <transition name="slide-fade">
           <n-split
             v-model:size="drawerSize"
-            :min="0"
+            :min=0
             :max="0.60"
             direction="horizontal"
             class="split-container"
@@ -258,7 +258,7 @@ const MaterialPanel = defineAsyncComponent(() => import('./Freedom/MaterialPanel
 const ComponentPanel = defineAsyncComponent(() => import('./Freedom/ComponentPanel.vue'))
 const ProjectFilePanel = defineAsyncComponent(() => import('./Freedom/ProjectFilePanel.vue'))
 const activeDrawer = ref('component'); // 默认显示元件抽屉
-const drawerSize = ref(0.08);
+const drawerSize = ref(0.1);
 const CanvasSize = ref(1);
 const showRightPDF = ref(false)
 const currentPdfFile = ref(null)
@@ -302,7 +302,7 @@ const toggleDrawer = (drawerName) => {
     drawerSize.value = 0
   } else {
     activeDrawer.value = drawerName
-    drawerSize.value = 0.08
+    drawerSize.value = 0.1
   }
 }
 

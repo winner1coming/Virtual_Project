@@ -1,11 +1,11 @@
 <template>
   <div class="pdf-buttons">
-    <div class="item" @click="openPdf(lab8PdfUrl)">
+    <button class="item" @click="openPdf(lab8PdfUrl)">
       <span>教材一</span>
-    </div>
-    <div class="item" @click="openPdf(lab9PdfUrl)">
+    </button>
+    <button class="item" @click="openPdf(lab9PdfUrl)">
       <span>教材二</span>
-    </div>
+    </button>
   </div>
 </template>
 
@@ -26,24 +26,35 @@ const openPdf = (file) => {
 .pdf-buttons {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
   gap: 8px;
 }
 
 .item {
+  width: 100px;
   padding: 10px;
   margin: 8px;
   background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
-  cursor: move;
+  cursor: pointer;
+  text-align: center;
 }
 .item:hover {
     background-color: #f0f5ff;
 }
 
-.item.active {
-  background: #e3f2fd;
-  border-left: 3px solid #2196f3;
+.item:active {
+  background: #c4d7e6;
+  border-left: 3px solid #cee3f5;
   font-weight: bold;
+}
+
+.item:focus{
+  background: #d3e3ef;
+  border-left: 3px solid #cee3f5;
+  font-weight: bold;
+  outline:none;
 }
 </style>
