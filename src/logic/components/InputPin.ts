@@ -8,9 +8,8 @@ export class InputPin extends BaseComponent {
         position: [number, number] = [0, 0], 
     ) {
         super(id, type, position);
-        this.changeInputPinCount(0); // InputPin没有输入引脚
         this.outputs.splice(0, this.outputs.length, 0); 
-        this.outputPinPosition.splice(0, this.outputPinPosition.length, [80, 80]); 
+        this.changeInputPinCount(0); // InputPin没有输入引脚
         this.bitWidth = 1; // 默认为1位
     }
 
@@ -27,7 +26,7 @@ export class InputPin extends BaseComponent {
         const svgWidth = cols * cellWidth + padding;
         const svgHeight = rows * cellHeight + padding/2;
         // 修改输出
-        this.outputPinPosition = [[svgWidth, svgHeight/2]];
+        this.outputPinPosition.splice(0, this.outputPinPosition.length, [svgWidth, svgHeight/2]);
     }
 
     // 切换某一位的值 (0变1，1变0)
@@ -110,10 +109,12 @@ export class InputPin extends BaseComponent {
             
             ////is.outputs = newOutputs;
             this.outputs.splice(0, this.outputs.length, ...newOutputs); // 替换outputs的值
+
+            EventDrivenSimulator.getInstance().checkComponentConnections(this.id); // 检查连线
+            this.updatePinPosition(); // 更新引脚位置
         }
 
-        EventDrivenSimulator.getInstance().checkComponentConnections(this.id); // 检查连线
-        this.updatePinPosition(); // 更新引脚位置
+        
     }
 
     // 获取当前值（十进制表示，适用于多bit）
