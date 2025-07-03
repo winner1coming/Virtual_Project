@@ -8,9 +8,8 @@ export class InputPin extends BaseComponent {
         position: [number, number] = [0, 0], 
     ) {
         super(id, type, position);
-        this.changeInputPinCount(0); // InputPin没有输入引脚
         this.outputs.splice(0, this.outputs.length, 0); 
-        this.outputPinPosition.splice(0, this.outputPinPosition.length, [80, 80]); 
+        this.changeInputPinCount(0); // InputPin没有输入引脚
         this.bitWidth = 1; // 默认为1位
     }
 
@@ -27,7 +26,7 @@ export class InputPin extends BaseComponent {
         const svgWidth = cols * cellWidth + padding;
         const svgHeight = rows * cellHeight + padding/2;
         // 修改输出
-        this.outputPinPosition = [[svgWidth, svgHeight/2]];
+        this.outputPinPosition.splice(0, this.outputPinPosition.length, [svgWidth, svgHeight/2]);
     }
 
     // 切换某一位的值 (0变1，1变0)
