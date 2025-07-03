@@ -26,5 +26,5 @@ self.onmessage = (event) => {
     }
   }
 
-  self.postMessage({ success: true });
+  // self.postMessage({ success: true });
 };

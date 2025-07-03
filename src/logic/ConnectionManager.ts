@@ -1,3 +1,4 @@
+import { MultiMap } from "@/logic/utils/MultiMap";
 export interface Conn {
     id: number;
     idx: number;
