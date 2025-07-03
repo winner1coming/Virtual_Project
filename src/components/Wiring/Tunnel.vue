@@ -19,14 +19,14 @@
           font-family="Arial"
           :font-size="48"
       >
-      {{ label }}
+      {{ tunnel.name }}
       </text>
 
       <!--选中方框-->
       <SelectedBox :x="175" :y="255" :width="x_right-178+12" :height="112" :visible="true"/>
 
-      <!-- 输入引脚 -->
-      <InputPort :cx="183.98" :cy="310" :active="1" :bitWidth="tunnel.bitCount" @toggle="() => handleToggleInput()"/>
+      <!-- 输出引脚 -->
+      <OutputPort :cx="183.98" :cy="310" :active="1" :bitWidth="tunnel.bitWidth" />
       <!--填充透明区域-->
       <path
         fill="transparent"
@@ -61,7 +61,7 @@ const tunnel = computed(() => {
 });
 
 const labelTextBox = ref(null);
-let label = ref('LBL');
+//let label = ref('LBL');
 const x_right = ref(313);
 
 function updateXRight() {
@@ -72,10 +72,10 @@ function updateXRight() {
 }
 
 // 监听 label 变化，并等待 DOM 更新
-watch(label, async () => {
-  await nextTick()
-  updateXRight()
-})
+// watch(label, async () => {
+//   await nextTick()
+//   updateXRight()
+// })
 
 // 初始化时也调用一次
 onMounted(async () => {
@@ -83,10 +83,10 @@ onMounted(async () => {
   updateXRight()
 })
 
-//调试用，要删 todo
-function handleToggleInput() {
-    label.value = "AAA光猎大人";
-}
+// //调试用，要删 todo
+// function handleToggleInput() {
+//     label.value = "AAA光猎大人";
+// }
 
 </script>
 
