@@ -257,34 +257,50 @@ export class EventDrivenSimulator {
   }
 
   processQueue(): void {
-    while (this.workQueue.length > 0) {
-      // 组件的id为id，它更改其索引为idx的引脚的输入为value
-      const { id, idx, value } = this.workQueue.shift()!;
-      this.inQueue.delete(`${id}_${idx}`);
+    // 移动到web worker中处理，以增加前端的响应性
+    const worker = new Worker(new URL('@/workers/simulatorWorker.ts', import.meta.url));
+    worker.postMessage({
+      workQueue: this.workQueue,
+      connectionManager: this.connectionManager,
+      circuitStore: this.circuitStore,
+    });
 
-      const component = this.circuitStore.getComponent(id);
-      if (!component) continue;
+    worker.onmessage = (event) => {
+      console.log("Queue processed:", event.data);
+    };
 
-      // 获取当前组件的新旧输出
-      const oldOutputs = [...component.getOutputs()];
-      const newOutputs = component.changeInput(idx, value);      
+    worker.onerror = (error) => {
+      console.error("Worker error:", error);
+    };
 
-      if (!this.isEqualOutputs(oldOutputs, newOutputs)) {
-        const pinMap = this.connectionManager.getOutputPinMap(id);
-        if (!pinMap) continue;
+    // while (this.workQueue.length > 0) {
+    //   // 组件的id为id，它更改其索引为idx的引脚的输入为value
+    //   const { id, idx, value } = this.workQueue.shift()!;
+    //   this.inQueue.delete(`${id}_${idx}`);
 
-        for (const pinIdx of pinMap.keys()) {
-          for( const conn of pinMap.get(pinIdx) || []) {
-            if (conn.legal) {
-              const targetComponent = this.circuitStore.getComponent(conn.id);
-              if (!targetComponent) continue;
+    //   const component = this.circuitStore.getComponent(id);
+    //   if (!component) continue;
 
-              this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
-            }
-          }
-        }
-      }
-    }
+    //   // 获取当前组件的新旧输出
+    //   const oldOutputs = [...component.getOutputs()];
+    //   const newOutputs = component.changeInput(idx, value);      
+
+    //   if (!this.isEqualOutputs(oldOutputs, newOutputs)) {
+    //     const pinMap = this.connectionManager.getOutputPinMap(id);
+    //     if (!pinMap) continue;
+
+    //     for (const pinIdx of pinMap.keys()) {
+    //       for( const conn of pinMap.get(pinIdx) || []) {
+    //         if (conn.legal) {
+    //           const targetComponent = this.circuitStore.getComponent(conn.id);
+    //           if (!targetComponent) continue;
+
+    //           this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   private isEqualOutputs(a: number[], b: number[]): boolean {
