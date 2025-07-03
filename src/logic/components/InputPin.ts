@@ -15,6 +15,22 @@ export class InputPin extends BaseComponent {
         this.bitWidth = 1; // 默认为1位
     }
 
+    // 更新引脚位置
+    updatePinPosition(): void{
+        // 排布相关参数
+        const colMax = 8;
+        const cellWidth = 40;
+        const cellHeight = 60;
+        const padding = 40;
+        const cols = Math.min(this.bitWidth, colMax);
+        const rows = Math.ceil(this.bitWidth / colMax);
+        // 宽高
+        const svgWidth = cols * cellWidth + padding;
+        const svgHeight = rows * cellHeight + padding/2;
+        // 修改输出
+        this.outputPinPosition = [[svgWidth, svgHeight/2]];
+    }
+
     // 切换某一位的值 (0变1，1变0)
     toggleBit(index: number): void {
         if (index >= 0 && index < this.bitWidth) {
