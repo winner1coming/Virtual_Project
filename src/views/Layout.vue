@@ -172,6 +172,7 @@
             v-model:size="drawerSize"
             :min="0"
             :max="0.60"
+            @drag-move="handleSplitDrag"
             direction="horizontal"
             class="split-container"
           >
@@ -280,6 +281,11 @@ const activeDrawerComponent = computed(() => {
     default: return null
   }
 })
+const handleSplitDrag = () => {
+  if(drawerSize.value < 0.08){
+    drawerSize.value = 0; 
+  }
+}
 
 import { useCircuitStore } from '@/store/CircuitStore'
 const circuitStore = useCircuitStore();
@@ -297,7 +303,7 @@ const handleClick = () => {
 }
 
 const toggleDrawer = (drawerName) => {
-  if (activeDrawer.value === drawerName) {
+  if (activeDrawer.value === drawerName && drawerSize.value > 0) {
     activeDrawer.value = null 
     drawerSize.value = 0
   } else {

@@ -68,6 +68,24 @@
         </n-select>
       </div>
 
+      <!-- 支持输入反转-->
+      <div class="invert-container" v-show="showInvertInputOption">
+        <div v-for="(invert, index) in circuitStore.getComponent(circuitStore.selectedId).inputInverted" :key="index" class="invert-item">
+          <label>反转输入 {{ index}}:</label>
+          <n-select
+            :value="circuitStore.getComponent(circuitStore.selectedId).inputInverted[index]? 1 : 0"
+            :options="[
+              { label: '否', value: 0 },
+              { label: '是', value: 1 }
+            ]"
+            @update:value="(value, option) => {
+              circuitStore.getComponent(circuitStore.selectedId).inputInverted[index] = value;
+            }"
+          >
+          </n-select>
+        </div>
+      </div>
+
     </div>
     <div v-else>
       <p align="center">选中元件以查看属性</p>
@@ -94,6 +112,14 @@ const showPinCountOptions = computed(() => {
   return selectedComponent.type !== 'NOT' && selectedComponent.type !== 'CLOCK' &&
         selectedComponent.type !== 'INPUT' && selectedComponent.type !== 'OUTPUT' &&
         selectedComponent.type !== 'SegmentDisplay' && selectedComponent.type !== 'TUNNEL' &&
+         selectedComponent.type !== 'POWER' && selectedComponent.type !== 'GROUND';
+});
+// 判断是否显示输入反转的选项
+const showInvertInputOption = computed(() => {
+  const selectedComponent = circuitStore.getComponent(circuitStore.selectedId);
+  return selectedComponent.type !== 'NOT' && selectedComponent.type !== 'CLOCK' &&
+         selectedComponent.type !== 'INPUT' && selectedComponent.type !== 'OUTPUT' &&
+         selectedComponent.type !== 'SegmentDisplay' && selectedComponent.type !== 'TUNNEL' &&
          selectedComponent.type !== 'POWER' && selectedComponent.type !== 'GROUND';
 });
 
@@ -137,5 +163,24 @@ function updateInputCount(value: number) {
   border: 1px solid #ddd;
   border-radius: 4px;
   width: calc(100% - 90px);
+}
+
+.invert-container {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.invert-container label {
+  display: inline-block;
+  font-weight: bold;
+  width: 80px;
+}
+.invert-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.invert-item span {
+  margin-right: 10px;
 }
 </style>
