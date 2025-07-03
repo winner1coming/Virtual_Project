@@ -1,7 +1,7 @@
 import { BaseComponent } from "../BaseComponent";
 export class SegmentDisplay extends BaseComponent{
-  constructor(id: number, type: String, position:[number, number] = [0,0],  pinPosition = []){
-    super(id, type, position, pinPosition);
+  constructor(id: number, type: String, position:[number, number] = [0,0]){
+    super(id, type, position);
     this.outputs.splice(0, this.outputs.length); 
     this.changeInputPinCount(8); // SegmentDisplay有8个输入引脚
   }
