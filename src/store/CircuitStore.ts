@@ -6,6 +6,7 @@ import { EventDrivenSimulator } from '@/logic/Simulator';
 import { useProjectStore } from './ProjectStore';
 
 import {createComponentByType} from '@/modules/useComponentType';
+import { SubCircuitComponent } from '@/logic/components/SubCircuitComponent';
 
 
 export const useCircuitStore = defineStore('circuit', {
@@ -38,10 +39,10 @@ export const useCircuitStore = defineStore('circuit', {
     },
 
     // 添加一个组件，返回id
-    addComponent(type: String, position: [number, number]=[0,0], name: String =""): number {
+    addComponent(type: String, position: [number, number]=[0,0], name: String ="", projectId: number): number {
       const id = this.currentId++;
       // const logic = createGate(type, id);
-      this.components.set(id, reactive(createComponentByType(id, type, position, name)));
+      this.components.set(id, reactive(createComponentByType(id, type, position, name, projectId)));
       // projectDate修改
       this.projectStore.getCurrentProject().componentsId.push(id);
       if(type === "INPUT"){
@@ -95,6 +96,7 @@ export const useCircuitStore = defineStore('circuit', {
       if (!component) {
         throw new Error(`Component with id ${id} not found`);
       }
+      // console.log("移动组件：ID:", id, "新位置:", newPosition);
       component.setPosition(newPosition);
       // 更新组件位置后，可能需要更新电线的位置 todo
     },

@@ -22,8 +22,8 @@ const emit = defineEmits(['dragstart']);
 
 const components = [
   {type: 'TUNNEL', name: '隧道'},
-  { type: 'INPUT', name: '输入端' },
-  { type: 'OUTPUT', name: '输出端' },
+  { type: 'INPUT', name: '输入引脚' },
+  { type: 'OUTPUT', name: '输出引脚' },
   { type: 'CLOCK', name: '时钟' },
   { type: 'REGISTER', name: '寄存器' },
   { type: 'MUX', name: '多路选择器' },

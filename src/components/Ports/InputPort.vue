@@ -28,7 +28,7 @@ function toggle() {
 
 // 计算颜色逻辑
 const fillColor = computed(() => {
-  if (props.active === -2) return 'red'
+  if (props.active === -2 || props.active === undefined) return 'red'
   if (props.active === -1) return 'blue'
   if (props.bitWidth > 1) return 'black'
   if (props.active === 1) return 'green'

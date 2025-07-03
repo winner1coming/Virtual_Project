@@ -1,5 +1,5 @@
 <template>
-      <g :transform="`translate(${inputPin.position[0]}, ${inputPin.position[1]}) scale(${inputPin.scale})`" cursor="move">
+      <g :transform="`translate(${-280*inputPin.scale}, ${-280*inputPin.scale}) scale(${inputPin.scale})`" cursor="move">
       <!-- 背景矩形 -->
       <rect
         x="0"
@@ -17,7 +17,7 @@
   
       <!-- 每个 bit 位 -->
       <g
-        v-for="(bit, index) in inputPin.outputs"
+        v-for="(bit, index) in inputPin.getBits()"
         :key="index"
         @click="toggleBit(index)"
         style="cursor: pointer;"
@@ -33,7 +33,7 @@
         </text>
       </g>
       <!-- 输出 -->
-      <OutputPort :cx="svgWidth" :cy="svgHeight/2" :active="1" />
+      <OutputPort :cx="svgWidth" :cy="svgHeight/2" :active="inputPin.outputs[0]" :bitWidth="inputPin.bitWidth" />
       </g>
   </template>
   

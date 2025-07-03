@@ -1,4 +1,5 @@
 import { BaseComponent } from "../BaseComponent";
+import { EventDrivenSimulator } from "../Simulator";
 
 export class InputPin extends BaseComponent {
     constructor(
@@ -10,6 +11,7 @@ export class InputPin extends BaseComponent {
         super(id, type, position, pinPosition);
         this.changeInputPinCount(0); // InputPin没有输入引脚
         this.outputs.splice(0, this.outputs.length, 0); 
+        this.outputPinPosition.splice(0, this.outputPinPosition.length, [80, 80]); 
         this.bitWidth = 1; // 默认为1位
     }
 
@@ -36,6 +38,27 @@ export class InputPin extends BaseComponent {
                                               this.outputs[index]); // 保持-1或-2不变
             }
         }
+
+        // 输入引脚的改变会导致电路的改变
+        EventDrivenSimulator.getInstance().enqueue(this.id, 0, this.outputs[0]); 
+        EventDrivenSimulator.getInstance().processQueue();
+    }
+
+    // 返回bits数组
+    getBits(): number[] {
+        const bits: number[] = [];
+        if (this.bitWidth <= 0) {
+            return bits; // 如果位宽为 0，返回空数组
+        }
+
+        let value = this.outputs[0]; 
+
+        for (let i = 0; i < this.bitWidth; i++) {
+            // 提取每一位（从高位到低位）
+            bits.unshift(value & 1); // 取最低位
+            value = value >> 1; // 右移 1 位
+        }
+        return bits;
     }
 
     compute(): number[] {

@@ -25,7 +25,7 @@ export class EventDrivenSimulator {
   private circuitStore = useCircuitStore();
   private workQueue: WorkItem[] = [];
   private inQueue: Set<string> = new Set();
-  private enableSimulator: Boolean = false; // 是否启用模拟器
+  private enableSimulator: Boolean = true; // 是否启用模拟器
   private pause: Boolean = false; // 是否暂停模拟器
 
   // 隧道维护
@@ -82,15 +82,23 @@ export class EventDrivenSimulator {
         inputId = id1;
         inputIdx = pinIndex1 - comp1.getInputPinCount();
         outputId = id2;
-        outputIdx = pinIndex2;
         
-        if (pinIndex2 >= comp2.getInputPinCount()) legal = false;
+        if (pinIndex2 >= comp2.getInputPinCount()) {
+          legal = false;
+          outputIdx = pinIndex2 - comp2.getInputPinCount();
+        }else{
+          outputIdx = pinIndex2;
+        }
       } else {
         outputId = id1;
         outputIdx = pinIndex1;
         inputId = id2;
-        inputIdx = pinIndex2 - comp2.getInputPinCount();
-        if (pinIndex2 < comp2.getInputPinCount()) legal = false;
+        if (pinIndex2 < comp2.getInputPinCount()) {
+          legal = false;
+          inputIdx = pinIndex2;
+        }else{
+          inputIdx = pinIndex2 - comp2.getInputPinCount();
+        }
       }
     } else{
       const tunnelComp = comp1.type === 'TUNNEL' ? comp1 : comp2;
@@ -197,6 +205,7 @@ export class EventDrivenSimulator {
         }
       }
     }
+    this.processQueue();
   }
 
   // 维护隧道
@@ -257,6 +266,22 @@ export class EventDrivenSimulator {
   }
 
   processQueue(): void {
+    // // 移动到web worker中处理，以增加前端的响应性
+    // const worker = new Worker(new URL('@/workers/simulatorWorker.ts', import.meta.url));
+    // worker.postMessage({
+    //   workQueue: this.workQueue,
+    //   connectionManager: this.connectionManager,
+    //   circuitStore: this.circuitStore,
+    // });
+
+    // worker.onmessage = (event) => {
+    //   // console.log("Queue processed:", event.data);
+    // };
+
+    // worker.onerror = (error) => {
+    //   console.error("Worker error:", error);
+    // };
+
     while (this.workQueue.length > 0) {
       // 组件的id为id，它更改其索引为idx的引脚的输入为value
       const { id, idx, value } = this.workQueue.shift()!;
@@ -265,25 +290,32 @@ export class EventDrivenSimulator {
       const component = this.circuitStore.getComponent(id);
       if (!component) continue;
 
-      // 获取当前组件的新旧输出
-      const oldOutputs = [...component.getOutputs()];
-      const newOutputs = component.changeInput(idx, value);      
+      let oldOutputs: number[];
+      let newOutputs: number[];
 
-      if (!this.isEqualOutputs(oldOutputs, newOutputs)) {
-        const pinMap = this.connectionManager.getOutputPinMap(id);
-        if (!pinMap) continue;
+      if(this.circuitStore.getComponent(id).type !== 'INPUT') {
+        // 获取当前组件的新旧输出
+        oldOutputs = [...component.getOutputs()];
+        newOutputs = component.changeInput(idx, value); 
+        if(this.isEqualOutputs(oldOutputs, newOutputs)) continue; // 如果输出没有变化，则不需要通知其他组件
+      }else{
+        newOutputs = component.getOutputs();
+      }
 
-        for (const pinIdx of pinMap.keys()) {
-          for( const conn of pinMap.get(pinIdx) || []) {
-            if (conn.legal) {
-              const targetComponent = this.circuitStore.getComponent(conn.id);
-              if (!targetComponent) continue;
+      const pinMap = this.connectionManager.getOutputPinMap(id);
+      if (!pinMap) continue;
 
-              this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
-            }
+      for (const pinIdx of pinMap.keys()) {
+        for( const conn of pinMap.get(pinIdx) || []) {
+          if (conn.legal) {
+            const targetComponent = this.circuitStore.getComponent(conn.id);
+            if (!targetComponent) continue;
+
+            this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
           }
         }
       }
+      
     }
   }
 
