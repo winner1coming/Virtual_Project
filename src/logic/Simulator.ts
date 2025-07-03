@@ -248,7 +248,10 @@ export class EventDrivenSimulator {
             conn.legal = false; 
             this.enqueue(conn.id, conn.idx, -2); 
           } else {
-            conn.legal = true; 
+            if(conn.legal === false){
+              conn.legal = true; 
+              this.enqueue(conn.id, conn.idx, component.getOutputs()[conn.idx]); // 恢复合法后，重新通知
+            }
           }
         }
       }
@@ -266,7 +269,10 @@ export class EventDrivenSimulator {
             conn.legal = false; 
             this.enqueue(id, pinIdx, -2); 
           } else {
-            conn.legal = true; 
+            if(conn.legal === false){
+              conn.legal = true; 
+              this.enqueue(id, pinIdx, targetComponent.getOutputs()[conn.idx]); // 恢复合法后，重新通知
+            }
           }
         }
       }
