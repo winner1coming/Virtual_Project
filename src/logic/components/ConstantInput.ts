@@ -19,8 +19,6 @@ export class ConstantInput extends BaseComponent {
         //this.outputs = [0]; // 初始输出值为0
         this.outputs.splice(0, this.outputs.length, 0); 
         this.bitWidth = 1; // 默认1位
-        this.height = 30;
-        this.width = 30;
         this.currentValue = 0;
         this.updateMaxValue();
         this.maxValue = maxValue;

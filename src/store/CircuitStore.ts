@@ -60,12 +60,9 @@ export const useCircuitStore = defineStore('circuit', {
       if (!component) {
         throw new Error(`Component with id ${id} not found`);
       }
-      // 删除组件时，先删除其所有连接的电线  todo
-      // this.wires.forEach((wire, key) => {
-      //   if (wire.from.id === id || wire.to.id === id) {
-      //     this.wires.delete(key);
-      //   }
-      // });
+      // 删除组件时，先删除其所有连接的电线  
+      this.simulator.removeComponent(id); // 删除组件的连线
+      // 删除元件
       this.components.delete(id);
       // 如果删除的组件是当前选中的组件，则取消选中
       if (this.selectedId === id) {

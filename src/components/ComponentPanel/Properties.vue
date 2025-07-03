@@ -105,7 +105,8 @@ function updateDirection(value: string, option: SelectOption) {
 
 function updateBitWidth(value: number, option: SelectOption) {
   // 更新元件的数据位宽
-  eventBus.emit('updateComponentBitWidth');
+  // eventBus.emit('updateComponentBitWidth');
+  circuitStore.getComponent(circuitStore.selectedId).setBitWidth(value);
 }
 
 function updateInputCount(value: number) {
