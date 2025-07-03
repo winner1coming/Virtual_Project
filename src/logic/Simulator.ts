@@ -84,7 +84,7 @@ export class EventDrivenSimulator {
         outputId = id2;
         
         if (pinIndex2 >= comp2.getInputPinCount()) {
-          legal = false;
+          //legal = false;
           outputIdx = pinIndex2 - comp2.getInputPinCount();
         }else{
           outputIdx = pinIndex2;
@@ -94,7 +94,7 @@ export class EventDrivenSimulator {
         outputIdx = pinIndex1;
         inputId = id2;
         if (pinIndex2 < comp2.getInputPinCount()) {
-          legal = false;
+          //legal = false;
           inputIdx = pinIndex2;
         }else{
           inputIdx = pinIndex2 - comp2.getInputPinCount();
@@ -120,13 +120,14 @@ export class EventDrivenSimulator {
         outputIdx = otherPinIndex - otherComp.getInputPinCount();
       }
     }
-    // 判断位宽是否合法   // todo 放在元件的compute方法中判断
+    // // 判断位宽是否合法   
     // if(comp1.bitWidth !== comp2.bitWidth) {
     //   legal = false;
     // }
     this.connectionManager.addConnection(inputId, inputIdx, outputId, outputIdx, legal);
 
     const outputVal = this.circuitStore.getComponent(inputId).getOutputs()[inputIdx];
+
     // 电线输出端的组件，其索引为idx的输入引脚的输入更改为了outputVal
     this.enqueue(outputId, outputIdx, outputVal);
     // 如果模拟器未启用或暂停，则不处理队列
@@ -208,6 +209,49 @@ export class EventDrivenSimulator {
     this.processQueue();
   }
 
+  checkComponentConnections(id: number){
+    // 检查与该组件相连的connection的合法性
+    // 检查与该组件的输出相连的位宽
+    const component = this.circuitStore.getComponent(id);
+    if (!component) return;
+    const pinMap = this.connectionManager.getOutputPinMap(id);
+    if (pinMap){
+      for (const pinIdx of pinMap.keys()) {
+        for(const conn of pinMap.get(pinIdx) || []) {
+          const targetComponent = this.circuitStore.getComponent(conn.id);
+          if (!targetComponent) continue;
+          // 判断位宽是否合法
+          if (component.bitWidth !== targetComponent.bitWidth) {
+            conn.legal = false; 
+            this.enqueue(conn.id, conn.idx, -2); 
+          } else {
+            conn.legal = true; 
+          }
+        }
+      }
+    }
+    
+    // 检查与该组件的输入相连的位宽
+    const inputPinMap = this.connectionManager.getInputPinMap(id);
+    if (inputPinMap){
+      for (const pinIdx of inputPinMap.keys()) {
+        for(const conn of inputPinMap.get(pinIdx) || []) {
+          const targetComponent = this.circuitStore.getComponent(conn.id);
+          if (!targetComponent) continue;
+          // 判断位宽是否合法
+          if (component.bitWidth !== targetComponent.bitWidth) {
+            conn.legal = false; 
+            this.enqueue(id, pinIdx, -2); 
+          } else {
+            conn.legal = true; 
+          }
+        }
+      }
+    }
+
+    this.processQueue();
+  }
+
   // 维护隧道
   // 添加隧道
   addTunnel(name: String, id: number) {
@@ -282,6 +326,7 @@ export class EventDrivenSimulator {
     //   console.error("Worker error:", error);
     // };
 
+    if(!this.enableSimulator || this.pause) return; // 如果模拟器未启用或暂停，则不处理队列
     while (this.workQueue.length > 0) {
       // 组件的id为id，它更改其索引为idx的引脚的输入为value
       const { id, idx, value } = this.workQueue.shift()!;
