@@ -1,3 +1,5 @@
+// 算法改过了，如果还要用这个，要更新里面的算法
+
 self.onmessage = (event) => {
   const { workQueue, connectionManager, circuitStore } = event.data;
 

@@ -1,5 +1,6 @@
 import { reactive } from "vue";
 import { calcInputYs } from "@/logic/utils/useGateLayout";
+import { EventDrivenSimulator } from "./Simulator";
 
 // 电路传输整型，-1表示未连接，-2表示错误
 export abstract class BaseComponent{
@@ -57,6 +58,7 @@ export abstract class BaseComponent{
 
   setBitWidth(bitWidth: number){
     this.bitWidth = bitWidth;
+    EventDrivenSimulator.getInstance().checkComponentConnections(this.id);
   }
   setPosition(position: [number, number]) {
     this.position[0] = position[0]; 
