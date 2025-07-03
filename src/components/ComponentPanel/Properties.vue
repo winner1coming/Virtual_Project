@@ -35,7 +35,7 @@
         <label for="bitWidth">数据位宽：</label>
         <n-select
           id="bitWidth"
-          v-model:value="circuitStore.getComponent(circuitStore.selectedId).bitWidth"
+          :value="circuitStore.getComponent(circuitStore.selectedId).bitWidth"
           :options="bitWidthOptions.map(width => ({ label: `${width} 位`, value: width }))"
           @update:value="updateBitWidth"
         >

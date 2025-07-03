@@ -94,10 +94,12 @@ export class InputPin extends BaseComponent {
             
             ////is.outputs = newOutputs;
             this.outputs.splice(0, this.outputs.length, ...newOutputs); // 替换outputs的值
+
+            EventDrivenSimulator.getInstance().checkComponentConnections(this.id); // 检查连线
+            this.updatePinPosition(); // 更新引脚位置
         }
 
-        EventDrivenSimulator.getInstance().checkComponentConnections(this.id); // 检查连线
-        this.updatePinPosition(); // 更新引脚位置
+        
     }
 
     // 获取当前值（十进制表示，适用于多bit）
