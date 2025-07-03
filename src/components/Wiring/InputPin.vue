@@ -1,5 +1,5 @@
 <template>
-      <g :transform="`translate(${inputPin.position[0]}, ${inputPin.position[1]}) scale(${inputPin.scale})`" cursor="move">
+      <g :transform="`scale(${inputPin.scale})`" cursor="move">
       <!-- 背景矩形 -->
       <rect
         x="0"
@@ -11,13 +11,22 @@
         stroke-width="8"
         rx="6"
       />
+      
+      <!--填充透明区域以便选中-->
+      <rect
+        x="0"
+        y="0"
+        :width="svgWidth"
+        :height="svgHeight"
+        fill=transparent
+      />
 
       <!--选中方框-->
-      <SelectedBox :x="-6" :y="-6" :width="svgWidth+12" :height="svgHeight+12" :visible="true"/>
+      <SelectedBox :x="-6" :y="-6" :width="svgWidth+12" :height="svgHeight+12" :visible="circuitStore.selectedId===props.id"/>
   
       <!-- 每个 bit 位 -->
       <g
-        v-for="(bit, index) in inputPin.outputs"
+        v-for="(bit, index) in inputPin.getBits()"
         :key="index"
         @click="toggleBit(index)"
         style="cursor: pointer;"
@@ -33,7 +42,7 @@
         </text>
       </g>
       <!-- 输出 -->
-      <OutputPort :cx="svgWidth" :cy="svgHeight/2" :active="1" />
+      <OutputPort :cx="svgWidth" :cy="svgHeight/2" :active="inputPin.outputs[0]" :bitWidth="inputPin.bitWidth" />
       </g>
   </template>
   

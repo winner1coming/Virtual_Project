@@ -12,7 +12,7 @@ import {Tunnel} from '@/logic/components/Tunnel';
 import { ConstantInput } from '@/logic/components/ConstantInput';
 import { SubCircuitComponent } from '@/logic/components/SubCircuitComponent';
 
-export function createComponentByType(id: number, type: String, position:[number, number] = [0,0], name:String=""): BaseComponent {
+export function createComponentByType(id: number, type: String, position:[number, number] = [0,0], name:String="", projectId: number=0): BaseComponent {
   switch (type) {
     case 'AND':
       return new AndGate(id, type, position);
@@ -36,8 +36,8 @@ export function createComponentByType(id: number, type: String, position:[number
       return new InputPin(id, type, position);
     case 'OUTPUT':
       return new OutputPin(id, type, position);
-    // case 'SUB_CIRCUIT':
-    //   return new SubCircuitComponent(id, type, position, 0);
+    case 'SUB_CIRCUIT':
+      return new SubCircuitComponent(id, type, position, name, projectId);
     // 添加其他组件类型
     default:
       throw new Error(`Unknown component type: ${type}`);

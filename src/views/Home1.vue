@@ -1,22 +1,33 @@
 <template>
   <div>
     <h1>数字电路实验</h1>
-    <svg
+    <!-- <svg
       viewBox="0 0 600 600"
       width="300"
       height="300"
       style="overflow: visible;"
     >
       <OrGate :id="orGateId"/>
-    </svg>
-    <svg
+    </svg> -->
+
+    <!-- <svg
       viewBox="0 0 600 600"
       width="300"
       height="300"
       style="overflow: visible;"
     >
       <InputPin :id="inputPinId"/>
+    </svg> -->
+
+    <svg
+      viewBox="-300 -300 600 600"
+      width="300"
+      height="300"
+      style="overflow: visible;"
+    >
+      <CustomizeComoponent :id="CustomizeComponentId"/>
     </svg>
+
     <!-- <svg
       viewBox="0 0 600 600"
       width="300"
@@ -25,14 +36,16 @@
     >
       <Tunnel :id="tunnelId"/>
     </svg> -->
-    <svg
+
+    <!-- <svg
       viewBox="0 0 600 600"
       width="300"
       height="300"
       style="overflow: visible;"
     >
       <AndGate :id="andGateId"/>
-    </svg>
+    </svg> -->
+
     <!-- <svg
       viewBox="0 0 600 600"
       width="300"
@@ -41,6 +54,7 @@
     >
       <Constant :id="constantId"/>
     </svg> -->
+
     <!-- <svg
       viewBox="0 0 600 600"
       width="300"
@@ -49,6 +63,7 @@
     >
       <Clock :id="clockId"/>
     </svg> -->
+
     <!-- <Splitter /> -->
     <button @click="toggleInputPin"> 改InputPin的位宽 </button>
   </div>
@@ -64,6 +79,7 @@ import InputPin from '@/components/Wiring/InputPin.vue'
 import Constant from '@/components/Wiring/Constant.vue'
 import Clock from '@/components/Wiring/Clock.vue'
 import Splitter from '@/components/Wiring/Splitter.vue'
+import CustomizeComoponent from '@/components/CustomizeComponent.vue'
 
 import { useCircuitStore } from '@/store/CircuitStore.js'
 const circuitStore = useCircuitStore();
@@ -75,10 +91,13 @@ const orGateId = circuitStore.addComponent('OR');
 const inputPinId = circuitStore.addComponent('INPUT');
 const constantId = circuitStore.addComponent('CONSTANT');
 const clockId = circuitStore.addComponent('CLOCK');
+// const splitterId = circuitStore.addComponent('SPLITTER')
+const CustomizeComponentId = circuitStore.addComponent('AND')
 
 function toggleInputPin()
 {
-  circuitStore.getComponent(inputPinId).setBitCount(32);
+  // circuitStore.getComponent(inputPinId).setBitCount(32);
+  circuitStore.getComponent(CustomizeComponentId).inputCount = 8;
 }
 </script>
 

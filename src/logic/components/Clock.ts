@@ -4,8 +4,8 @@ export class Clock extends BaseComponent {
     private intervalId: any = null;
     private period: number; // 时钟周期，单位ms
 
-    constructor(id: number, type: String, position: [number, number] = [0, 0], pinPosition = [], period: number = 1000) {
-        super(id, type, position, pinPosition);
+    constructor(id: number, type: String, position: [number, number] = [0, 0], period: number = 1000) {
+        super(id, type, position);
         this.changeInputPinCount(0); // 时钟没有输入引脚
         this.period = period;
 

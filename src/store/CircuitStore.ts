@@ -6,6 +6,7 @@ import { EventDrivenSimulator } from '@/logic/Simulator';
 import { useProjectStore } from './ProjectStore';
 
 import {createComponentByType} from '@/modules/useComponentType';
+import { SubCircuitComponent } from '@/logic/components/SubCircuitComponent';
 
 
 export const useCircuitStore = defineStore('circuit', {
@@ -38,10 +39,10 @@ export const useCircuitStore = defineStore('circuit', {
     },
 
     // 添加一个组件，返回id
-    addComponent(type: String, position: [number, number]=[0,0], name: String =""): number {
+    addComponent(type: String, position: [number, number]=[0,0], name: String ="", projectId: number): number {
       const id = this.currentId++;
       // const logic = createGate(type, id);
-      this.components.set(id, reactive(createComponentByType(id, type, position, name)));
+      this.components.set(id, reactive(createComponentByType(id, type, position, name, projectId)));
       // projectDate修改
       this.projectStore.getCurrentProject().componentsId.push(id);
       if(type === "INPUT"){
@@ -59,12 +60,9 @@ export const useCircuitStore = defineStore('circuit', {
       if (!component) {
         throw new Error(`Component with id ${id} not found`);
       }
-      // 删除组件时，先删除其所有连接的电线  todo
-      // this.wires.forEach((wire, key) => {
-      //   if (wire.from.id === id || wire.to.id === id) {
-      //     this.wires.delete(key);
-      //   }
-      // });
+      // 删除组件时，先删除其所有连接的电线  
+      this.simulator.removeComponent(id); // 删除组件的连线
+      // 删除元件
       this.components.delete(id);
       // 如果删除的组件是当前选中的组件，则取消选中
       if (this.selectedId === id) {
@@ -95,6 +93,7 @@ export const useCircuitStore = defineStore('circuit', {
       if (!component) {
         throw new Error(`Component with id ${id} not found`);
       }
+      // console.log("移动组件：ID:", id, "新位置:", newPosition);
       component.setPosition(newPosition);
       // 更新组件位置后，可能需要更新电线的位置 todo
     },

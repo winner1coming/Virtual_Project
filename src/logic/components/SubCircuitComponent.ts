@@ -17,7 +17,6 @@ export class SubCircuitComponent extends BaseComponent {
     type: String,
     position:[number, number] = [0, 0],
     name: String,
-    componentsId: number[],
     projectId: number,
   ) {
     super(id, type, position);
@@ -29,8 +28,8 @@ export class SubCircuitComponent extends BaseComponent {
     this.inputPins = projectStore.getProjectById(projectId).inputPins;
     this.outputPins = projectStore.getProjectById(projectId).outputPins;
 
-    this.inputs = reactive(Array(this.inputPins.length).fill(-1));
-    this.outputs = reactive(Array(this.outputPins.length).fill(-1));
+    this.changeInputPinCount(this.inputPins.length);
+    this.changeOutputPinCount(this.outputPins.length);
 
     // 根据id创建组件
     projectStore.getProjectById(projectId).componentsId.forEach(id => {

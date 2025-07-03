@@ -1,6 +1,5 @@
 <template>
   <div class="component-properties">
-    <h3>元件属性</h3>
     <div v-if="circuitStore.selectedId !== -1">
       <!-- 修改名字 -->
       <div class="property-item">
@@ -35,7 +34,7 @@
         <label for="bitWidth">数据位宽：</label>
         <n-select
           id="bitWidth"
-          v-model:value="circuitStore.getComponent(circuitStore.selectedId).bitWidth"
+          :value="circuitStore.getComponent(circuitStore.selectedId).bitWidth"
           :options="bitWidthOptions.map(width => ({ label: `${width} 位`, value: width }))"
           @update:value="updateBitWidth"
         >
@@ -71,7 +70,7 @@
 
     </div>
     <div v-else>
-      <p>未选中任何元件</p>
+      <p align="center">选中元件以查看属性</p>
     </div>
   </div>
 </template>
@@ -105,7 +104,8 @@ function updateDirection(value: string, option: SelectOption) {
 
 function updateBitWidth(value: number, option: SelectOption) {
   // 更新元件的数据位宽
-  eventBus.emit('updateComponentBitWidth');
+  // eventBus.emit('updateComponentBitWidth');
+  circuitStore.getComponent(circuitStore.selectedId).setBitWidth(value);
 }
 
 function updateInputCount(value: number) {

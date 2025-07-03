@@ -1,0 +1,92 @@
+<template>
+    <g :transform="`translate(-280, -280) scale(${customizeComponent.scale})`" cursor="move">
+      <!-- 自定义图形 -->
+      <rect
+        x="149"
+        :y="minY<181? minY-6 : 175"
+        :width="223"
+        :height="minY<181? maxY-minY+12: 226"
+        fill=transparent
+        stroke="black"
+        stroke-width="8"
+      />
+       
+      <!--选中方框-->
+      <!-- <SelectedBox :x="82" :y="minY<181? minY-12: 175" :width="424" :height="minY<181? (maxY-minY+24): 226" :visible="circuitStore.selectedId===props.id"/>
+       -->
+
+      <!-- 输入引脚 -->
+      <template v-for="(input, index) in customizeComponent.inputs" :key="index">
+        <circle
+          v-if="customizeComponent.inputInverted[index]"
+          :cx="149 - 26"
+          :cy="customizeComponent.inputPinPosition[index][1]"
+          r="16"
+          stroke="black"
+          stroke-width="12"
+          fill="none"
+        />
+        <path v-if="!customizeComponent.inputInverted[index]":d="`M92 ${customizeComponent.inputPinPosition[index][1]}L149 ${customizeComponent.inputPinPosition[index][1]}`" stroke="black" stroke-width="12" />
+        <InputPort :cx="92" :cy="customizeComponent.inputPinPosition[index][1]" :active="input" :bitWidth="customizeComponent.bitWidth" @toggle="() => handleToggleInput(index)"/>
+      </template>
+
+      <!-- 输出引脚 --待改写 -->
+      <template v-for="(output, index) in customizeComponent.outputs" :key="output.id">
+        <circle
+          v-if="output.inverted"
+          :cx="149+223"
+          :cy="outputYs[index]"
+          r="16"
+          stroke="black"
+          stroke-width="12"
+          fill="none"
+        />
+        <path v-if="!output.inverted":d="`M372 ${outputYs[index]}L429 ${outputYs[index]}`" stroke="black" stroke-width="12" />
+        <OutputPort :cx="149+223+57" :cy="outputYs[index]" :active="output" />
+      </template>
+
+    </g>
+</template>
+
+<script setup>
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import InputPort from '@/components/Ports/InputPort.vue'
+import OutputPort from '@/components/Ports/OutputPort.vue'
+import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
+import { defineProps } from 'vue'
+
+import { useGateLayout } from '@/logic/usegates/useGateLayout'
+import { useCircuitStore } from '@/store/CircuitStore'
+
+const circuitStore = useCircuitStore();
+const props = defineProps({
+  id: {
+    type: Number,
+    required: true
+  }
+})
+
+const customizeComponent = computed(() => {
+  // return circuitStore.getComponent(id);   // debug
+  return circuitStore.getComponent(props.id);  
+});
+
+let minY_in = computed(()=>Math.min(...customizeComponent.value.inputPinPosition.map(pin => pin[1])));
+let maxY_in = computed(()=>Math.max(...customizeComponent.value.inputPinPosition.map(pin => pin[1])));
+
+let minY = computed(()=>Math.min(minY_in.value, minY_out)); // todo
+let maxY = computed(()=>Math.max(maxY_in.value, maxY_out)); // todo
+
+let outputYs = useGateLayout(15) // 定义输出的个数 调试用，要删 todo
+let minY_out = Math.min(...outputYs.value); //todo
+let maxY_out = Math.max(...outputYs.value); //todo
+
+
+</script>
+
+<style scoped>
+svg {
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+}
+</style>

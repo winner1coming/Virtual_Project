@@ -200,6 +200,7 @@ const Ports = new Map();
 
 // 定义电线的两端
 const wireStart = ref(null) // 记录起始点
+const wireEndPort = ref(null) // 记录终点端口信息
 let wireStartId = null // 记录起始点port的元件ID
 
 const { saveHistory, saveSnapshot } = useHistory(components) // 使用自定义的历史记录管理
@@ -217,13 +218,13 @@ const contextMenu = reactive({
 
 
 
-// 添加元件的端口对
+// 添加元件的引脚信息
 function addComponentPorts(componentId, portsInfo, index_x, index_y) {
   const portList = portsInfo.ports.map((port, index) => {
     const inputCount = portsInfo.ports.length - 1; // 假设最后一个是输出
     return {
       id: port.id,               // 原始端口编号
-      x: port.x + index_x - 280,       // 端口X坐标=相对坐标x+元件坐标
+      x: port.x + index_x - 280,       // 端口X坐标=相对坐标x+元件坐标，这里的280是因为原点移动了（-280，-280）
       y: port.y + index_y - 280,       // 端口Y坐标=相对坐标y+元件坐标
       componentId,
       type: index < inputCount ? 'input' : 'output'
@@ -232,22 +233,20 @@ function addComponentPorts(componentId, portsInfo, index_x, index_y) {
   Ports.set(componentId, portList);
 }
 
+// 根据元件ID获取引脚信息
 function getComponentPorts(componentId) {
   return Ports.get(componentId) || [];
 }
 
+// 元件被移除时，也要移除其端口信息
 function removeComponentPorts(componentId) {
   Ports.delete(componentId);
 }
 
-function updateComponentPorts(componentId, portsArray) {
-  Ports.set(componentId, portsArray);
+// 更新元件端口信息
+function updateComponentPorts(componentId, portsInfo, index_x, index_y) {
+  addComponentPorts(componentId, portsInfo, index_x, index_y)
 }
-
-
-// // 组件按钮对应图片选择
-// const expanded = reactive({ logic:true })// 逻辑门、IO、其他分类的展开状态
-// function toggleCategory(type) {expanded[type] = !expanded[type]}
 
 // 组件映射表
 const componentMap = {
@@ -255,7 +254,7 @@ const componentMap = {
   OR: OrGate,
   NOT: NotGate,
   TUNNEL: Tunnel,
-  INPUT_PIN: InputPin,
+  INPUT: InputPin,
 }
 
 // 各组件的方法映射
@@ -264,7 +263,7 @@ const COMPONENT_LOGIC = {
   OR: LogicOrGate,
   NOT: LogicNotGate,
   TUNNEL: LogicTunnel,
-  INPUT_PIN: LogicInputPin,
+  INPUT: LogicInputPin,
 }
 
 // 初始化各元件尺寸配置
@@ -273,7 +272,7 @@ const COMPONENT_SIZES = {
   OR: { width: 150, height: 150 },
   NOT: { width: 60, height: 60 },
   TUNNEL: { width: 50, height: 50 },
-  INPUT_PIN: { width: 30, height: 30 },
+  INPUT: { width: 30, height: 30 },
 }
  
 // 按钮图片资源映射表
@@ -282,7 +281,7 @@ const IMAGE_MAP = {
   OR: new Image(),
   NOT: new Image(),
   TUNNEL: new Image(),
-  INPUT_PIN: new Image(),
+  INPUT: new Image(),
 }
 
 // 初始化图片资源
@@ -290,7 +289,7 @@ IMAGE_MAP.AND.src = '/assets/AND.png'
 IMAGE_MAP.OR.src = '/assets/OR.png'
 IMAGE_MAP.NOT.src = '/assets/NOT.png'
 IMAGE_MAP.TUNNEL.src = '/assets/TUNNEL.png'
-IMAGE_MAP.INPUT_PIN.src = '/assets/INPUT_PIN.png'
+IMAGE_MAP.INPUT.src = '/assets/INPUT.png'
 
 function updateComponentDirection() {
   // 更新完方向后重新绘制画布
@@ -501,19 +500,78 @@ function generateConnectionPath(start, end) {
 
 // 修改 handleMouseMove 以支持连线拖动
 function handleMouseMove(event) {
-
   
   const rect = canvasContainer.value.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
 
   if (currentComponent.value) {
+    // 单纯选中，但是不拖动
     previewPos.x = x;
     previewPos.y = y;
   } else if (isDragging.value && selectedComponent.value) {
+    // 选中且拖动：虽然我知道拖动这里用偏移量来做更合理，但是出现了意想不到的bug，因此照搬新建逻辑
+    // selectedComponent：元件初始位置
+    // dragOffset：拖动偏移量
+    // x, y：元件下放位置
     selectedComponent.value.x = x - dragOffset.x;
     selectedComponent.value.y = y - dragOffset.y;
+
+    let ID = selectedComponent.value.ID// 获取元件ID
+
+    // 获取组件类型对应的逻辑类
+    let componentLogic
+    switch (selectedComponent.value.componentType) {
+      case 'AND':
+        componentLogic = new LogicAndGate(ID, 'AND', [selectedComponent.value.x, selectedComponent.value.y])
+        break
+      case 'OR':
+        componentLogic = new LogicOrGate(ID, 'OR', [selectedComponent.value.x, selectedComponent.value.y])
+        break
+      case 'NOT':
+        componentLogic = new LogicNotGate(ID, 'NOT', [selectedComponent.value.x, selectedComponent.value.y])
+        break
+      case 'TUNNEL':
+        componentLogic = new LogicTunnel(ID, 'TUNNEL', [selectedComponent.value.x, selectedComponent.value.y])
+        break
+      case 'INPUT':
+        componentLogic = new LogicInputPin(ID, 'INPUT', [selectedComponent.value.x, selectedComponent.value.y])
+        break
+      default:
+        console.error("未知元件类型：", selectedComponent.value.componentType)
+    }
+
+    // 触发引脚坐标更新（非常重要）
+    componentLogic.setPosition([selectedComponent.value.x, selectedComponent.value.y]);
     
+
+    // 创建Vue组件实例
+    const componentInstance = {
+      component: componentMap[selectedComponent.value.componentType],
+      props: {ID},
+      logic: componentLogic,
+    }
+
+    // 存储Vue实例引用
+    vueComponentMap.set(ID, componentInstance);
+
+    // 4：记录当前ID的端口信息
+    // 延迟4后获取端口信息，确保见组件挂载完成
+    nextTick(() => {
+      const logic = vueComponentMap.get(ID)?.logic;
+      if(!logic) {
+        console.warn("逻辑类未找到，ID：", ID)
+        return
+      }
+      const portsInfo = logic.getAllPorts()
+      console.log("端口信息1：", portsInfo)
+      console.log("selectedComponent.value.x:", selectedComponent.value.x, "selectedComponent.value.y:", selectedComponent.value.y)
+      updateComponentPorts(ID, portsInfo, selectedComponent.value.x, selectedComponent.value.y);
+      console.log("所有端口：", Ports)
+    })
+
+    useCircuitStore().moveComponent(ID, [x, y])// 调用函数移动元件
+
     // 更新所有相关连线的路径
     updateConnectionPaths();
   } else if (startPin && tempWire.value) {
@@ -578,8 +636,7 @@ function handleMouseDown(event) {
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
 
-  // console.log("元件x:", x)
-  // console.log("元件y:", y)
+  console.log("点击点x:", x, "点击点Y:", y)
 
   handleWireConnection(x, y)// 处理连线逻辑
 
@@ -633,7 +690,7 @@ function handleWireConnection(x, y) {
   console.log("设置终点：", endPort)
   if (endPort) {
     // 这里是第二次点击：查找最近的端口作为电线终点
-    const wireEndPort = {
+    wireEndPort.value = {
       x: endPort.x,
       y: endPort.y,
       componentId: endPort.componentId,// 端口的元件ID
@@ -641,10 +698,13 @@ function handleWireConnection(x, y) {
       portType:endPort.type,          // 端口的类型 
     };
     // 根据起始点画线
-    const newWire = createWirePath(wireStart.value, wireEndPort);
+    const newWire = createWirePath(wireStart.value, wireEndPort.value);
     connections.push(newWire);
     // 填写逻辑类，调用函数连接两个元件
-    useCircuitStore.connect(wireStartId, wireStart.portId, wireEndPort.componentId, wireEndPort.portId)
+    console.log("电线起点元件ID:", wireStartId, "起点引脚ID:", wireStart.value.portId)
+    console.log("电线终点元件ID:", wireEndPort.value.componentId, "终点引脚ID:", wireEndPort.value.portId)
+    useCircuitStore().connect(wireStartId, wireStart.value.portId, wireEndPort.value.componentId, wireEndPort.value.portId);
+    console.log("创建新连线成功！")
     wireStart.value = null;// 重置起点
     wireStartId = null;
   }
@@ -743,6 +803,7 @@ function handleMouseUp() {
   isDragging.value = false
 }
 
+// 选中元件selectedComponent
 function selectComponent(item, event) {
   console.log("选中元件：", item)
   const rect = canvasContainer.value.getBoundingClientRect()
@@ -762,6 +823,12 @@ function handleLeftClick(event) {
   if (!currentComponent.value) {
     console.log("当前没有元件，无法放置")
     return; // 没有元件时不处理
+  }
+
+  // 鼠标左键且处于元件放置状态，清空电线起点
+  if (wireStartId != null) {
+    wireStart.value = null; // 如果有起点，重置起点
+    wireStartId = null; // 重置起点ID
   }
 
   event.preventDefault();
@@ -802,8 +869,8 @@ function handleLeftClick(event) {
       case 'TUNNEL':
         componentLogic = new LogicTunnel(id, 'TUNNEL', [x, y])
         break
-      case 'INPUT_PIN':
-        componentLogic = new LogicInputPin(id, 'INPUT_PIN', [x, y])
+      case 'INPUT':
+        componentLogic = new LogicInputPin(id, 'INPUT', [x, y])
         break
       default:
         console.error("未知元件类型：", currentComponent.value.componentType)
@@ -845,6 +912,14 @@ function handleLeftClick(event) {
 
 function handleRightClick(event) {
   event.preventDefault();
+
+  console.log("电线起点元件ID:", wireStartId)
+  // 鼠标右键时清空起点记录
+  if (wireStartId != null) {
+    wireStart.value = null; // 如果有起点，重置起点
+    wireStartId = null; // 重置起点ID
+  }
+  console.log("清空后，电线起点元件ID:", wireStartId)
 
   const rect = canvasContainer.value.getBoundingClientRect();
   const x = event.clientX - rect.left;
