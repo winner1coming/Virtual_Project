@@ -25,40 +25,40 @@
         <path    :stroke="segmentDisplay.inputs[1]===1 ? 'red':'rgba(206.55, 206.55, 206.55, 1)'" stroke-width="16"    d="M182 134L182 241.173">
         </path>
         <!--2显示横线-->
-        <path    :stroke="segmentDisplay.inputs[0]===1 ? 'red':'rgba(206.55, 206.55, 206.55, 1)'" stroke-width="16"    d="M291.915 134L193.777 134">
+        <path    :stroke="segmentDisplay.inputs[2]===1 ? 'red':'rgba(206.55, 206.55, 206.55, 1)'" stroke-width="16"    d="M291.915 134L193.777 134">
         </path>
         <!--3显示竖线-->
-        <path    :stroke="segmentDisplay.inputs[0]===1 ? 'red':'rgba(206.55, 206.55, 206.55, 1)'" stroke-width="16"    d="M304.346 134L304.346 241.173">
+        <path    :stroke="segmentDisplay.inputs[3]===1 ? 'red':'rgba(206.55, 206.55, 206.55, 1)'" stroke-width="16"    d="M304.346 134L304.346 241.173">
         </path>
         <!--4显示竖线-->
-        <path    :stroke="segmentDisplay.inputs[0]===1 ? 'red':'rgba(206.55, 206.55, 206.55, 1)'" stroke-width="16"    d="M182 244.827L182 352">
+        <path    :stroke="segmentDisplay.inputs[4]===1 ? 'red':'rgba(206.55, 206.55, 206.55, 1)'" stroke-width="16"    d="M182 244.827L182 352">
         </path>
         <!--5显示横线-->
-        <path    :stroke="segmentDisplay.inputs[0]===1 ? 'red':'rgba(206.55, 206.55, 206.55, 1)'" stroke-width="16"    d="M291.915 352L193.777 352">
+        <path    :stroke="segmentDisplay.inputs[5]===1 ? 'red':'rgba(206.55, 206.55, 206.55, 1)'" stroke-width="16"    d="M291.915 352L193.777 352">
         </path>
         <!--6显示竖线-->
-        <path    :stroke="segmentDisplay.inputs[0]===1 ? 'red':'rgba(206.55, 206.55, 206.55, 1)'" stroke-width="16"    d="M305 244.827L305 352">
+        <path    :stroke="segmentDisplay.inputs[6]===1 ? 'red':'rgba(206.55, 206.55, 206.55, 1)'" stroke-width="16"    d="M305 244.827L305 352">
         </path>
         <!--小数点-->
-        <path    :stroke="segmentDisplay.inputs[0]===1 ? 'red':'rgba(206.55, 206.55, 206.55, 1)'" stroke-width="16"    d="M340 344L340 360">
+        <path    :stroke="segmentDisplay.inputs[7]===1 ? 'red':'rgba(206.55, 206.55, 206.55, 1)'" stroke-width="16"    d="M340 344L340 360">
         </path>
 
         <!--接口0-->
         <InputPort :cx="182" :cy="91" :active="segmentDisplay.inputs[0]" :bitWidth="segmentDisplay.width" />
         <!--接口1-->
-        <InputPort :cx="232" :cy="91" :active="segmentDisplay.inputs[0]" :bitWidth="1" />
+        <InputPort :cx="232" :cy="91" :active="segmentDisplay.inputs[1]" :bitWidth="1" />
         <!--接口2-->
-        <InputPort :cx="286" :cy="91" :active="segmentDisplay.inputs[0]" :bitWidth="1" />
+        <InputPort :cx="286" :cy="91" :active="segmentDisplay.inputs[2]" :bitWidth="1" />
         <!--接口3-->
-        <InputPort :cx="340" :cy="91" :active="segmentDisplay.inputs[0]" :bitWidth="1" />
+        <InputPort :cx="340" :cy="91" :active="segmentDisplay.inputs[3]" :bitWidth="1" />
         <!--接口4-->
-        <InputPort :cx="182" :cy="396" :active="segmentDisplay.inputs[0]" :bitWidth="1" />
+        <InputPort :cx="182" :cy="396" :active="segmentDisplay.inputs[4]" :bitWidth="1" />
         <!--接口5-->
-        <InputPort :cx="234" :cy="396" :active="segmentDisplay.inputs[0]" :bitWidth="1" />
+        <InputPort :cx="234" :cy="396" :active="segmentDisplay.inputs[5]" :bitWidth="1" />
         <!--接口6-->
-        <InputPort :cx="286" :cy="396" :active="segmentDisplay.inputs[0]" :bitWidth="1" />
+        <InputPort :cx="286" :cy="396" :active="segmentDisplay.inputs[6]" :bitWidth="1" />
         <!--接口7-->
-        <InputPort :cx="340" :cy="396" :active="segmentDisplay.inputs[0]" :bitWidth="1" />
+        <InputPort :cx="340" :cy="396" :active="segmentDisplay.inputs[7]" :bitWidth="1" />
 
         <!-- <InputPort :cx="92" :cy="inputYs[index]" :active="input" :bitWidth="segmentDisplay.width" @toggle="() => handleToggleInput(index)"/> -->
       </g>

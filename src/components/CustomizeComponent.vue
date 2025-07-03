@@ -74,12 +74,12 @@ const customizeComponent = computed(() => {
 let minY_in = computed(()=>Math.min(...customizeComponent.value.inputPinPosition.map(pin => pin[1])));
 let maxY_in = computed(()=>Math.max(...customizeComponent.value.inputPinPosition.map(pin => pin[1])));
 
-let minY = computed(()=>Math.min(minY_in.value, minY_out)); // todo
-let maxY = computed(()=>Math.max(maxY_in.value, maxY_out)); // todo
+let minY = computed(()=>Math.min(minY_in.value, minY_out.value)); // todo
+let maxY = computed(()=>Math.max(maxY_in.value, maxY_out.value)); // todo
 
-let outputYs = useGateLayout(15) // 定义输出的个数 调试用，要删 todo
-let minY_out = Math.min(...outputYs.value); //todo
-let maxY_out = Math.max(...outputYs.value); //todo
+let outputYs = computed(()=>useGateLayout(customizeComponent.value.outputs.length)) // 定义输出的个数 调试用，要删 todo
+let minY_out = computed(()=>Math.min(...outputYs.value)); //todo
+let maxY_out = computed(()=>Math.max(...outputYs.value)); //todo
 
 
 </script>
