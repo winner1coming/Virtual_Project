@@ -100,6 +100,11 @@ export abstract class BaseComponent{
 
     this.updatePinPosition();
   }
+  changeOutputPinCount(num: number){
+    this.outputs.splice(0, this.outputs.length, ...Array(num).fill(-1));
+
+    this.updatePinPosition();
+  }
 
   changeInputInverted(idx: number){
     if(idx < 0 || idx >= this.inputCount){

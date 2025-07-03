@@ -7,7 +7,7 @@
       :key="project.projectId"
       class="project-item"
       :class="{ selected: project.projectId === projectStore.selectedProjectId }"
-      @click="loadProject(project.projectId)"
+      @mousedown="handleMouseDown(project.projectId)"
       @contextmenu.prevent="showContextMenu($event, project)"
     >
       {{ project.name }}
@@ -35,9 +35,11 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { NButton, NDropdown } from 'naive-ui';
+import { c, create, NButton, NDropdown } from 'naive-ui';
 import { useProjectStore } from '@/store/ProjectStore';
 import { ProjectData } from '@/logic/ProjectData';
+import { useCircuitStore } from '@/store/CircuitStore';
+import eventBus from '@/modules/useEventBus';
 
 const projectStore = useProjectStore();
 
@@ -69,9 +71,46 @@ const createNewProject = () => {
   }
 };
 
-// 加载项目
+let clickTimer: number | null = null;
+let clickCount = 0;
+const handleMouseDown = (projectId: number) => {
+  clickCount++;
+  if(clickCount === 1){
+    clickTimer = setTimeout(() => {
+      createSubComponent(projectId); 
+      clickCount = 0; // 重置点击计数
+    }, 200); // 单击延时500毫秒
+  } else if (clickCount === 2) {
+    if (clickTimer) {
+      clearTimeout(clickTimer);
+      clickTimer = null; // 清除定时器
+    }
+    loadProject(projectId); // 双击加载项目
+    clickCount = 0; // 重置点击计数
+  }
+};
+
+// 加载项目（双击）
 const loadProject = (projectId: number) => {
+  if(clickTimer) {
+    clearTimeout(clickTimer);
+    clickTimer = null; // 清除定时器
+  }
   projectStore.loadProject(projectId);
+};
+
+// 根据项目ID创建子组件（单击）
+const createSubComponent = (projectId: number) => {
+  clickTimer = setTimeout(() => {
+    console.log("创建子组件", projectId);
+    // 画布那边不用再addComponent todo （预览图的处理）
+    useCircuitStore().addComponent("SUB_CIRCUIT", [0,0], "", projectId);
+
+    eventBus.emit('start-place-component', {type: "SUB_CIRCUIT"} );
+
+    clickTimer = null; // 清除定时器
+  }, 500);
+  
 };
 
 // 显示右键菜单
