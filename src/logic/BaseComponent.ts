@@ -21,10 +21,11 @@ export abstract class BaseComponent{
   outputPinPosition: Array<[number, number]>;  // todo! 默认为2，部分特殊文件中的这个还没改
   direction: string; // 组件的方向，'east', 'west', 'north', 'south'
 
-  constructor(id: number, type: String, position:[number, number] = [0,0],  inputPinPosition = []) {
+  constructor(id: number, type: String, position:[number, number] = [0,0]) {
+    // 子类初始化构造记得要调用changeInputPinCount()（changeOutputPinCount在outputPin不为1时调用）（会修改一些数组的长度，也会重新计算引脚位置）
     this.id = id;
     this.type = type;
-    this.name = "";    // todo
+    this.name = "";   
     
     this.inputs = reactive([-1, -1]);     // 默认2个输入，如果不是，子类需要在构造函数中初始化
     this.inputCount = 2; // 默认2个输入
@@ -32,8 +33,6 @@ export abstract class BaseComponent{
 
     this.outputs = reactive([-1]);  // 输出初始值为-1 未连接
     this.bitWidth = 1;
-    // this.height = 1;   // todo
-    // this.width = 1;
     this.scale = 1;    
     this.position = reactive(position); // 将 position 包装为 reactive
     this.inputPinPosition =  reactive([[0,0], [0,0]]);  // 默认只有两个输入引脚
@@ -44,7 +43,10 @@ export abstract class BaseComponent{
     // this.inputYs = calcInputYs(this.inputCount); // 计算输入引脚的y坐标
   };
 
-  abstract compute(): number[];   // 调用后返回outputs
+  // 计算内部逻辑，调用后返回outputs
+  abstract compute(): number[];   
+
+  // 改变某一个引脚的电平，返回outputs
   abstract changeInput(idx: number, v: number): number[];  // 改变某一个引脚的电平，返回outputs
   // // 取反（只给位宽为1的输入引脚用）
   // invertInput(idx: number): void {
@@ -52,25 +54,28 @@ export abstract class BaseComponent{
   //     this.compute();  // 更新outputs
   // } 
 
+  // #region Setters
+  // 改变名字
   setName(name: String){
     this.name = name;
   }
-
+  // 改变位宽
   setBitWidth(bitWidth: number){
     this.bitWidth = bitWidth;
     EventDrivenSimulator.getInstance().checkComponentConnections(this.id);
   }
+  // 改变position
   setPosition(position: [number, number]) {
     this.position[0] = position[0]; 
     this.position[1] = position[1];
-
-    // this.updatePinPosition(); // 更新引脚位置
   }
+  // 设置缩放比例
   setScale(scale: number) {
     this.scale = scale;
-    this.updatePinPosition(); 
   }
+  // #endregion Setters
 
+  // #region 引脚
   // 更新引脚位置
   updatePinPosition(): void{
     // 适用于与门、或门
@@ -107,6 +112,7 @@ export abstract class BaseComponent{
 
     this.updatePinPosition();
   }
+  // #endregion 引脚
 
   changeInputInverted(idx: number){
     if(idx < 0 || idx >= this.inputCount){
@@ -116,7 +122,7 @@ export abstract class BaseComponent{
   }
 
   getInputPinCount(): number{
-    return this.inputs.length;
+    return this.inputCount;
   }
   getOutputs(): number[]{
     return this.outputs;
