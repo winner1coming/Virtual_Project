@@ -209,6 +209,29 @@ export class EventDrivenSimulator {
     this.processQueue();
   }
 
+  // 移除一个组件，删除与其有关的所有连接
+  removeComponent(id: number) {
+    // 删除与该组件有关的所有连接
+    // 从输出端查找
+    const pinMap = this.connectionManager.getOutputPinMap(id);
+    if (pinMap) {
+      for (const pinIdx of pinMap.keys()) {
+        for(const conn of pinMap.get(pinIdx) || []) {
+          this.disconnect(id, pinIdx, conn.id, conn.idx);
+        }
+      }
+    }
+    // 从输入端查找
+    const inputPinMap = this.connectionManager.getInputPinMap(id);
+    if (inputPinMap) {
+      for (const pinIdx of inputPinMap.keys()) {
+        for(const conn of inputPinMap.get(pinIdx) || []) {
+          this.disconnect(conn.id, conn.idx, id, pinIdx);
+        }
+      }
+    }
+  }
+
   checkComponentConnections(id: number){
     // 检查与该组件相连的connection的合法性
     // 检查与该组件的输出相连的位宽

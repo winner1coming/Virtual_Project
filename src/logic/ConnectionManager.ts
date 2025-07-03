@@ -17,6 +17,7 @@ export class ConnectionManager {
     //   ...
     // }
     // 即Map<id:number, PinMap>
+    // 即connections存储的是每个元件的输出端口与其他元件输入端口的连线关系
     connections: Map<number, PinMap>;
     reverseConnections: Map<number, PinMap>; // 反向连线关系，便于根据输入端口查输出端口
     constructor() {
