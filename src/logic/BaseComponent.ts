@@ -24,6 +24,7 @@ export abstract class BaseComponent{
   outputPinPosition: Array<[number, number]>;  // todo! 默认为2，部分特殊文件中的这个还没改
   direction: string; // 组件的方向，'east', 'west', 'north', 'south'
   simulator!: EventDrivenSimulator | SubSimulator; // 关联的模拟器实例
+  period= 0;
 
   constructor(id: number, type: String, position:[number, number] = [0,0]) {
     // 子类初始化构造记得要调用changeInputPinCount()（changeOutputPinCount在outputPin不为1时调用）（会修改一些数组的长度，也会重新计算引脚位置）

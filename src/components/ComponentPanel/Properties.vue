@@ -96,6 +96,16 @@
         </div>
       </div>
 
+      <!-- 修改时钟周期-->
+      <div class="property-item" v-if="circuitStore.getComponent(circuitStore.selectedId).type === 'CLOCK'">
+        <label for="period">时钟周期(s)：</label>
+        <n-input
+          id="period"
+          v-model="circuitStore.getComponent(circuitStore.selectedId).period"
+          placeholder="请输入时钟周期（毫秒）"
+        />
+      </div>
+
     </div>
     <div v-else>
       <p align="center">选中元件以查看属性</p>
