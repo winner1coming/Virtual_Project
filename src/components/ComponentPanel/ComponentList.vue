@@ -26,15 +26,17 @@ const components = [
   { type: 'OUTPUT', name: '输出引脚' },
   { type: 'CLOCK', name: '时钟' },
   { type: 'REGISTER', name: '寄存器' },
-  { type: 'MUX', name: '多路选择器' },
-  { type: 'DEMUX', name: '解多路选择器' },
+  // { type: 'MUX', name: '多路选择器' },
+  // { type: 'DEMUX', name: '解多路选择器' },
   { type: 'AND', name: '与门' },
   { type: 'OR', name: '或门' },
   { type: 'NOT', name: '非门' },
   { type: 'XOR', name: '异或门' },
-  { type: 'AND', name: '与门' },
-  { type: 'OR', name: '或门' },
-  { type: 'XOR', name: '异或门' },
+  {type: 'NAND', name: '与非门'},
+  {type: 'NOR', name: '或非门'},
+  { type: 'POWER', name: '电源' },
+  { type: 'GROUND', name: '接地' },
+  { type: 'SEGMENT_DISPLAY', name: '七段数码器' },
   
 ];
 

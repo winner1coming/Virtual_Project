@@ -15,18 +15,16 @@ export class Tunnel extends BaseComponent {
     }
     this.offset=[-253,-310];
     this.initInputPin(0); 
-    this.setName(name); // 设置 tunnel 名称
+    this.name = name; 
     EventDrivenSimulator.getInstance().addTunnel(name, id);
-  }
-
-  destroy() {
-   EventDrivenSimulator.getInstance().removeTunnel(this.name, this.id); 
   }
 
   setName(name: String): void {
     EventDrivenSimulator.getInstance().removeTunnel(this.name, this.id); // 删除旧的隧道
-    EventDrivenSimulator.getInstance().addTunnel(name, this.id); // 添加新的隧
     this.name = name;
+    EventDrivenSimulator.getInstance().addTunnel(name, this.id); // 添加新的隧道
+
+    this.simulator.processQueue();
   }
 
   compute(): number[] {
@@ -40,7 +38,7 @@ export class Tunnel extends BaseComponent {
   }
 
   updatePinPosition(): void {
-    this.outputPinPosition.splice(0, this.outputPinPosition.length, [183.98*this.scale, 310*this.scale]);
+    this.outputPinPosition.splice(0, this.outputPinPosition.length, [183.98, 310]);
     this.inputPinPosition.splice(0, this.inputPinPosition.length); 
   }
 }

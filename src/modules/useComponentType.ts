@@ -11,6 +11,10 @@ import { OutputPin } from '@/logic/components/OutputPin';
 import {Tunnel} from '@/logic/components/Tunnel';
 import { ConstantInput } from '@/logic/components/ConstantInput';
 import { SubCircuitComponent } from '@/logic/components/SubCircuitComponent';
+import { Power } from '@/logic/components/Power';
+import { Ground } from '@/logic/components/Ground';
+import { SegmentDisplay } from '@/logic/components/SegmentDisplay';
+
 
 export function createComponentByType(id: number, type: String, position:[number, number] = [0,0], name:String="", projectId: number=0): BaseComponent {
   switch (type) {
@@ -36,6 +40,12 @@ export function createComponentByType(id: number, type: String, position:[number
       return new InputPin(id, type, position);
     case 'OUTPUT':
       return new OutputPin(id, type, position);
+    case 'POWER':
+      return new Power(id, type, position); 
+    case 'GROUND':
+      return new Ground(id, type, position);
+    case 'SEGMENT_DISPLAY':
+      return new SegmentDisplay(id, type, position);
     case 'SUB_CIRCUIT':
       return new SubCircuitComponent(id, type, position, name, projectId);
     // 添加其他组件类型
