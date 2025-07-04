@@ -93,6 +93,19 @@ export class OutputPin extends BaseComponent {
     //     }, 0);
     // }
 
+    // 更新引脚位置
+    updatePinPosition(): void{
+        // 排布相关参数
+        const colMax = 8;
+        const cellHeight = 60;
+        const padding = 40;
+        const rows = Math.ceil(this.bitWidth / colMax);
+        // 宽高
+        const svgHeight = rows * cellHeight + padding/2;
+        // 修改输入
+        this.inputPinPosition.splice(0, this.inputPinPosition.length, [0, svgHeight/2]);
+    }
+
     // 覆盖基类方法：设置位数
     setBitWidth(bitWidth: number): void {
         if (bitWidth !== this.bitWidth) {
