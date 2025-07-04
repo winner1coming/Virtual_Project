@@ -19,23 +19,23 @@
       <InputPin :id="inputPinId"/>
     </svg> -->
 
-    <svg
+    <!-- <svg
       viewBox="-300 -300 600 600"
       width="300"
       height="300"
       style="overflow: visible;"
     >
       <CustomizeComoponent :id="CustomizeComponentId"/>
-    </svg>
+    </svg> -->
 
-    <!-- <svg
+    <svg
       viewBox="0 0 600 600"
       width="300"
       height="300"
       style="overflow: visible;"
     >
       <Tunnel :id="tunnelId"/>
-    </svg> -->
+    </svg>
 
     <!-- <svg
       viewBox="0 0 600 600"

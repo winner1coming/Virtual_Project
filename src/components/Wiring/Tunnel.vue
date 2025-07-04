@@ -1,5 +1,5 @@
 <template>
-  <g :transform="`translate(${tunnel.position[0]}, ${tunnel.position[1]}) scale(${tunnel.scale})`" cursor="move">
+  <g :transform="`scale(${tunnel.scale})`" cursor="move">
       <!-- 图形 -->
       <path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M223.65 362.58L183.982 308.585"><!--左下方斜线-->
       </path>
@@ -23,9 +23,9 @@
       </text>
 
       <!--选中方框-->
-      <SelectedBox :x="175" :y="255" :width="x_right-178+12" :height="112" :visible="true"/>
+      <SelectedBox :x="175" :y="255" :width="x_right-178+12" :height="112" :visible="circuitStore.selectedId===props.id"/>
 
-      <!-- 输出引脚 -->
+      <!-- 输入引脚 -->
       <OutputPort :cx="183.98" :cy="310" :active="1" :bitWidth="tunnel.bitWidth" />
       <!--填充透明区域-->
       <path
@@ -37,13 +37,11 @@
   
 <script setup>
 import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
-import InputPort from '@/components/Ports/InputPort.vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 import { defineProps } from 'vue'
 
 import { useCircuitStore } from '@/store/CircuitStore'
-import {watchComponentChanges} from '@/modules/useComponentsWatchers'
 
 const circuitStore = useCircuitStore();
 
@@ -53,40 +51,34 @@ const props = defineProps({
     required: true
   }
 });
-// const id = circuitStore.addComponent('And', [0,0]);  // debug
 
 const tunnel = computed(() => {
-    // return circuitStore.getComponent(id);   // debug
     return circuitStore.getComponent(props.id);  
 });
 
 const labelTextBox = ref(null);
-//let label = ref('LBL');
+// let label = ref('LBL')
+const tunnelName = computed(() => tunnel.value.name);
 const x_right = ref(313);
 
 function updateXRight() {
-  if (labelTextBox.value) {
+  if (labelTextBox.value && tunnel.value.name) {
     const bbox = labelTextBox.value.getBBox()
     x_right.value = bbox.x + bbox.width + 20
   }
 }
 
 // 监听 label 变化，并等待 DOM 更新
-// watch(label, async () => {
-//   await nextTick()
-//   updateXRight()
-// })
+watch(tunnelName, async () => {
+  await nextTick()
+  updateXRight()
+})
 
 // 初始化时也调用一次
 onMounted(async () => {
   await nextTick()
   updateXRight()
 })
-
-// //调试用，要删 todo
-// function handleToggleInput() {
-//     label.value = "AAA光猎大人";
-// }
 
 </script>
 
