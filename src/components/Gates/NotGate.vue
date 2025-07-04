@@ -1,5 +1,5 @@
 <template>
-      <g :transform="`translate(${notGate.x}, ${notGate.y}) scale(${notGate.scale})`" cursor="move">
+      <g :transform="`translate(${notGate.offset[0]*notGate.scale}, ${notGate.offset[1]*notGate.scale}) scale(${notGate.scale})`" cursor="move">
         <!-- NOT门主体（三角形） -->
         <path
           d="M438.075 288.5L147.769 392.856L147.769 184.144L438.075 288.5Z"
@@ -19,7 +19,7 @@
         />
         <!-- 输入 -->
         <circle
-          v-if="notGate.input.inverted"
+          v-if="notGate.inputInverted[0]"
           :cx="149 - 26"
           :cy="288"
           r="16"
@@ -27,63 +27,40 @@
           stroke-width="12"
           fill="none"
         />
-        <path v-if="!notGate.input.inverted" stroke="black" stroke-width="12" d="M93 288L150 288" />
-  
+        <path v-if="!notGate.inputInverted[0]" stroke="black" stroke-width="12" d="M93 288L150 288" />
+
+        <!--选中方框-->
+        <SelectedBox :x="83" :y="183" :width="406" :height="209" :visible="circuitStore.selectedId===props.id"/>
+
         <!-- 输入状态端口 -->
-        <InputPort :cx="93" :cy="288" :active="notGate.input.value" @toggle="handleToggleInput" />
+        <InputPort :cx="93" :cy="288" :active="notGate.inputs[0]" @toggle="handleToggleInput" />
         <!-- 输出状态端口 -->
-        <OutputPort :cx="497" :cy="286" :active="notGate.output" />
+        <OutputPort :cx="497" :cy="286" :active="notGate.outputs[0]" />
       </g>
 </template>
   
 <script setup>
-import { reactive } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import InputPort from '@/components/Ports/InputPort.vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
-import {
-  setInputValue,
-  toggleInput,
-  setInputInverted,
-  setScale
-} from '@/logic/usegates/useLogicGates'
-// import { useGateLayout } from '@/logic/usegates/useGateLayout'
+import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
+import { defineProps } from 'vue'
 
-const notGate = reactive({
-    x: 0,
-    y: 0,
-    input: reactive({
-      id: 0,
-      value: false,
-      inverted: false,
-    }),
-    output: true,
-    scale: 1,
+import { useGateLayout, getInputLine } from '@/logic/usegates/useGateLayout'
+import { useCircuitStore } from '@/store/CircuitStore'
+import {watchComponentChanges} from '@/modules/useComponentsWatchers'
+
+const circuitStore = useCircuitStore();
+const props = defineProps({
+  id: {
+    type: Number,
+    required: true
+  }
 })
 
-
-function handleToggleInput() {
-  notGate.input.value = !notGate.input.value
-  updateOutput()
-  //handleSetInputInverted(!notGate.input.inverted);
-  //handleSetScale(0.5);
-}
-
-function handleSetInputValue(value) {
-  setInputValue(notGate, 0, value, updateOutput)
-}
-
-function handleSetInputInverted(inverted) {
-  notGate.input.inverted = inverted
-  updateOutput()
-}
-
-function handleSetScale(newscale){
-  setScale(notGate, newscale)
-}
-
-function updateOutput() {
-  notGate.output = notGate.input.inverted? notGate.input.value : !notGate.input.value
-}
+const notGate = computed(() => {
+  return circuitStore.getComponent(props.id);  
+});
 
 </script>
 
