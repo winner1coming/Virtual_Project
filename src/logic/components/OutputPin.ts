@@ -19,6 +19,7 @@ export class OutputPin extends BaseComponent {
         }
         this.initInputPin(1); 
         this.outputs.splice(0, this.outputs.length); // 输出引脚不产生输出
+        this.outputPinPosition.splice(0, this.outputPinPosition.length); 
         // this.binaryValue = new Array(this.bitWidth).fill(0); // 内部二进制表示
     }
 
