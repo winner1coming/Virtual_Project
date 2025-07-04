@@ -66,7 +66,7 @@ export abstract class BaseComponent{
   // 改变位宽
   setBitWidth(bitWidth: number){
     this.bitWidth = bitWidth;
-    EventDrivenSimulator.getInstance().checkComponentConnections(this.id);
+    this.simulator.checkComponentConnections(this.id);
   }
   // 改变position
   setPosition(position: [number, number]) {

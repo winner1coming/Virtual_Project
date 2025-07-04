@@ -35,37 +35,30 @@ export class InputPin extends BaseComponent {
         this.outputPinPosition.splice(0, this.outputPinPosition.length, [svgWidth, svgHeight/2]);
     }
 
-    // 切换某一位的值 (0变1，1变0)
+    // 切换某一位的值 （index为高位到低位（1101从左往右数），index从0开始）
     toggleBit(index: number): void {
         if (index >= 0 && index < this.bitWidth) {
-            if (this.bitWidth === 1) {
-                // this.outputs[0] = this.outputs[0] === 0 ? 1 : 
-                //                  this.outputs[0] === 1 ? 0 : 
-                //                  this.outputs[0]; // 保持-1或-2不变
-                this.outputs.splice(0, 1, this.outputs[0] === 0 ? 1 : 
-                                      this.outputs[0] === 1 ? 0 :
-                                        this.outputs[0]); // 保持-1或-2不变
-            } else {
-                if (this.outputs.length !== this.bitWidth) {
-                    //this.outputs = new Array(this.bitWidth).fill(-1);
-                    this.outputs.splice(0, this.outputs.length, ...Array(this.bitWidth).fill(-1));
-                }
-                // this.outputs[index] = this.outputs[index] === 0 ? 1 : 
-                //                       this.outputs[index] === 1 ? 0 : 
-                //                       this.outputs[index];
-                this.outputs.splice(index, 1, this.outputs[index] === 0 ? 1 : 
-                                              this.outputs[index] === 1 ? 0 : 
-                                              this.outputs[index]); // 保持-1或-2不变
+            let value = this.outputs[0]; 
+            if (value === -1 || value === -2) {
+                return;
             }
-        }
+            index = this.bitWidth - 1 - index; // 将index转换为低位到高位的顺序
+            // 计算当前位的掩码
+            const mask = 1 << index;
 
-        // 输入引脚的改变会导致电路的改变
-        EventDrivenSimulator.getInstance().enqueue(this.id, 0, this.outputs[0]); 
-        EventDrivenSimulator.getInstance().processQueue();
+            this.outputs[0] = value ^ mask; // 使用按位异或操作切换位
+
+            // 输入引脚的改变会导致电路的改变
+            EventDrivenSimulator.getInstance().enqueue(this.id, 0, this.outputs[0]);
+            EventDrivenSimulator.getInstance().processQueue();
+        }
     }
 
     // 返回bits数组
     getBits(): number[] {
+        if(this.outputs.length === 0 || this.outputs[0] === -1 || this.outputs[0] === -2) {
+            return []; 
+        }
         const bits: number[] = [];
         if (this.bitWidth <= 0) {
             return bits; // 如果位宽为 0，返回空数组
@@ -82,15 +75,7 @@ export class InputPin extends BaseComponent {
     }
 
     compute(): number[] {
-        // InputPin的计算逻辑简单，主要是确保输出状态正确
-        if (this.bitWidth > 1) {
-            // 检查所有输出是否有效
-            for (const val of this.outputs) {
-                if (val === -2) {
-                    return this.outputs; // 保持错误状态
-                }
-            }
-        }
+        
         return this.outputs;
     }
 
@@ -116,7 +101,7 @@ export class InputPin extends BaseComponent {
             ////is.outputs = newOutputs;
             this.outputs.splice(0, this.outputs.length, ...newOutputs); // 替换outputs的值
 
-            EventDrivenSimulator.getInstance().checkComponentConnections(this.id); // 检查连线
+            this.simulator.checkComponentConnections(this.id); // 检查连线
             this.updatePinPosition(); // 更新引脚位置
         }
 
