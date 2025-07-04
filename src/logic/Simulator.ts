@@ -209,9 +209,20 @@ export class EventDrivenSimulator {
     this.processQueue();
   }
 
-  // 移除一个组件，删除与其有关的所有连接
-  removeComponent(id: number) {
-    // 删除与该组件有关的所有连接
+  // 取消一个组件与前驱的连接
+  disconnectPredecessors(id: number) {
+    // 从输入端查找
+    const pinMap = this.connectionManager.getInputPinMap(id);
+    if (pinMap) {
+      for (const pinIdx of pinMap.keys()) {
+        for(const conn of pinMap.get(pinIdx) || []) {
+          this.disconnect(conn.id, conn.idx, id, pinIdx);
+        }
+      }
+    }
+  }
+  // 取消一个组件与后继的连接
+  disconnectSuccessors(id: number) {
     // 从输出端查找
     const pinMap = this.connectionManager.getOutputPinMap(id);
     if (pinMap) {
@@ -221,15 +232,15 @@ export class EventDrivenSimulator {
         }
       }
     }
+  }
+
+  // 移除一个组件，删除与其有关的所有连接
+  removeComponent(id: number) {
+    // 删除与该组件有关的所有连接
+    // 从输出端查找
+    this.disconnectSuccessors(id);
     // 从输入端查找
-    const inputPinMap = this.connectionManager.getInputPinMap(id);
-    if (inputPinMap) {
-      for (const pinIdx of inputPinMap.keys()) {
-        for(const conn of inputPinMap.get(pinIdx) || []) {
-          this.disconnect(conn.id, conn.idx, id, pinIdx);
-        }
-      }
-    }
+    this.disconnectPredecessors(id);
   }
 
   checkComponentConnections(id: number){
@@ -302,6 +313,29 @@ export class EventDrivenSimulator {
         this.InputTunnelMap.delete(name);
       }
     }
+  }
+
+  // 处理输出改变时的情况（给BaseComponent调用）
+  // 参数：id :改变输出的组件的id
+  //      idx: 该组件的改变输出的引脚
+  //     value:  引脚将变为何值
+  processOutputChange(id: number, idx: number, value: number): void {
+    // 获取组件的后继
+    const pinMap = this.connectionManager.getOutputPinMap(id);
+    if (!pinMap) return;
+    for (const pinIdx of pinMap.keys()) {
+      if(pinIdx !== idx) continue;
+      for( const conn of pinMap.get(pinIdx) || []) {
+        //if (conn.legal) {
+          const targetComponent = this.circuitStore.getComponent(conn.id)!;
+          if (!targetComponent) continue;
+
+          this.enqueue(conn.id, conn.idx, value);
+        //}
+      }
+    }
+    // 处理队列
+    this.processQueue();
   }
 
 
@@ -381,13 +415,13 @@ export class EventDrivenSimulator {
 
       for (const pinIdx of pinMap.keys()) {
         for( const conn of pinMap.get(pinIdx) || []) {
-          if (conn.legal) {
+          //if (conn.legal) {
             const targetComponent = this.circuitStore.getComponent(conn.id);
             if (!targetComponent) continue;
 
             this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
           }
-        }
+        //}
       }
       
     }
