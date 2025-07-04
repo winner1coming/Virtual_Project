@@ -1,6 +1,6 @@
 <template>
   <g :transform="`translate(${nandGate.offset[0]*nandGate.scale}, ${nandGate.offset[1]*nandGate.scale}) scale(${nandGate.scale})`" cursor="move">
-    <!-- NAND 门图形 -->
+    <!-- AND 门图形 -->
      <!--左侧竖线-->
     <path
       stroke="black"
@@ -15,6 +15,7 @@
       stroke-width="12"
       d="M366.5 180C507 259.301 410.965 399.972 366.5 395"
     />
+    <!-- <path stroke="black" stroke-width="12" d="M440 288L497 288" /> -->
     <ellipse cx="470.2452697753906" cy="286.0000305175781" rx="20.754730224609375" ry="20" stroke="rgba(0, 0, 0, 1)" stroke-width="12"      fill="#CCCCCC" fill-opacity="0">
     </ellipse>
 
@@ -50,7 +51,7 @@
 
   </g>
 </template>
-  
+
 <script setup>
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import InputPort from '@/components/Ports/InputPort.vue'
@@ -62,23 +63,50 @@ import { useCircuitStore } from '@/store/CircuitStore'
 
 const circuitStore = useCircuitStore();
 const props = defineProps({
-  id: {
-    type: Number,
-    required: true
-  }
+id: {
+  type: Number,
+  required: true
+}
 })
+// const id = circuitStore.addComponent('And', [0,0]);  // debug
 
+// console.log('AndGate.vue props.id:', props.id); // debug
 const nandGate = computed(() => {
-  return circuitStore.getComponent(props.id);  
+// return circuitStore.getComponent(id);   // debug
+return circuitStore.getComponent(props.id);  
 });
 
 let minY = computed(()=>Math.min(...nandGate.value.inputPinPosition.map(pin => pin[1])));
 let maxY = computed(()=>Math.max(...nandGate.value.inputPinPosition.map(pin => pin[1])));
+
+
+// 以下为调试用代码，后期可删除---------------------------------------
+
+// 测试用函数，后期删掉  todo
+// function handleToggleInput(index) {
+//   //toggleInput(nandGate, index, updateOutput)
+//   // todotodo
+//   setInputCount(10);
+//   if(nandGate.value.inputs[index] === 0){
+//     nandGate.value.changeInput(index, 1);
+//   }else{
+//     nandGate.value.changeInput(index, 0);
+//   }
+
+//   // test
+//   // this.setInputCount(4); // 更新输入引脚布局
+//   nandGate.value.changeInputInverted(index, !nandGate.value.inputInverted[index]); // 切换输入引脚的反相状态
+// }
+
+// function handleSetScale(newScale){
+//   nandGate.value.scale = newScale;
+// }
+
 </script>
 
 <style scoped>
 svg {
-  border: 1px solid #ccc;
-  background-color: #f8f8f8;
+border: 1px solid #ccc;
+background-color: #f8f8f8;
 }
 </style>

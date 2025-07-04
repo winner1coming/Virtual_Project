@@ -923,6 +923,9 @@ function handleLeftClick(event) {
       case 'INPUT':
         componentLogic = new LogicInputPin(id, 'INPUT', [x, y])
         break
+      case 'NAND':
+      componentLogic = new LogicInputPin(id, 'NAND', [x, y])
+      break
       default:
         console.error("未知元件类型：", currentComponent.value.componentType)
     }
