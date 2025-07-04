@@ -28,14 +28,14 @@
       <CustomizeComoponent :id="CustomizeComponentId"/>
     </svg> -->
 
-    <svg
+    <!-- <svg
       viewBox="0 0 600 600"
       width="300"
       height="300"
       style="overflow: visible;"
     >
       <Tunnel :id="tunnelId"/>
-    </svg>
+    </svg> -->
 
     <!-- <svg
       viewBox="0 0 600 600"
@@ -64,6 +64,24 @@
       <Clock :id="clockId"/>
     </svg> -->
 
+    <!-- <svg
+      viewBox="-300 -300 600 600"
+      width="300"
+      height="300"
+      style="overflow: visible;"
+    >
+      <OutputPin :id="outputpinId"/>
+    </svg> -->
+
+    <svg
+      viewBox="-300 -300 600 600"
+      width="300"
+      height="300"
+      style="overflow: visible;"
+    >
+      <andGate />
+    </svg>
+
     <!-- <Splitter /> -->
     <button @click="toggleInputPin"> 改InputPin的位宽 </button>
   </div>
@@ -76,10 +94,12 @@ import OrGate from '@/components/Gates/OrGate.vue'
 import NorGate from '@/components/Gates/NorGate.vue'
 import Tunnel from '@/components/Wiring/Tunnel.vue'
 import InputPin from '@/components/Wiring/InputPin.vue'
+import OutputPin from '@/components/Wiring/OutputPin.vue'
 import Constant from '@/components/Wiring/Constant.vue'
 import Clock from '@/components/Wiring/Clock.vue'
 import Splitter from '@/components/Wiring/Splitter.vue'
 import CustomizeComoponent from '@/components/CustomizeComponent.vue'
+import andGate from '@/components/preview/andGate.vue'
 
 import { useCircuitStore } from '@/store/CircuitStore.js'
 const circuitStore = useCircuitStore();
@@ -89,6 +109,7 @@ const andGateId = circuitStore.addComponent('AND');
 const tunnelId = circuitStore.addComponent('TUNNEL');
 const orGateId = circuitStore.addComponent('OR');
 const inputPinId = circuitStore.addComponent('INPUT');
+const outputpinId = circuitStore.addComponent('OUTPUT');
 const constantId = circuitStore.addComponent('CONSTANT');
 const clockId = circuitStore.addComponent('CLOCK');
 // const splitterId = circuitStore.addComponent('SPLITTER')

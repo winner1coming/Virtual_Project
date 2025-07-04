@@ -1,5 +1,5 @@
 <template>
-  <g :transform="`translate(${nandGate.offset[0]}, ${nandGate.offset[1]}) scale(${nandGate.scale})`" cursor="move">
+  <g :transform="`translate(${nandGate.offset[0]*nandGate.scale}, ${nandGate.offset[1]*nandGate.scale}) scale(${nandGate.scale})`" cursor="move">
     <!-- NAND 门图形 -->
      <!--左侧竖线-->
     <path

@@ -1,5 +1,5 @@
 <template>
-  <g :transform="`translate(${inputPin.offset[0]*inputPin.scale}, ${inputPin.offset[1]*inputPin.scale}) scale(${inputPin.scale})`" cursor="move">
+    <g :transform="`translate(${outputPin.offset[0]*outputPin.scale}, ${outputPin.offset[1]*outputPin.scale}) scale(${outputPin.scale})`" cursor="move">
     <!-- 背景矩形 -->
     <rect
       x="0"
@@ -26,7 +26,7 @@
 
     <!-- 每个 bit 位 -->
     <g
-      v-for="(bit, index) in inputPin.getBits()"
+      v-for="(bit, index) in outputPin.getBits()"
       :key="index"
       @click="toggleBit(index)"
       style="cursor: pointer;"
@@ -41,28 +41,28 @@
         {{ bit }}
       </text>
     </g>
-    <!-- 输出 -->
-    <OutputPort :cx="svgWidth" :cy="svgHeight/2" :active="inputPin.outputs[0]" :bitWidth="inputPin.bitWidth" />
-  </g>
+    <!-- 输入 -->
+    <InputPort :cx="0" :cy="svgHeight/2" :active="outputPin.inputs[0]" :bitWidth="outputPin.bitWidth" />
+    </g>
 </template>
-  
+
 <script setup>
 import { ref, computed, watch } from 'vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
-  
+
 import { useCircuitStore } from '@/store/CircuitStore'
 
 const circuitStore = useCircuitStore();
 const props = defineProps({
-  id: {
-    type: Number,
-    required: true
-  },
+id: {
+  type: Number,
+  required: true
+},
 })
 
-const inputPin = computed(() => {
-  return circuitStore.getComponent(props.id);  
+const outputPin = computed(() => {
+return circuitStore.getComponent(props.id);  
 });
 
 // 排布相关参数
@@ -73,30 +73,29 @@ const padding = 40
 
 // 点击切换
 function toggleBit(index) {
-  //bits.value[index] = bits.value[index] === 0 ? 1 : 0
-  inputPin.value.toggleBit(index);
+//bits.value[index] = bits.value[index] === 0 ? 1 : 0
+outputPin.value.toggleBit(index);
 }
 
 // 计算坐标
 function bitX(index) {
-  const col = index % colMax
-  return padding + col * cellWidth
+const col = index % colMax
+return padding + col * cellWidth
 }
 
 function bitY(index) {
-  const row = Math.floor(index / colMax)
-  return padding + row * cellHeight
+const row = Math.floor(index / colMax)
+return padding + row * cellHeight
 }
 
 // 宽高
 const svgWidth = computed(() => {
-  const cols = Math.min(inputPin.value.bitWidth, colMax)
-  return cols * cellWidth + padding
+const cols = Math.min(outputPin.value.bitWidth, colMax)
+return cols * cellWidth + padding
 })
 
 const svgHeight = computed(() => {
-  const rows = Math.ceil(inputPin.value.bitWidth / colMax)
-  return rows * cellHeight + padding/2
+const rows = Math.ceil(outputPin.value.bitWidth / colMax)
+return rows * cellHeight + padding/2
 })
 </script>
-  
