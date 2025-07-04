@@ -26,7 +26,7 @@
       <SelectedBox :x="175" :y="255" :width="x_right-178+12" :height="112" :visible="circuitStore.selectedId===props.id"/>
 
       <!-- 输入引脚 -->
-      <OutputPort :cx="183.98" :cy="310" :active="1" :bitWidth="tunnel.bitWidth" />
+      <OutputPort :cx="183.98" :cy="310" :active="tunnel.outputs[0]" :bitWidth="tunnel.bitWidth" />
       <!--填充透明区域-->
       <path
         fill="transparent"
