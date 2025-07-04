@@ -36,7 +36,7 @@ export abstract class BaseComponent{
 
     this.outputs = reactive([-1]);  // 输出初始值为-1 未连接
     this.bitWidth = 1;
-    this.scale = 1;    
+    this.scale = 0.25;    
     this.position = reactive(position); // 将 position 包装为 reactive
     this.inputPinPosition =  reactive([[0,0], [0,0]]);  // 默认只有两个输入引脚
     this.outputPinPosition = reactive([[0,0]]); // 默认只有一个输出引脚
@@ -169,16 +169,16 @@ export abstract class BaseComponent{
     for(let i = 0; i < this.getInputPinCount(); i++){
       result.ports.push({
         id: i,
-        x: this.inputPinPosition[i][0]+this.offset[0],
-        y: this.inputPinPosition[i][1]+this.offset[1],
+        x: (this.inputPinPosition[i][0]+this.offset[0])*this.scale,
+        y: (this.inputPinPosition[i][1]+this.offset[1])*this.scale,
       });
     }  
 
     for(let i = 0; i < this.outputs.length; i++){
       result.ports.push({
         id: i + this.getInputPinCount(),
-        x: this.outputPinPosition[i][0]+this.offset[0], 
-        y: this.outputPinPosition[i][1]+this.offset[1],
+        x: (this.outputPinPosition[i][0]+this.offset[0])*this.scale, 
+        y: (this.outputPinPosition[i][1]+this.offset[1])*this.scale,
       });
     }
     return result;

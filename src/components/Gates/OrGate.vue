@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${-280*orGate.scale}, ${-280*orGate.scale}) scale(${orGate.scale})`" cursor="move">
+    <g :transform="`translate(${orGate.offset[0]*orGate.scale}, ${orGate.offset[1]*orGate.scale}) scale(${orGate.scale})`" cursor="move">
       <!-- OR 门图形 -->
       <path stroke="black" stroke-width="12" d="M145.999 181L315.999 181" /> <!--上下两条横线-->
       <path stroke="black" stroke-width="12" d="M146 395.115L316 395.115" />
@@ -100,18 +100,6 @@ import { useGateLayout, getInputLine } from '@/logic/usegates/useGateLayout'
 import { useCircuitStore } from '@/store/CircuitStore'
 import {watchComponentChanges} from '@/modules/useComponentsWatchers'
 
-
-//const inputCount = 3
-//console.log(computedLineBottom, computedLineTop)
-
-// const orGate = reactive({
-//   x: 0,
-//   y: 0,
-//   scale: 1,
-//   inputCount: 8,
-//   inputs: [],
-//   output: false,
-// })
 const circuitStore = useCircuitStore();
 const props = defineProps({
   id: {
@@ -119,78 +107,15 @@ const props = defineProps({
     required: true
   }
 })
-// const id = circuitStore.addComponent('Or', [0,0]);  // debug
 
 const orGate = computed(() => {
-  // return circuitStore.getComponent(id);   //debug
   return circuitStore.getComponent(props.id);  
 });
 
-// let inputYs = useGateLayout(orGate.value.inputCount)
 const bezierYMin = 179.5;
 const bezierYMax = 397;
-// let minY = Math.min(...inputYs.value);
-// let maxY = Math.max(...inputYs.value);
 let minY = computed(()=>Math.min(...orGate.value.inputPinPosition.map(pin => pin[1])));
 let maxY = computed(()=>Math.max(...orGate.value.inputPinPosition.map(pin => pin[1])));
-
-// function setInputCount(newCount)
-// {
-//   // 更新输入引脚的布局
-//   //inputYs = useGateLayout(orGate.value.inputCount)
-
-//   minY = Math.min(...orGate.value.inputPinPosition.map(pin => pin[1]));
-//   maxY = Math.max(...orGate.value.inputPinPosition.map(pin => pin[1]));
-
-//   // 更新引脚位置
-//   orGate.value.inputPinPosition = orGate.value.inputPinPosition.map((pin, index) => {
-//     return [
-//       orGate.value.position[0] + 92 * orGate.value.scale,
-//       orGate.value.position[1] + orGate.value.inputPinPosition.map(pin => pin[1])[index] * orGate.value.scale,
-//     ];
-//   });
-// }
-
-// const {unwatchInputCount } = watchComponentChanges(orGate, setInputCount);
-
-// onUnmounted(() => {
-//   unwatchInputCount; // 清理监听
-// });
-
-
-// 以下调试用，后期删除  todo -----------------------------------------------------------
-
-// handleSetInputInverted(1, true);
-// handleSetScale(0.5)
-
-// function handleToggleInput(index) {
-//   // todotodo
-//   setInputCount(8);
-//   if(orGate.value.inputs[index] === 0){
-//     orGate.value.changeInput(index, 1);
-//   }else{
-//     orGate.value.changeInput(index, 0);
-//   }
-// }
-
-// function handleSetInputInverted(index, inverted) {
-//   setInputInverted(orGate, index, inverted, updateOutput)
-// }
-
-// function handleSetScale(newscale)
-// {
-//   setScale(orGate, newscale)
-// }
-
-// function updateOutput() {
-//   orGate.output = orGate.inputs.some(input =>
-//     input.inverted ? !input : input
-//   )
-// }
-
-// onMounted(()=>{
-//  orGate.inputs = computed(()=>createInputs(orGate.inputCount));
-// })
 
 </script>
 

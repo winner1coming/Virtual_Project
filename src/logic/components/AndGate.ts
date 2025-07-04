@@ -3,6 +3,7 @@ import { EventDrivenSimulator } from "../Simulator";
 export class AndGate extends BaseComponent{
 	constructor(id: number, type: String, position:[number, number] = [0,0], simulator: any = null){
 		super(id, type, position);
+		this.offset = [-280, -280];
 		if(!simulator) {
 			this.simulator = EventDrivenSimulator.getInstance(); 
 		}else {
