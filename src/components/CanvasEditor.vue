@@ -54,7 +54,7 @@
           <path
             :d="connection.path"
             stroke="black"
-            stroke-width="12"
+            stroke-width="3"
             fill="none"
           />
         </g>
@@ -573,33 +573,48 @@ function handleMouseMove(event) {
     useCircuitStore().moveComponent(ID, [x, y])// 调用函数移动元件
 
     // 更新所有相关连线的路径
-    updateConnectionPaths();
+    updateConnectionPaths(ID);
   } else if (startPin && tempWire.value) {
     // 更新临时连线路径
     tempWire.value.path = `M${startPin.x},${startPin.y} L${x},${y}`;
   }
 }
 
-function updateConnectionPaths() {
-  connections.forEach(conn => {
-    const fromComponent = components[conn.from.componentId];
-    const toComponent = components[conn.to.componentId];
-    
-    const fromPos = getPinPosition(
-      fromComponent, 
-      conn.from.pinType, 
-      conn.from.pinIndex
-    );
-    
-    const toPos = getPinPosition(
-      toComponent, 
-      conn.to.pinType, 
-      conn.to.pinIndex
-    );
-    
-    conn.path = generateConnectionPath(fromPos, toPos);
+// 更新所有跟该元件相关的连线路径
+function updateConnectionPaths(componentId = null) {
+  connections.forEach((connection) => {
+    const fromId = connection.from.componentId;
+    const toId = connection.to.componentId;
+
+    if (componentId === null || fromId === componentId || toId === componentId) {
+      // 获取最新端口位置
+      const updatedFromPort = findPortById(fromId, connection.from.portId);
+      const updatedToPort = findPortById(toId, connection.to.portId);
+
+      if (updatedFromPort && updatedToPort) {
+        connection.from.x = updatedFromPort.x;
+        connection.from.y = updatedFromPort.y;
+        connection.to.x = updatedToPort.x;
+        connection.to.y = updatedToPort.y;
+
+        const midX = (connection.from.x + connection.to.x) / 2;
+        connection.path = `M ${connection.from.x} ${connection.from.y} 
+                           L ${midX} ${connection.from.y} 
+                           L ${midX} ${connection.to.y} 
+                           L ${connection.to.x} ${connection.to.y}`;
+      }
+    }
   });
 }
+
+// 根据元件ID和引脚ID获取引脚位置信息
+function findPortById(componentId, portId) {
+  const ports = Ports.get(componentId);
+  if (!ports) return null;
+  return ports.find(port => port.id === portId);
+}
+
+
 
 // 修改 deleteComponent 以删除相关连线
 function deleteComponent() {
@@ -657,8 +672,7 @@ function handleWireConnection(x, y) {
     let closestPort = findNearestPort(x, y, 50);
     // console.log("找到了最近的port！")
     console.log("调用findNearestPort，返回结果：", closestPort)
-    // console.log("最近的元件ID是否不为空:", closestPort.componentId != null)
-    // console.log("最近的端口ID是否不为空:", closestPort.id != null)
+
     if (closestPort.componentId != null && closestPort.id != null) {
       // 这里是第一次点击：查找最近的端口作为电线终点
       // 记录端口的位置和编号
@@ -919,7 +933,18 @@ function handleRightClick(event) {
     wireStart.value = null; // 如果有起点，重置起点
     wireStartId = null; // 重置起点ID
   }
-  console.log("清空后，电线起点元件ID:", wireStartId)
+
+  // if (currentComponent.value) {
+  //   // 如果当前有元件在放置状态，清空当前元件
+  //   currentComponent.value = null;
+  //   console.log("右键点击，清空当前元件")
+  // }
+
+  // if (selectedComponent.value) {
+  //   // 如果有选中元件，清空选中状态
+  //   selectedComponent.value = null;
+  //   console.log("右键点击，清空选中元件")
+  // }
 
   const rect = canvasContainer.value.getBoundingClientRect();
   const x = event.clientX - rect.left;
