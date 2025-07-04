@@ -13,4 +13,8 @@ export class Power extends BaseComponent{
   changeInput(idx: number, v: number): number[]{
       throw new Error("Power component does not have inputs to change.");
   }
+
+  updatePinPosition(): void{
+    this.outputPinPosition.splice(0, this.outputPinPosition.length, [38, 124]);
+  }
 }

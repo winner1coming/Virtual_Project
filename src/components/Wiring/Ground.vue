@@ -1,15 +1,19 @@
 <template>
-    <g :transform="`translate(${power.offset[0]*power.scale}, ${power.offset[1]*power.scale}) scale(${power.scale})`" cursor="move">
-        <path d="M38 20L61.3827 94.25L14.6173 94.25L38 20Z" fill="transparent" stroke="rgba(0, 0, 0, 1)" stroke-width="10"   >
+    <g :transform="`translate(${ground.offset[0]*ground.scale}, ${ground.offset[1]*ground.scale}) scale(${ground.scale})`" cursor="move">
+        <path    stroke="rgba(0, 0, 0, 1)" stroke-width="10"    d="M29 75L94 75">
         </path>
-        <path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M38 94L38 124">
+        <path    stroke="rgba(0, 0, 0, 1)" stroke-width="10"    d="M52 95L72 95">
         </path>
-        
+        <path    stroke="rgba(0, 0, 0, 1)" stroke-width="10"    d="M10 55L110 55">
+        </path>
+        <path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M62 15L62 55">
+        </path>
+
         <!--选中方框-->
         <SelectedBox :x="10" :y="10" :width="60" :height="130" :visible="circuitStore.selectedId===props.id"/>
     
         <!-- 输出状态 -->
-        <OutputPort :cx="38" :cy="124" :active="power.outputs[0]" />
+        <OutputPort :cx="62" :cy="13" :active="ground.outputs[0]" />
     </g>
 </template>
 
@@ -28,7 +32,7 @@ const props = defineProps({
     required: true
   }
 })
-const power = computed(() => {
+const ground = computed(() => {
   return circuitStore.getComponent(props.id);  
 });
 
