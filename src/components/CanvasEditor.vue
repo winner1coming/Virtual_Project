@@ -164,6 +164,7 @@ import OrGate from './Gates/OrGate.vue'
 import NotGate from './Gates/NotGate.vue'
 import Tunnel from './Wiring/Tunnel.vue'
 import InputPin from './Wiring/InputPin.vue'
+import NandGate from './Gates/NandGate.vue'
 
 
 // 逻辑类建模
@@ -261,6 +262,7 @@ const componentMap = {
   NOT: NotGate,
   TUNNEL: Tunnel,
   INPUT: InputPin,
+  NAND: NandGate,
 }
 
 // 各组件的方法映射
@@ -270,6 +272,7 @@ const COMPONENT_LOGIC = {
   NOT: LogicNotGate,
   TUNNEL: LogicTunnel,
   INPUT: LogicInputPin,
+  NAND: LogicNandGate
 }
 
 // 初始化各元件尺寸配置
@@ -279,6 +282,7 @@ const COMPONENT_SIZES = {
   NOT: { width: 60, height: 60 },
   TUNNEL: { width: 50, height: 50 },
   INPUT: { width: 30, height: 30 },
+  NAND: { width: 30, height: 30 },
 }
  
 // 按钮图片资源映射表
@@ -288,6 +292,7 @@ const IMAGE_MAP = {
   NOT: new Image(),
   TUNNEL: new Image(),
   INPUT: new Image(),
+  NAND: new Image(),
 }
 
 // 初始化图片资源
@@ -296,6 +301,7 @@ IMAGE_MAP.OR.src = '/assets/OR.png'
 IMAGE_MAP.NOT.src = '/assets/NOT.png'
 IMAGE_MAP.TUNNEL.src = '/assets/TUNNEL.png'
 IMAGE_MAP.INPUT.src = '/assets/INPUT.png'
+IMAGE_MAP.NAND.src = '/assets/INPUT.png'
 
 function updateComponentDirection() {
   // 更新完方向后重新绘制画布
@@ -542,6 +548,9 @@ function handleMouseMove(event) {
         break
       case 'INPUT':
         componentLogic = new LogicInputPin(ID, 'INPUT', [selectedComponent.value.x, selectedComponent.value.y])
+        break
+      case 'NAND':
+        componentLogic = new LogicInputPin(ID, 'NAND', [selectedComponent.value.x, selectedComponent.value.y])
         break
       default:
         console.error("未知元件类型：", selectedComponent.value.componentType)
