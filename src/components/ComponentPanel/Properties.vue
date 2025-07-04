@@ -4,11 +4,14 @@
       <!-- 修改名字 -->
       <div class="property-item">
         <label for="name">名字：</label>
-        <input
+        <n-input
           id="name"
           type="text"
-          v-model="circuitStore.getComponent(circuitStore.selectedId).name"
+          :value="circuitStore.getComponent(circuitStore.selectedId).name.toString()"
           placeholder=""
+          @update:value="(value: string) => {
+            circuitStore.getComponent(circuitStore.selectedId).setName(value);
+          }"
         />
       </div>
 
@@ -99,7 +102,7 @@
 import { computed, ref, watch } from 'vue';
 import { useCircuitStore } from '@/store/CircuitStore';
 import eventBus from '@/modules/useEventBus';
-import { NSelect } from 'naive-ui';
+import { NSelect, NInput } from 'naive-ui';
 import type { SelectOption } from 'naive-ui'
 
 const circuitStore = useCircuitStore();
