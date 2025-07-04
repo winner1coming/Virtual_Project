@@ -34,7 +34,7 @@
         <text
           :x="bitX(index)"
           :y="bitY(index)"
-          font-size="36"
+          font-size="48"
           text-anchor="middle"
           alignment-baseline="middle"
         >

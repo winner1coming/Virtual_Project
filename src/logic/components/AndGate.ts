@@ -3,13 +3,13 @@ import { EventDrivenSimulator } from "../Simulator";
 export class AndGate extends BaseComponent{
 	constructor(id: number, type: String, position:[number, number] = [0,0], simulator: any = null){
 		super(id, type, position);
+		this.offset = [-280, -280];
 		if(!simulator) {
 			this.simulator = EventDrivenSimulator.getInstance(); 
 		}else {
 			this.simulator = simulator; 
 		}
 		this.changeInputPinCount(2); // 初始化输入引脚数量为2
-		this.offset = [-280, -280];
 		//this.updatePinPosition();
 		////is.inputs = [-1, -1];  
 	}
