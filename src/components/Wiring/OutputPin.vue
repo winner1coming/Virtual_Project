@@ -9,7 +9,7 @@
       fill=none
       stroke="black"
       stroke-width="8"
-      rx="6"
+      rx="12"
     />
     
     <!--填充透明区域以便选中-->
@@ -28,7 +28,6 @@
     <g
       v-for="(bit, index) in outputPin.getBits()"
       :key="index"
-      @click="toggleBit(index)"
       style="cursor: pointer;"
     >
       <text
@@ -38,7 +37,7 @@
         text-anchor="middle"
         alignment-baseline="middle"
       >
-        {{ bit }}
+        {{ bit === -1 ? 'x' : bit }}
       </text>
     </g>
     <!-- 输入 -->
@@ -70,12 +69,6 @@ const colMax = 8 // 每行最多8列
 const cellWidth = 40
 const cellHeight = 60
 const padding = 40
-
-// 点击切换
-function toggleBit(index) {
-//bits.value[index] = bits.value[index] === 0 ? 1 : 0
-outputPin.value.toggleBit(index);
-}
 
 // 计算坐标
 function bitX(index) {
