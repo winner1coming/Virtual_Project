@@ -1,4 +1,5 @@
 import { BaseComponent } from "../BaseComponent";
+import { EventDrivenSimulator } from "../Simulator";
 
 export class OutputPin extends BaseComponent {
     private binaryValue: number[]; // 存储当前二进制值
@@ -7,8 +8,14 @@ export class OutputPin extends BaseComponent {
         id: number, 
         type: String = "OutputPin", 
         position: [number, number] = [0, 0], 
+        simulator: any = null
     ) {
         super(id, type, position);
+        if (!simulator) {
+            this.simulator = EventDrivenSimulator.getInstance();
+        } else {
+            this.simulator = simulator;
+        }
         //this.inputs = [-1]; // 默认一个输入引脚，初始未连接
         this.changeInputPinCount(1); 
         //this.outputs = [];  // 输出引脚本身不产生输出

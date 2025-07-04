@@ -1,6 +1,7 @@
 import { reactive } from "vue";
 import { calcInputYs } from "@/logic/utils/useGateLayout";
 import { EventDrivenSimulator } from "./Simulator";
+import { SubSimulator } from "./SubSimulator";
 
 // 电路传输整型，-1表示未连接，-2表示错误
 export abstract class BaseComponent{
@@ -20,6 +21,7 @@ export abstract class BaseComponent{
   //inputYs: number[]; // 输入引脚的y坐标
   outputPinPosition: Array<[number, number]>;  // todo! 默认为2，部分特殊文件中的这个还没改
   direction: string; // 组件的方向，'east', 'west', 'north', 'south'
+  simulator!: EventDrivenSimulator | SubSimulator; // 关联的模拟器实例
 
   constructor(id: number, type: String, position:[number, number] = [0,0]) {
     // 子类初始化构造记得要调用changeInputPinCount()（changeOutputPinCount在outputPin不为1时调用）（会修改一些数组的长度，也会重新计算引脚位置）
@@ -38,6 +40,8 @@ export abstract class BaseComponent{
     this.inputPinPosition =  reactive([[0,0], [0,0]]);  // 默认只有两个输入引脚
     this.outputPinPosition = reactive([[0,0]]); // 默认只有一个输出引脚
     this.direction = 'east';  // 默认方向为东
+
+    // this.simulator = EventDrivenSimulator.getInstance(); 
 
     // this.changeInputPinCount(2); // 初始化输入引脚数量为2 
     // this.inputYs = calcInputYs(this.inputCount); // 计算输入引脚的y坐标
@@ -106,10 +110,18 @@ export abstract class BaseComponent{
     this.inputInverted.splice(0, this.inputInverted.length, ...Array(num).fill(false)); // 初始化输入取反状态
 
     this.updatePinPosition();
+    // 取消与前驱的连接
+    this.simulator.disconnectPredecessors(this.id);
+    for(let i = 0; i < this.outputs.length; i++){
+      this.outputs.splice(i, 1, -1); 
+      this.simulator.processOutputChange(this.id, i, -1); 
+    }
   }
   changeOutputPinCount(num: number){
     this.outputs.splice(0, this.outputs.length, ...Array(num).fill(-1));
 
+    // 取消与后继的连接
+    this.simulator.disconnectSuccessors(this.id);
     this.updatePinPosition();
   }
   // #endregion 引脚
@@ -119,6 +131,14 @@ export abstract class BaseComponent{
       throw new Error(`Input index ${idx} out of bounds for component ${this.type}`);
     }
     this.inputInverted.splice(idx, 1, !this.inputInverted[idx]); // 切换输入取反状态
+
+    const oldOutputs = [...this.outputs];
+    this.compute();
+    for(let i = 0; i < this.outputs.length; i++){
+      if(this.outputs[i] !== oldOutputs[i]){
+        this.simulator.processOutputChange(this.id, i, this.outputs[i]); 
+      }
+    }
   }
 
   getInputPinCount(): number{

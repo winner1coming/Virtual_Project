@@ -57,6 +57,32 @@ export class SubSimulator {
     this.processQueue();
   }
 
+  disconnectPredecessors(id: number){}
+  disconnectSuccessors(id: number) {}
+
+  // 处理输出改变时的情况（给BaseComponent调用）
+  // 参数：id :改变输出的组件的id
+  //      idx: 该组件的改变输出的引脚
+  //     value:  引脚将变为何值
+  processOutputChange(id: number, idx: number, value: number): void {
+    // 获取组件的后继
+    const pinMap = this.connectionManager.getOutputPinMap(id);
+    if (!pinMap) return;
+    for (const pinIdx of pinMap.keys()) {
+      if(pinIdx !== idx) continue;
+      for( const conn of pinMap.get(pinIdx) || []) {
+        //if (conn.legal) {
+          const targetComponent = this.componentIdMap.get(conn.id)!;
+          if (!targetComponent) continue;
+
+          this.enqueue(conn.id, conn.idx, value);
+        //}
+      }
+    }
+    // 处理队列
+    this.processQueue();
+  }
+
   // 全局处理输入改变的情况
   // 参数：id :输入改变的组件的id
   //      idx: 该组件的改变输入的引脚
@@ -109,12 +135,12 @@ export class SubSimulator {
 
         for (const pinIdx of pinMap.keys()) {
           for( const conn of pinMap.get(pinIdx) || []) {
-            if (conn.legal) {
+            //if (conn.legal) {
               const targetComponent = this.componentIdMap.get(conn.id)!;
               if (!targetComponent) continue;
 
               this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
-            }
+            //}
           }
         }
       }

@@ -1,8 +1,14 @@
 import { BaseComponent } from "../BaseComponent";
+import { EventDrivenSimulator } from "../Simulator";
 
 export class NandGate extends BaseComponent {
-    constructor(id: number, type: String, position: [number, number] = [0, 0]) {
+    constructor(id: number, type: String, position: [number, number] = [0, 0], simulator: any = null) {
         super(id, type, position);
+        if (!simulator) {
+            this.simulator = EventDrivenSimulator.getInstance();
+        } else {
+            this.simulator = simulator;
+        }
     }
 
     compute(): number[] {

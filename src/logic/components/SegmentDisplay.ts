@@ -1,7 +1,13 @@
 import { BaseComponent } from "../BaseComponent";
+import { EventDrivenSimulator } from "../Simulator";
 export class SegmentDisplay extends BaseComponent{
-  constructor(id: number, type: String, position:[number, number] = [0,0]){
+  constructor(id: number, type: String, position:[number, number] = [0,0], simulator: any = null){
     super(id, type, position);
+    if(!simulator) {
+      this.simulator = EventDrivenSimulator.getInstance(); 
+    } else {
+      this.simulator = simulator; 
+    }
     this.outputs.splice(0, this.outputs.length); 
     this.changeInputPinCount(8); // SegmentDisplay有8个输入引脚
   }
