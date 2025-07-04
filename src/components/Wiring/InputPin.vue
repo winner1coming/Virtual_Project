@@ -1,5 +1,5 @@
 <template>
-      <g :transform="`scale(${inputPin.scale})`" cursor="move">
+      <g :transform="`translate(${inputPin.offset[0]}, ${inputPin.offset[1]}) scale(${inputPin.scale})`" cursor="move">
       <!-- 背景矩形 -->
       <rect
         x="0"

@@ -17,6 +17,7 @@ export abstract class BaseComponent{
   // width: number;
   scale: number; // 缩放比例
   position: [number, number];
+  offset: [number, number];
   inputPinPosition: Array<[number, number]>;   // todo! 默认为2，部分特殊文件中的这个还没改
   //inputYs: number[]; // 输入引脚的y坐标
   outputPinPosition: Array<[number, number]>;  // todo! 默认为2，部分特殊文件中的这个还没改
@@ -40,6 +41,7 @@ export abstract class BaseComponent{
     this.inputPinPosition =  reactive([[0,0], [0,0]]);  // 默认只有两个输入引脚
     this.outputPinPosition = reactive([[0,0]]); // 默认只有一个输出引脚
     this.direction = 'east';  // 默认方向为东
+    this.offset = [0,0];
 
     // this.simulator = EventDrivenSimulator.getInstance(); 
 
@@ -161,16 +163,16 @@ export abstract class BaseComponent{
     for(let i = 0; i < this.getInputPinCount(); i++){
       result.ports.push({
         id: i,
-        x: this.inputPinPosition[i][0],
-        y: this.inputPinPosition[i][1],
+        x: this.inputPinPosition[i][0]+this.offset[0],
+        y: this.inputPinPosition[i][1]+this.offset[1],
       });
     }  
 
     for(let i = 0; i < this.outputs.length; i++){
       result.ports.push({
         id: i + this.getInputPinCount(),
-        x: this.outputPinPosition[i][0], 
-        y: this.outputPinPosition[i][1],
+        x: this.outputPinPosition[i][0]+this.offset[0], 
+        y: this.outputPinPosition[i][1]+this.offset[1],
       });
     }
     return result;

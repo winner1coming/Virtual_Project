@@ -224,8 +224,8 @@ function addComponentPorts(componentId, portsInfo, index_x, index_y) {
     const inputCount = portsInfo.ports.length - 1; // 假设最后一个是输出
     return {
       id: port.id,               // 原始端口编号
-      x: port.x + index_x - 280,       // 端口X坐标=相对坐标x+元件坐标，这里的280是因为原点移动了（-280，-280）
-      y: port.y + index_y - 280,       // 端口Y坐标=相对坐标y+元件坐标
+      x: port.x + index_x,       // 端口X坐标=相对坐标x+元件坐标，这里的280是因为原点移动了（-280，-280）
+      y: port.y + index_y,       // 端口Y坐标=相对坐标y+元件坐标
       componentId,
       type: index < inputCount ? 'input' : 'output'
     };
