@@ -29,7 +29,7 @@ export class SubCircuitComponent extends BaseComponent {
     this.outputPins = projectStore.getProjectById(projectId).outputPins;
 
     this.initInputPin(this.inputPins.length);
-    this.changeOutputPinCount(this.outputPins.length);
+    this.initOutputPin(this.outputPins.length);
 
     // 根据id创建组件
     projectStore.getProjectById(projectId).componentsId.forEach(id => {
@@ -71,8 +71,6 @@ export class SubCircuitComponent extends BaseComponent {
     this.inputPinPosition.splice(0, this.inputPinPosition.length,
       ...inputYs.map((pin, index): [number, number] => {
         return [
-          // 0 + 92 * this.scale,
-          // 0 + pin * this.scale,
           149 - 26,
           pin,
         ];
@@ -81,8 +79,6 @@ export class SubCircuitComponent extends BaseComponent {
     this.outputPinPosition.splice(0, this.outputPinPosition.length,
       ...outputYs.map((pin, index): [number, number] => {
         return [
-          // 0 + 92 * this.scale,
-          // 0 + pin * this.scale,
           149+223+57,
           pin,
         ];

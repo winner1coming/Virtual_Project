@@ -165,6 +165,7 @@ import NotGate from './Gates/NotGate.vue'
 import Tunnel from './Wiring/Tunnel.vue'
 import InputPin from './Wiring/InputPin.vue'
 import NandGate from './Gates/NandGate.vue'
+import CustomizeComponent from './CustomizeComponent.vue'
 
 
 // 逻辑类建模
@@ -180,6 +181,7 @@ import {Ground as LogicGround} from '@/logic/components/Ground.js'
 import {Power as LogicPower} from '@/logic/components/Power.js'
 import { Tunnel as LogicTunnel} from '@/logic/components/Tunnel'
 import { InputPin as LogicInputPin} from '@/logic/components/InputPin'
+import { SubCircuitComponent as LogicSubCircuit } from '@/logic/components/SubCircuitComponent'
 import { BaseComponent } from '@/logic/BaseComponent'
 
 // 其他
@@ -188,6 +190,7 @@ import eventBus from '@/modules/useEventBus';
 import { useCircuitStore } from '@/store/CircuitStore';
 import { nextTick } from 'vue'
 import { convertCompilerOptionsFromJson } from 'typescript'
+import NorGate from './Gates/NorGate.vue'
 
 
 const canvasContainer = ref(null)
@@ -263,6 +266,7 @@ const componentMap = {
   TUNNEL: Tunnel,
   INPUT: InputPin,
   NAND: NandGate,
+  SUB_CIRCUIT: CustomizeComponent,
 }
 
 // 各组件的方法映射
@@ -272,7 +276,9 @@ const COMPONENT_LOGIC = {
   NOT: LogicNotGate,
   TUNNEL: LogicTunnel,
   INPUT: LogicInputPin,
-  NAND: LogicNandGate
+  NAND: LogicNandGate,
+  SUB_CIRCUIT: LogicSubCircuit,
+
 }
 
 // 初始化各元件尺寸配置
@@ -283,6 +289,7 @@ const COMPONENT_SIZES = {
   TUNNEL: { width: 50, height: 50 },
   INPUT: { width: 30, height: 30 },
   NAND: { width: 30, height: 30 },
+  SUB_CIRCUIT: { width: 300, height: 200 }, 
 }
  
 // 按钮图片资源映射表
@@ -293,6 +300,7 @@ const IMAGE_MAP = {
   TUNNEL: new Image(),
   INPUT: new Image(),
   NAND: new Image(),
+  SUB_CIRCUIT: new Image(),
 }
 
 // 初始化图片资源
@@ -302,6 +310,7 @@ IMAGE_MAP.NOT.src = '/assets/NOT.png'
 IMAGE_MAP.TUNNEL.src = '/assets/TUNNEL.png'
 IMAGE_MAP.INPUT.src = '/assets/INPUT.png'
 IMAGE_MAP.NAND.src = '/assets/INPUT.png'
+IMAGE_MAP.SUB_CIRCUIT.src = '/assets/INPUT.png'
 
 function updateComponentDirection() {
   // 更新完方向后重新绘制画布
@@ -552,6 +561,9 @@ function handleMouseMove(event) {
       case 'NAND':
         componentLogic = new LogicInputPin(ID, 'NAND', [selectedComponent.value.x, selectedComponent.value.y])
         break
+      case 'SUB_CIRCUIT':
+        componentLogic = new LogicSubCircuit(ID, 'SUB_CIRCUIT', [selectedComponent.value.x, selectedComponent.value.y], "", projectTypeId)
+        break
       default:
         console.error("未知元件类型：", selectedComponent.value.componentType)
     }
@@ -698,7 +710,7 @@ function handleWireConnection(x, y) {
     // console.log("找到了最近的port！")
     console.log("调用findNearestPort，返回结果：", closestPort)
 
-    if (closestPort.componentId != null && closestPort.id != null) {
+    if (closestPort && closestPort.componentId != null && closestPort.id != null) {
       // 这里是第一次点击：查找最近的端口作为电线终点
       // 记录端口的位置和编号
       wireStart.value = {
@@ -868,6 +880,7 @@ function selectComponent(item, event) {
   useCircuitStore().selectComponent(item.ID);
 }
 
+let projectTypeId = 0;
 // 鼠标左键且currentComponent不为null（处于元件下方状态）：触发元件放置
 function handleLeftClick(event) {
 
@@ -894,7 +907,7 @@ function handleLeftClick(event) {
     // TODO：(已完成)
     // 1：单独记录这个元件的ID
     // 调用useCircuitStore()获取元件的ID
-    const id = useCircuitStore().addComponent(currentComponent.value.componentType, [x, y]);
+    const id = useCircuitStore().addComponent(currentComponent.value.componentType, [x, y], "", projectTypeId);
     console.log("元件ID：", id)
     // 2：创建元件配置对象，将元件的相关信息存放到components列表里
     components.push({ 
@@ -924,8 +937,11 @@ function handleLeftClick(event) {
         componentLogic = new LogicInputPin(id, 'INPUT', [x, y])
         break
       case 'NAND':
-      componentLogic = new LogicInputPin(id, 'NAND', [x, y])
-      break
+        componentLogic = new LogicNandGate(id, 'NAND', [x, y])
+        break
+      case 'SUB_CIRCUIT':
+        componentLogic = new LogicSubCircuit(id, 'SUB_CIRCUIT', [x, y], "", projectTypeId)
+        break
       default:
         console.error("未知元件类型：", currentComponent.value.componentType)
     }
@@ -1081,7 +1097,8 @@ function toggleInput(component, index) {
 }
 
 onMounted(() => {
-  eventBus.on('start-place-component', (type) => {
+  eventBus.on('start-place-component', ({type:type, projectId: projectId=0}) => {
+    projectTypeId = projectId; 
     startPlacingVueComponent(type);
   });  
   eventBus.on('updateComponentDirection', () => {

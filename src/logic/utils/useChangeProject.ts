@@ -26,8 +26,8 @@ export function useChangeProject() {
     // 更新全局信息
     return {
       components: projectData.components,
-      ports: projectData.ports,
       connections: projectData.connections,
+      ports: projectData.ports,
       Ports: projectData.Ports,
     };
   }
@@ -42,7 +42,7 @@ export function useChangeProject() {
   }
 
   return {
-    projectMap,
+    
     switchProject,
     deleteProject,
   };
