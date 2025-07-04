@@ -1,5 +1,5 @@
 <template>
-  <g :transform="`scale(${tunnel.scale})`" cursor="move">
+  <g :transform="`translate(${tunnel.offset[0]}, ${tunnel.offset[1]}) scale(${tunnel.scale})`" cursor="move">
       <!-- 图形 -->
       <path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M223.65 362.58L183.982 308.585"><!--左下方斜线-->
       </path>
