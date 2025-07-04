@@ -81,22 +81,22 @@ export class ConnectionManager {
         return this.reverseConnections.get(id);
     }
 
-    setConnectionLegal(inputId: number, inputIdx: number, outputId: number, outputIdx: number, legal: boolean) {
-        const pinMap = this.connections.get(inputId);
-        if (pinMap) {
-            const conn = pinMap.get(inputIdx)?.find(c => c.id === outputId && c.idx === outputIdx);
-            if (conn) {
-                conn.legal = legal; // 更新合法性
-            }
-        }
-        const reversePinMap = this.reverseConnections.get(outputId);
-        if (reversePinMap) {
-            const conn = reversePinMap.get(outputIdx)?.find(c => c.id === inputId && c.idx === inputIdx);
-            if (conn) {
-                conn.legal = legal; // 更新合法性
-            }
-        }
-    }
+    // setConnectionLegal(inputId: number, inputIdx: number, outputId: number, outputIdx: number, legal: boolean) {
+    //     const pinMap = this.connections.get(inputId);
+    //     if (pinMap) {
+    //         const conn = pinMap.get(inputIdx)!.find(c => c.id === outputId && c.idx === outputIdx);
+    //         if (conn) {
+    //             conn.legal = legal; // 更新合法性
+    //         }
+    //     }
+    //     const reversePinMap = this.reverseConnections.get(outputId);
+    //     if (reversePinMap) {
+    //         const conn = reversePinMap.get(outputIdx)!.find(c => c.id === inputId && c.idx === inputIdx);
+    //         if (conn) {
+    //             conn.legal = legal; // 更新合法性
+    //         }
+    //     }
+    // }
 
     // // 获取所有连线（暂时没什么用）
     // getAllConnections() {

@@ -2,6 +2,7 @@ import { reactive } from "vue";
 import { calcInputYs } from "@/logic/utils/useGateLayout";
 import { EventDrivenSimulator } from "./Simulator";
 import { SubSimulator } from "./SubSimulator";
+import eventBus from "@/modules/useEventBus";
 
 // 电路传输整型，-1表示未连接，-2表示错误
 export abstract class BaseComponent{
@@ -128,6 +129,8 @@ export abstract class BaseComponent{
       this.outputs.splice(i, 1, -1); 
       this.simulator.processOutputChange(this.id, i, -1); 
     }
+
+    eventBus.emit('updatePinPosition', {id: this.id}); 
   }
   changeOutputPinCount(num: number){
     this.outputs.splice(0, this.outputs.length, ...Array(num).fill(-1));
@@ -135,6 +138,7 @@ export abstract class BaseComponent{
     // 取消与后继的连接
     this.simulator.disconnectSuccessors(this.id);
     this.updatePinPosition();
+    eventBus.emit('updatePinPosition', {id: this.id}); 
   }
   // #endregion 引脚
 

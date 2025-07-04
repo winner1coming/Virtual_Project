@@ -11,30 +11,36 @@ export class XorGate extends BaseComponent {
         }
     }
 
-    compute(): number[] {
-        let hasConnected = false;
-        let result = 0;
-        for (const value of this.inputs) {
-            if (value === -2) {
-                this.outputs.splice(0, this.outputs.length, -2); // 输出引脚错误
-                return this.outputs;
-            }
-            if (value !== -1) {
-                if (!hasConnected) {
-                    hasConnected = true;
-                    result = value;
-                } else {
-                    result = result ^ value; 
-                }
-            }
-        }
-        if (!hasConnected) {
-            this.outputs.splice(0, this.outputs.length, -1); 
-        } else {
-            this.outputs.splice(0, 1, result); 
-        }
-        return this.outputs;
-    }
+   compute(){   // 返回输出(int)
+		let hasConnected = false;
+		const mask = (1 << this.bitWidth) - 1;
+		for (let i = 0; i < this.inputs.length; i++) {
+			let value = this.inputs[i];
+
+			// 如果输入引脚被设置为取反，则取反值
+			if (this.inputInverted[i]) {
+				value = value === -1 || value === -2 ? value : ~value & mask; // 保持 -1 和 -2 不变，其他值取反
+			}
+
+			if (value === -2) {
+				this.outputs.splice(0, this.outputs.length, -2);
+				return this.outputs;
+			}
+
+			if (value !== -1) {
+				if (!hasConnected) {
+				hasConnected = true;
+				this.outputs.splice(0, 1, value); 
+				} else {
+				this.outputs.splice(0, 1, this.outputs[0] ^ value); 
+				}
+			}
+		}
+		if(!hasConnected) {
+			this.outputs.splice(0, this.outputs.length, -1); // 如果没有连接任何输入，则输出-1
+		}
+		return this.outputs;
+	}
 
     changeInput(idx: number, v: number): number[] {
         this.inputs.splice(idx, 1, v); // 替换idx位置的值

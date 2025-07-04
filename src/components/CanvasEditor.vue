@@ -525,6 +525,38 @@ function generateConnectionPath(start, end) {
   return `M${start.x},${start.y} C${midX},${start.y} ${midX},${end.y} ${end.x},${end.y}`;
 }
 
+// 触发引脚变化
+function updatePinPosition(ID) {
+  // 获取组件类型对应的逻辑类
+  let componentLogic = useCircuitStore().getComponent(ID)
+
+  // 创建Vue组件实例
+  const componentInstance = {
+    component: componentMap[component.type],
+    props: {ID},
+    logic: componentLogic,
+  }
+
+  // 存储Vue实例引用
+  vueComponentMap.set(ID, componentInstance);
+
+  // 4：记录当前ID的端口信息
+  // 延迟4后获取端口信息，确保见组件挂载完成
+  nextTick(() => {
+    const logic = vueComponentMap.get(ID)?.logic;
+    if(!logic) {
+      console.warn("逻辑类未找到，ID：", ID)
+      return
+    }
+    const portsInfo = logic.getAllPorts()
+    updateComponentPorts(ID, portsInfo, componentLogic.position[0], componentLogic.position[1]);
+    console.log("所有端口：", Ports)
+  })
+
+  // 更新所有相关连线的路径
+  updateConnectionPaths(ID);
+}
+
 // 修改 handleMouseMove 以支持连线拖动
 function handleMouseMove(event) {
   
@@ -547,35 +579,7 @@ function handleMouseMove(event) {
     let ID = selectedComponent.value.ID// 获取元件ID
 
     // 获取组件类型对应的逻辑类
-    let componentLogic
-    switch (selectedComponent.value.componentType) {
-      case 'AND':
-        componentLogic = new LogicAndGate(ID, 'AND', [selectedComponent.value.x, selectedComponent.value.y])
-        break
-      case 'OR':
-        componentLogic = new LogicOrGate(ID, 'OR', [selectedComponent.value.x, selectedComponent.value.y])
-        break
-      case 'NOT':
-        componentLogic = new LogicNotGate(ID, 'NOT', [selectedComponent.value.x, selectedComponent.value.y])
-        break
-      case 'TUNNEL':
-        componentLogic = new LogicTunnel(ID, 'TUNNEL', [selectedComponent.value.x, selectedComponent.value.y])
-        break
-      case 'INPUT':
-        componentLogic = new LogicInputPin(ID, 'INPUT', [selectedComponent.value.x, selectedComponent.value.y])
-        break
-      case 'OUTPUT':
-        componentLogic = new LogicInputPin(ID, 'OUTPUT', [selectedComponent.value.x, selectedComponent.value.y])
-        break
-      case 'NAND':
-        componentLogic = new LogicInputPin(ID, 'NAND', [selectedComponent.value.x, selectedComponent.value.y])
-        break
-      case 'SUB_CIRCUIT':
-        componentLogic = new LogicSubCircuit(ID, 'SUB_CIRCUIT', [selectedComponent.value.x, selectedComponent.value.y], "", projectTypeId)
-        break
-      default:
-        console.error("未知元件类型：", selectedComponent.value.componentType)
-    }
+    let componentLogic = useCircuitStore().getComponent(ID)
 
     // 触发引脚坐标更新（非常重要）
     componentLogic.setPosition([selectedComponent.value.x, selectedComponent.value.y]);
@@ -708,6 +712,7 @@ function handleMouseDown(event) {
 
 // 连线逻辑
 function handleWireConnection(x, y) {
+
   console.log("开始创建电路了！")
   console.log("电线起点：",wireStart.value)
   // 电线画线逻辑：分起始点和终点两种情况
@@ -928,34 +933,8 @@ function handleLeftClick(event) {
     // 3：将元件ID存起来，方便后面查找各元件的引脚信息
     componentID.push(id)
     // 获取组件类型对应的逻辑类
-    let componentLogic
-    switch (currentComponent.value.componentType) {
-      case 'AND':
-        componentLogic = new LogicAndGate(id, 'AND', [x, y])
-        break
-      case 'OR':
-        componentLogic = new LogicOrGate(id, 'OR', [x, y])
-        break
-      case 'NOT':
-        componentLogic = new LogicNotGate(id, 'NOT', [x, y])
-        break
-      case 'TUNNEL':
-        componentLogic = new LogicTunnel(id, 'TUNNEL', [x, y])
-        break
-      case 'INPUT':
-        componentLogic = new LogicInputPin(id, 'INPUT', [x, y])
-        break
-      case 'OUTPUT':
-        componentLogic = new LogicInputPin(id, 'OUTPUT', [x, y])
-      case 'NAND':
-        componentLogic = new LogicNandGate(id, 'NAND', [x, y])
-        break
-      case 'SUB_CIRCUIT':
-        componentLogic = new LogicSubCircuit(id, 'SUB_CIRCUIT', [x, y], "", projectTypeId)
-        break
-      default:
-        console.error("未知元件类型：", currentComponent.value.componentType)
-    }
+    let componentLogic = useCircuitStore().getComponent(id)
+
     // 触发引脚坐标更新（非常重要）
     componentLogic.setPosition([x, y]);
 
@@ -999,6 +978,7 @@ function handleRightClick(event) {
   if (wireStartId != null) {
     wireStart.value = null; // 如果有起点，重置起点
     wireStartId = null; // 重置起点ID
+    tempWire.value = null; // 清除临时连线
   }
 
   // if (currentComponent.value) {
@@ -1114,6 +1094,9 @@ onMounted(() => {
   });  
   eventBus.on('updateComponentDirection', () => {
     updateComponentDirection();
+  });
+  eventBus.on('updatePinPosition', ({id: number}) => {
+    updatePinPosition(id);
   });
   // 确保画布元素可聚焦
   canvasContainer.value.focus();
