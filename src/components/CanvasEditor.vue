@@ -191,6 +191,7 @@ import { useCircuitStore } from '@/store/CircuitStore';
 import { nextTick } from 'vue'
 import { convertCompilerOptionsFromJson } from 'typescript'
 import NorGate from './Gates/NorGate.vue'
+import OutputPin from './Wiring/OutputPin.vue'
 
 
 const canvasContainer = ref(null)
@@ -265,6 +266,7 @@ const componentMap = {
   NOT: NotGate,
   TUNNEL: Tunnel,
   INPUT: InputPin,
+  OUTPUT: OutputPin,
   NAND: NandGate,
   SUB_CIRCUIT: CustomizeComponent,
 }
@@ -276,6 +278,7 @@ const COMPONENT_LOGIC = {
   NOT: LogicNotGate,
   TUNNEL: LogicTunnel,
   INPUT: LogicInputPin,
+  OUTPUT: LogicInputPin, 
   NAND: LogicNandGate,
   SUB_CIRCUIT: LogicSubCircuit,
 
@@ -288,6 +291,7 @@ const COMPONENT_SIZES = {
   NOT: { width: 60, height: 60 },
   TUNNEL: { width: 50, height: 50 },
   INPUT: { width: 30, height: 30 },
+  OUTPUT: { width: 30, height: 30 },
   NAND: { width: 30, height: 30 },
   SUB_CIRCUIT: { width: 300, height: 200 }, 
 }
@@ -299,6 +303,7 @@ const IMAGE_MAP = {
   NOT: new Image(),
   TUNNEL: new Image(),
   INPUT: new Image(),
+  OUTPUT: new Image(),
   NAND: new Image(),
   SUB_CIRCUIT: new Image(),
 }
@@ -309,6 +314,7 @@ IMAGE_MAP.OR.src = '/assets/OR.png'
 IMAGE_MAP.NOT.src = '/assets/NOT.png'
 IMAGE_MAP.TUNNEL.src = '/assets/TUNNEL.png'
 IMAGE_MAP.INPUT.src = '/assets/INPUT.png'
+IMAGE_MAP.OUTPUT.src = '/assets/OUTPUT.png'
 IMAGE_MAP.NAND.src = '/assets/INPUT.png'
 IMAGE_MAP.SUB_CIRCUIT.src = '/assets/INPUT.png'
 
@@ -557,6 +563,9 @@ function handleMouseMove(event) {
         break
       case 'INPUT':
         componentLogic = new LogicInputPin(ID, 'INPUT', [selectedComponent.value.x, selectedComponent.value.y])
+        break
+      case 'OUTPUT':
+        componentLogic = new LogicInputPin(ID, 'OUTPUT', [selectedComponent.value.x, selectedComponent.value.y])
         break
       case 'NAND':
         componentLogic = new LogicInputPin(ID, 'NAND', [selectedComponent.value.x, selectedComponent.value.y])
@@ -936,6 +945,8 @@ function handleLeftClick(event) {
       case 'INPUT':
         componentLogic = new LogicInputPin(id, 'INPUT', [x, y])
         break
+      case 'OUTPUT':
+        componentLogic = new LogicInputPin(id, 'OUTPUT', [x, y])
       case 'NAND':
         componentLogic = new LogicNandGate(id, 'NAND', [x, y])
         break
