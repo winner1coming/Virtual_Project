@@ -19,14 +19,14 @@
       <InputPin :id="inputPinId"/>
     </svg> -->
 
-    <!-- <svg
+    <svg
       viewBox="-300 -300 600 600"
       width="300"
       height="300"
       style="overflow: visible;"
     >
       <CustomizeComoponent :id="CustomizeComponentId"/>
-    </svg> -->
+    </svg>
 
     <!-- <svg
       viewBox="0 0 600 600"
@@ -73,14 +73,14 @@
       <OutputPin :id="outputpinId"/>
     </svg> -->
 
-    <svg
+    <!-- <svg
       viewBox="-300 -300 600 600"
       width="300"
       height="300"
       style="overflow: visible;"
     >
       <andGate />
-    </svg>
+    </svg> -->
 
     <!-- <Splitter /> -->
     <button @click="toggleInputPin"> 改InputPin的位宽 </button>

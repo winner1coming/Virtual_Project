@@ -5,6 +5,7 @@ import { reactive } from 'vue';
 import { SubSimulator } from '../SubSimulator';
 import { useProjectStore } from '@/store/ProjectStore';
 import { createComponentByType } from '@/modules/useComponentType';
+import { calcInputYs } from "@/logic/utils/useGateLayout";
 
 export class SubCircuitComponent extends BaseComponent {
   private inputPins: number[];   // 输入引脚的id
@@ -62,4 +63,31 @@ export class SubCircuitComponent extends BaseComponent {
     this.updateOutputs();
     return this.outputs;
   }
+
+  updatePinPosition(): void{
+    // 修改输入
+    const inputYs = calcInputYs(this.inputCount);
+    const outputYs = calcInputYs(this.outputs.length);
+    this.inputPinPosition.splice(0, this.inputPinPosition.length,
+      ...inputYs.map((pin, index): [number, number] => {
+        return [
+          // 0 + 92 * this.scale,
+          // 0 + pin * this.scale,
+          149 - 26,
+          pin,
+        ];
+    }));
+    // 修改输出
+    this.outputPinPosition.splice(0, this.outputPinPosition.length,
+      ...outputYs.map((pin, index): [number, number] => {
+        return [
+          // 0 + 92 * this.scale,
+          // 0 + pin * this.scale,
+          149+223+57,
+          pin,
+        ];
+    }));
+  
+  }
+
 }

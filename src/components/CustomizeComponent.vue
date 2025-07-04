@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(-280, -280) scale(${customizeComponent.scale})`" cursor="move">
+    <g :transform="`translate(${customizeComponent.offset[0]*customizeComponent.scale}, ${customizeComponent.offset[1]*customizeComponent.scale}) scale(${customizeComponent.scale})`" cursor="move">
       <!-- 自定义图形 -->
       <rect
         x="149"
@@ -32,17 +32,8 @@
 
       <!-- 输出引脚 --待改写 -->
       <template v-for="(output, index) in customizeComponent.outputs" :key="output.id">
-        <circle
-          v-if="output.inverted"
-          :cx="149+223"
-          :cy="outputYs[index]"
-          r="16"
-          stroke="black"
-          stroke-width="12"
-          fill="none"
-        />
-        <path v-if="!output.inverted":d="`M372 ${outputYs[index]}L429 ${outputYs[index]}`" stroke="black" stroke-width="12" />
-        <OutputPort :cx="149+223+57" :cy="outputYs[index]" :active="output" />
+        <path :d="`M372 ${customizeComponent.outputPinPosition[index][1]}L429 ${customizeComponent.outputPinPosition[index][1]}`" stroke="black" stroke-width="12" />
+        <OutputPort :cx="149+223+57" :cy="customizeComponent.outputPinPosition[index][1]" :active="output" />
       </template>
 
     </g>
@@ -55,7 +46,6 @@ import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 import { defineProps } from 'vue'
 
-import { useGateLayout } from '@/logic/usegates/useGateLayout'
 import { useCircuitStore } from '@/store/CircuitStore'
 
 const circuitStore = useCircuitStore();
@@ -77,9 +67,9 @@ let maxY_in = computed(()=>Math.max(...customizeComponent.value.inputPinPosition
 let minY = computed(()=>Math.min(minY_in.value, minY_out.value)); // todo
 let maxY = computed(()=>Math.max(maxY_in.value, maxY_out.value)); // todo
 
-let outputYs = computed(()=>useGateLayout(customizeComponent.value.outputs.length)) // 定义输出的个数 调试用，要删 todo
-let minY_out = computed(()=>Math.min(...outputYs.value)); //todo
-let maxY_out = computed(()=>Math.max(...outputYs.value)); //todo
+// let outputYs = computed(()=>useGateLayout(customizeComponent.value.outputs.length)) // 定义输出的个数 调试用，要删 todo
+let minY_out = computed(()=>Math.min(...customizeComponent.value.outputPinPosition.map(pin => pin[1]))); //todo
+let maxY_out = computed(()=>Math.max(...customizeComponent.value.outputPinPosition.map(pin => pin[1]))); //todo
 
 
 </script>
