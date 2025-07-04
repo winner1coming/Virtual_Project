@@ -160,12 +160,19 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 // 元件建模
 import AndGate from './Gates/AndGate.vue'
+import NandGate from './Gates/NandGate.vue'
 import OrGate from './Gates/OrGate.vue'
+import NorGate from './Gates/NorGate.vue'
 import NotGate from './Gates/NotGate.vue'
+import XorGate from './Gates/XorGate.vue'
+import XnorGate from './Gates/XnorGate.vue'
 import Tunnel from './Wiring/Tunnel.vue'
 import InputPin from './Wiring/InputPin.vue'
-import NandGate from './Gates/NandGate.vue'
 import CustomizeComponent from './CustomizeComponent.vue'
+import Clock from './Wiring/Clock.vue'
+import Constant from './Wiring/Constant.vue'
+import Power from './Wiring/Power.vue'
+import Splitter from './Wiring/Splitter.vue'
 
 
 // 逻辑类建模
@@ -190,7 +197,6 @@ import eventBus from '@/modules/useEventBus';
 import { useCircuitStore } from '@/store/CircuitStore';
 import { nextTick } from 'vue'
 import { convertCompilerOptionsFromJson } from 'typescript'
-import NorGate from './Gates/NorGate.vue'
 import OutputPin from './Wiring/OutputPin.vue'
 
 
@@ -269,19 +275,31 @@ const componentMap = {
   OUTPUT: OutputPin,
   NAND: NandGate,
   SUB_CIRCUIT: CustomizeComponent,
+  XOR: XorGate,
+  XNOR: XnorGate,
+  NOR: NorGate,
+  CLOCK: Clock,
+  CONSTANT: Constant,
+  POWER: Power,
+  SPLITTER: Splitter,
+  COMBINER: LogicCombiner,
 }
 
-// 各组件的方法映射
+// 逻辑类映射表
 const COMPONENT_LOGIC = {
   AND: LogicAndGate, 
+  NAND: LogicNandGate,
   OR: LogicOrGate,
+  NOR: LogicNorGate,
   NOT: LogicNotGate,
+  CLOCK: LogicClock,
+  COMBINER: LogicCombiner,
+  GROUND: LogicGround,
+  POWER: LogicPower,
   TUNNEL: LogicTunnel,
   INPUT: LogicInputPin,
-  OUTPUT: LogicInputPin, 
-  NAND: LogicNandGate,
+  // OUTPUT: LogicInputPin, 
   SUB_CIRCUIT: LogicSubCircuit,
-
 }
 
 // 初始化各元件尺寸配置
