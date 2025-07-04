@@ -5,7 +5,7 @@
           d="M438.075 288.5L147.769 392.856L147.769 184.144L438.075 288.5Z"
           stroke="black"
           stroke-width="12"
-          fill="none"
+          fill="transparent"
         />
         <!-- 输出端圆圈 -->
         <ellipse
@@ -30,7 +30,7 @@
         <path v-if="!notGate.inputInverted[0]" stroke="black" stroke-width="12" d="M93 288L150 288" />
 
         <!--选中方框-->
-        <SelectedBox :x="83" :y="183" :width="406" :height="209" :visible="circuitStore.selectedId===props.id"/>
+        <SelectedBox :x="83" :y="178" :width="420" :height="220" :visible="circuitStore.selectedId===props.id"/>
 
         <!-- 输入状态端口 -->
         <InputPort :cx="93" :cy="288" :active="notGate.inputs[0]" @toggle="handleToggleInput" />

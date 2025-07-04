@@ -5,7 +5,6 @@
     <path stroke="black" stroke-width="12" d="M146 395.115L316 395.115" />
     <path fill="none" stroke="black" stroke-width="12" d="M303.269 181.612C313.833 179.216 358.755 182.869 373.209 204.739" /> <!--右上角的小曲线-->
     <path fill="none" stroke="black" stroke-width="12" d="M303.27 394.502C313.834 396.899 358.756 393.246 373.21 371.375" /> <!--右下角的小曲线-->
-    <path stroke="black" stroke-width="12" d="M440 288L497 288" /> <!--输出端的横线-->
     <path stroke="black" stroke-width="12" d="M368.226 198.885L450.774 292.115" /> <!--右上角的斜直线-->
     <path stroke="black" stroke-width="12" d="M368.227 377.23L450.775 284" /> <!--右下角的斜直线-->
     <ellipse cx="470.2452697753906" cy="286.0000305175781" rx="20.754730224609375" ry="20" stroke="rgba(0, 0, 0, 1)" stroke-width="12"      fill="#CCCCCC" fill-opacity="0">

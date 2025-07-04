@@ -324,6 +324,7 @@ const IMAGE_MAP = {
   OUTPUT: new Image(),
   NAND: new Image(),
   SUB_CIRCUIT: new Image(),
+  NOR: new Image(),
 }
 
 // 初始化图片资源
@@ -335,6 +336,7 @@ IMAGE_MAP.INPUT.src = '/assets/INPUT.png'
 IMAGE_MAP.OUTPUT.src = '/assets/OUTPUT.png'
 IMAGE_MAP.NAND.src = '/assets/INPUT.png'
 IMAGE_MAP.SUB_CIRCUIT.src = '/assets/INPUT.png'
+IMAGE_MAP.NOR.src = '/assets/INPUT.png'
 
 function updateComponentDirection() {
   // 更新完方向后重新绘制画布
