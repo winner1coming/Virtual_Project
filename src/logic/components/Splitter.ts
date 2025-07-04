@@ -1,9 +1,15 @@
 // Splitter.ts - 分离器
 import { BaseComponent } from "../BaseComponent";
+import { EventDrivenSimulator } from "../Simulator";
 
 export class Splitter extends BaseComponent {
-    constructor(id: number, position: [number, number] = [0, 0], bitWidth: number = 4) {
+    constructor(id: number, position: [number, number] = [0, 0], simulator = null,bitWidth: number = 4) {
         super(id, "splitter", position);
+        if (!simulator) {
+            this.simulator = EventDrivenSimulator.getInstance();
+        } else {
+            this.simulator = simulator;
+        }
         this.bitWidth = bitWidth;
         //this.inputs = [-1]; // 只有一个输入
         this.inputs.splice(0, this.inputs.length, -1); // 初始未连接状态

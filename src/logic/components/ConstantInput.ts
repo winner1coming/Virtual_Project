@@ -1,4 +1,5 @@
 import { BaseComponent } from "../BaseComponent";
+import { EventDrivenSimulator } from "../Simulator";
 
 export class ConstantInput extends BaseComponent {
     private currentValue: number;
@@ -8,9 +9,15 @@ export class ConstantInput extends BaseComponent {
         id: number,
         type: String = "ConstantInput", 
         position: [number, number] = [0, 0],
+        simulator: any = null,
         maxValue = 1
     ) {
         super(id, type, position);
+        if(!simulator) {
+            this.simulator = EventDrivenSimulator.getInstance();
+        } else {
+            this.simulator = simulator;
+        }
         //this.inputs = []; // 常量输入没有输入引脚
         this.inputs.splice(0, this.inputs.length); // 清空输入引脚
         this.inputCount = 0; 

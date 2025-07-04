@@ -1,11 +1,21 @@
 import { BaseComponent } from "../BaseComponent";
+import { EventDrivenSimulator } from "../Simulator";
 
 export class Clock extends BaseComponent {
     private intervalId: any = null;
     private period: number; // 时钟周期，单位ms
 
-    constructor(id: number, type: String, position: [number, number] = [0, 0], period: number = 1000) {
+    constructor(id: number, 
+            type: String, 
+            position: [number, number] = [0, 0], 
+            period: number = 1000,
+            simulator: any = null) {
         super(id, type, position);
+        if(!simulator) {
+			this.simulator = EventDrivenSimulator.getInstance(); 
+		}else {
+			this.simulator = simulator; 
+		}
         this.changeInputPinCount(0); // 时钟没有输入引脚
         this.period = period;
 

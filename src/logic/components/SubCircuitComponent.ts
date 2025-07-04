@@ -7,7 +7,6 @@ import { useProjectStore } from '@/store/ProjectStore';
 import { createComponentByType } from '@/modules/useComponentType';
 
 export class SubCircuitComponent extends BaseComponent {
-  private subSimulator: SubSimulator;
   private inputPins: number[];   // 输入引脚的id
   private outputPins: number[];
   private componentIdMap: Map<number, BaseComponent> = new Map(); // 用于映射元件的id
@@ -39,13 +38,13 @@ export class SubCircuitComponent extends BaseComponent {
       }
     });
 
-    this.subSimulator = new SubSimulator(projectId, this.componentIdMap);
+    this.simulator = new SubSimulator(projectId, this.componentIdMap);
   }
 
   changeInput(idx: number, v: number): number[] {
     this.componentIdMap.get(this.inputPins[idx])!.changeInput(0, v);
-    this.subSimulator.enqueue(this.inputPins[idx], 0, v);
-    this.subSimulator.processQueue();
+    this.simulator.enqueue(this.inputPins[idx], 0, v);
+    this.simulator.processQueue();
     this.updateOutputs();
     return this.outputs;
   }
@@ -59,7 +58,7 @@ export class SubCircuitComponent extends BaseComponent {
   }
 
   compute(): number[] {
-    this.subSimulator.processQueue();
+    this.simulator.processQueue();
     this.updateOutputs();
     return this.outputs;
   }
