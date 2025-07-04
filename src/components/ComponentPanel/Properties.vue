@@ -49,7 +49,7 @@
         <label for="pinCount">引脚数量：</label>
         <n-select
           id="pinCount"
-          v-model:value="circuitStore.getComponent(circuitStore.selectedId).inputCount"
+          :value="circuitStore.getComponent(circuitStore.selectedId).inputCount"
           :options="pinCountOptions.map(count => ({ label: `${count} 个`, value: count }))"
           @update:value="updateInputCount"
         >
@@ -61,12 +61,17 @@
         <label for="scale">大小：</label>
         <n-select
           id="scale"
-          v-model:value="circuitStore.getComponent(circuitStore.selectedId).scale"
+          :value="circuitStore.getComponent(circuitStore.selectedId).scale"
           :options="[
             { label: '小', value: 0.25 },
             { label: '中', value: 0.5 },
             { label: '大', value: 1 },
           ]"
+          @update:value="(value, option) => {
+            if(value !== circuitStore.getComponent(circuitStore.selectedId).scale) {
+              circuitStore.getComponent(circuitStore.selectedId).setScale(value);
+            }
+          }"
         >
         </n-select>
       </div>
