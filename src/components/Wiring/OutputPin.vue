@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${outputPin.offset[0]*outputPin.scale}, ${outputPin.offset[1]*outputPin.scale}) scale(${outputPin.scale})`" cursor="move">
+  <g :transform="`translate(${outputPin.offset[0]*outputPin.scale}, ${outputPin.offset[1]*outputPin.scale}) scale(${outputPin.scale})`" cursor="move">
     <!-- 背景矩形 -->
     <rect
       x="0"
@@ -9,7 +9,7 @@
       fill=none
       stroke="black"
       stroke-width="8"
-      rx="12"
+      rx="30"
     />
     
     <!--填充透明区域以便选中-->
@@ -28,7 +28,6 @@
     <g
       v-for="(bit, index) in outputPin.getBits()"
       :key="index"
-      style="cursor: pointer;"
     >
       <text
         :x="bitX(index)"
@@ -41,13 +40,13 @@
       </text>
     </g>
     <!-- 输入 -->
-    <InputPort :cx="0" :cy="svgHeight/2" :active="outputPin.inputs[0]" :bitWidth="outputPin.bitWidth" />
-    </g>
+    <InputPort :cx="0" :cy="outputPin.inputPinPosition[0][1]" :active="outputPin.inputs[0]" :bitWidth="outputPin.bitWidth" />
+  </g>
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import OutputPort from '@/components/Ports/OutputPort.vue'
+import InputPort from '@/components/Ports/InputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 
 import { useCircuitStore } from '@/store/CircuitStore'
