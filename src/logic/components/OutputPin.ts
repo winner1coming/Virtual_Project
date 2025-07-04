@@ -17,7 +17,7 @@ export class OutputPin extends BaseComponent {
             this.simulator = simulator;
         }
         //this.inputs = [-1]; // 默认一个输入引脚，初始未连接
-        this.changeInputPinCount(1); 
+        this.initInputPin(1); 
         //this.outputs = [];  // 输出引脚本身不产生输出
         this.outputs.splice(0, this.outputs.length); // 输出引脚不产生输出
         this.bitWidth = 4;  // 默认4位

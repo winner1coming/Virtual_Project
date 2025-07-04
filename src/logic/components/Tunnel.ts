@@ -4,14 +4,18 @@ import { reactive } from 'vue';
 import { EventDrivenSimulator } from '../Simulator';
 
 export class Tunnel extends BaseComponent {
-  constructor(id: number, type: String, position: [number, number] = [0, 0], name: String) {
+  constructor(id: number, type: String, position: [number, number] = [0, 0], name: String, simulator: any = null) {
     super(id, type, position);
-    // 只支持输出，隧道输入的逻辑放在模拟器中全局判断
-    this.inputCount = 0;
-    this.inputs.splice(0, this.inputs.length);       // 0个输入
-    this.inputPinPosition.splice(0, this.inputPinPosition.length, [0,0]);
-    this.setName(name); // 设置 tunnel 名称
+    // 只支持输出，隧道输入的逻辑放在模拟器中全局判断  todo 处理模拟器还是子模拟器
+    if(!simulator) {
+      this.simulator = EventDrivenSimulator.getInstance();
+    }
+    else {
+      this.simulator = simulator;
+    }
     this.offset=[-253,-310];
+    this.initInputPin(0); 
+    this.setName(name); // 设置 tunnel 名称
     EventDrivenSimulator.getInstance().addTunnel(name, id);
   }
 
@@ -33,5 +37,10 @@ export class Tunnel extends BaseComponent {
     // 直接传播给输出
     this.outputs.splice(0, this.outputs.length, v); // 替换outputs[0]的值
     return this.outputs;
+  }
+
+  updatePinPosition(): void {
+    this.outputPinPosition.splice(0, this.outputPinPosition.length, [183.98, 310]);
+    this.inputPinPosition.splice(0, this.inputPinPosition.length); 
   }
 }
