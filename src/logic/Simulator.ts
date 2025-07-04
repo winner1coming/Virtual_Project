@@ -386,7 +386,7 @@ export class EventDrivenSimulator {
     // if (this.inQueue.has(key)) return;
     if (this.inQueue.has(key)) {
       // 更新队列中的任务而不是直接返回 todo 这种方法待测试
-      const idx = this.workQueue.findIndex(task => task.id === id && task.idx === idx);
+      idx = this.workQueue.findIndex(task => task.id === id && task.idx === idx);
       if (idx !== -1) {
         this.workQueue[idx].value = value; // 更新任务的值
       }
@@ -441,7 +441,7 @@ export class EventDrivenSimulator {
             //if (conn.legal) {
               const targetComponent = this.circuitStore.getComponent(conn.id);
               if (!targetComponent) continue;
-
+              if(conn.id === id && conn.idx === idx) continue; // 防止自己通知自己
               this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
             }
           //}
