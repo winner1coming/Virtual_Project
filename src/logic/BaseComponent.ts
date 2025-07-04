@@ -106,6 +106,10 @@ export abstract class BaseComponent{
   
   }
   
+  initOutputPin(num: number){
+    this.outputs.splice(0, this.outputs.length, ...Array(num).fill(-1));
+    this.updatePinPosition(); // 更新输出引脚位置
+  }
   // 初始化输入引脚，不检查连接
   initInputPin(num: number){
     this.inputCount = num;

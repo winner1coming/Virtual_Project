@@ -229,6 +229,8 @@ export class EventDrivenSimulator {
       for (const pinIdx of pinMap.keys()) {
         for(const conn of pinMap.get(pinIdx) || []) {
           this.disconnect(id, pinIdx, conn.id, conn.idx);
+           // 通知后继组件该引脚的输入已断开 todo 没考虑两个元件连一个引脚的情况
+          this.enqueue(conn.id, conn.idx, -1);
         }
       }
     }

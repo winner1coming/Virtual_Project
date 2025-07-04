@@ -78,8 +78,8 @@ const handleMouseDown = (projectId: number) => {
   if(clickCount === 1){
     clickTimer = setTimeout(() => {
       createSubComponent(projectId); 
-      clickCount = 0; // 重置点击计数
-    }, 200); // 单击延时500毫秒
+      clickCount = 0; 
+    }, 200); 
   } else if (clickCount === 2) {
     if (clickTimer) {
       clearTimeout(clickTimer);
@@ -103,10 +103,10 @@ const loadProject = (projectId: number) => {
 const createSubComponent = (projectId: number) => {
   clickTimer = setTimeout(() => {
     console.log("创建子组件", projectId);
-    // 画布那边不用再addComponent todo （预览图的处理）
-    useCircuitStore().addComponent("SUB_CIRCUIT", [0,0], "", projectId);
+    // // 画布那边不用再addComponent todo （预览图的处理）
+    // useCircuitStore().addComponent("SUB_CIRCUIT", [0,0], "", projectId);
 
-    eventBus.emit('start-place-component', {type: "SUB_CIRCUIT"} );
+    eventBus.emit('start-place-component', {type: "SUB_CIRCUIT", projectId: projectId} );
 
     clickTimer = null; // 清除定时器
   }, 500);

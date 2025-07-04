@@ -43,7 +43,7 @@ const components = [
 
 const onDragStart = (type) => {
   // event.dataTransfer.setData('component', JSON.stringify(component));
-  eventBus.emit('start-place-component', type); // 发送拖动事件
+  eventBus.emit('start-place-component', {type: type, projectId:0}); // 发送拖动事件
 };
 </script>
 
