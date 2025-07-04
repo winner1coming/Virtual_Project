@@ -53,6 +53,10 @@ export class OutputPin extends BaseComponent {
     compute(): number[] {
         return this.inputs; 
     }
+    getOutputs(): number[] {
+        // 直接返回输入引脚的值
+        return this.inputs;
+    }
 
     // // 更新内部二进制值表示
     // private updateBinaryValue(): void {

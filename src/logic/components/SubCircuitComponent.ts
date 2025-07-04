@@ -43,7 +43,7 @@ export class SubCircuitComponent extends BaseComponent {
   }
 
   changeInput(idx: number, v: number): number[] {
-    this.componentIdMap.get(this.inputPins[idx])!.changeInput(0, v);
+    // this.componentIdMap.get(this.inputPins[idx])!.changeInput(0, v);
     this.simulator.enqueue(this.inputPins[idx], 0, v);
     this.simulator.processQueue();
     this.updateOutputs();
@@ -51,9 +51,8 @@ export class SubCircuitComponent extends BaseComponent {
   }
 
   updateOutputs() {
-    const store = useCircuitStore();
     this.outputPins.forEach((id, idx) => {
-      const comp = store.getComponent(id);
+      const comp = this.componentIdMap.get(id);
       if (comp) this.outputs[idx] = comp.getOutputs()[0];
     });
   }

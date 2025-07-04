@@ -42,7 +42,7 @@ export class NandGate extends BaseComponent {
 			this.outputs.splice(0, this.outputs.length, -1); // 如果没有连接任何输入，则输出-1
 		} else {
             // 将outputs[0]按mask取反
-            this.outputs.splice(0, 1, ~(this.outputs[0] & mask));
+            this.outputs.splice(0, 1, ~this.outputs[0] & mask);
         }
 		return this.outputs;
 	}
