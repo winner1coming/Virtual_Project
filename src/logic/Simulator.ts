@@ -339,12 +339,13 @@ export class EventDrivenSimulator {
     if (index !== -1) {
       tunnels.splice(index, 1);
     }
-    index = this.InputTunnelMap.get(name)?.indexOf(id) || -1;
+    index = this.InputTunnelMap.get(name)!.indexOf(id);
     if (index !== -1) {  // 是输入隧道
-      this.InputTunnelMap.get(name)?.splice(index, 1);
-
       // 传播-1
-      this.enqueue(id, 0, -1);
+      this.InputTunnelMap.get(name)?.splice(index, 1);
+      this.enqueue(id, 0, this.circuitStore.getComponent(id).outputs[0]);
+      this.processQueue();
+
     }
 
     if (tunnels.length === 0) {
@@ -386,7 +387,7 @@ export class EventDrivenSimulator {
     // if (this.inQueue.has(key)) return;
     if (this.inQueue.has(key)) {
       // 更新队列中的任务而不是直接返回 todo 这种方法待测试
-      const idx = this.workQueue.findIndex(task => task.id === id && task.idx === idx);
+      idx = this.workQueue.findIndex(task => task.id === id && task.idx === idx);
       if (idx !== -1) {
         this.workQueue[idx].value = value; // 更新任务的值
       }
@@ -422,44 +423,43 @@ export class EventDrivenSimulator {
       const component = this.circuitStore.getComponent(id);
       if (!component) continue;
 
-      let oldOutputs: number[];
+      let oldOutputs: number[]=[];
       let newOutputs: number[];
 
       if(this.circuitStore.getComponent(id).type !== 'INPUT') {
         // 获取当前组件的新旧输出
         oldOutputs = [...component.getOutputs()];
         newOutputs = component.changeInput(idx, value); 
-        if(this.isEqualOutputs(oldOutputs, newOutputs)) continue; // 如果输出没有变化，则不需要通知其他组件
       }else{
         newOutputs = component.getOutputs();
       }
 
-      const pinMap = this.connectionManager.getOutputPinMap(id);
-      if (pinMap) {
-        for (const pinIdx of pinMap.keys()) {
-          for( const conn of pinMap.get(pinIdx) || []) {
-            //if (conn.legal) {
-              const targetComponent = this.circuitStore.getComponent(conn.id);
-              if (!targetComponent) continue;
-
-              this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
-            }
-          //}
+      if(!this.isEqualOutputs(oldOutputs, newOutputs)){
+        const pinMap = this.connectionManager.getOutputPinMap(id);
+        if (pinMap) {
+          for (const pinIdx of pinMap.keys()) {
+            for( const conn of pinMap.get(pinIdx) || []) {
+              //if (conn.legal) {
+                const targetComponent = this.circuitStore.getComponent(conn.id);
+                if (!targetComponent) continue;
+                if(conn.id === id && conn.idx === idx) continue; // 防止自己通知自己
+                this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
+              }
+            //}
+          }
         }
       }
 
-      
-
-      // 处理tunnel同步
+      // 处理tunnel同步（只有原输入隧道需要将自己的状态广播）
       if (component?.type === 'TUNNEL') {
         const name = component.name;
         const tunnelIds = this.tunnelNameMap.get(name);
         const inputTunnels = this.InputTunnelMap.get(name);
-        if (tunnelIds) {
+        if (tunnelIds && (inputTunnels!.includes(id) || !tunnelIds.includes(id))) {
           for (const tunnelId of tunnelIds) {
             if (tunnelId !== id) {
               if (inputTunnels && inputTunnels.length > 1) {
-                this.enqueue(tunnelId, 0, -2); // 强制传播给其他 tunnel
+                this.enqueue(tunnelId, 0, -2); // 强制传播给其他 非输入tunnel
               }else if(inputTunnels && inputTunnels.length === 1){
                 this.enqueue(tunnelId, 0, this.circuitStore.getComponent(inputTunnels[0]).outputs[0]);
               }else{
