@@ -58,7 +58,16 @@
             fill="none"
           />
         </g>
-        
+
+        <!-- 渲染临时连线，实现电线实时渲染-->
+        <path
+          v-if="tempWire"
+          :d="tempWire.path"
+          :stroke="tempWire.color"
+          :stroke-width="tempWire.strokeWidth"
+          fill="none"
+        />
+
         <!-- 箭头标记定义 -->
         <defs>
           <marker
@@ -97,10 +106,9 @@
         <path
           v-if="tempWire"
           :d="tempWire.path"
-          stroke="black"
-          stroke-width="2"
+          stroke="tempWire.color"
+          stroke-width="3"
           fill="none"
-          stroke-dasharray="5,5"
         />
       </svg>
 
@@ -200,13 +208,11 @@ const Ports = new Map();
 
 // 定义电线的两端
 const wireStart = ref(null) // 记录起始点
+const tempWire = ref(null) // 临时连线
 const wireEndPort = ref(null) // 记录终点端口信息
 let wireStartId = null // 记录起始点port的元件ID
-
 const { saveHistory, saveSnapshot } = useHistory(components) // 使用自定义的历史记录管理
 
-// 当前拖动的临时连线
-const tempWire = ref(null)
 // 当前拖动起点信息
 let startPin = null
 const contextMenu = reactive({
@@ -576,7 +582,19 @@ function handleMouseMove(event) {
     updateConnectionPaths(ID);
   } else if (startPin && tempWire.value) {
     // 更新临时连线路径
-    tempWire.value.path = `M${startPin.x},${startPin.y} L${x},${y}`;
+    // tempWire.value.path = `M${startPin.x},${startPin.y} L${x},${y}`;
+    // 更新临时连线路径（鼠标拖动中）
+    tempWire.value.to.x = x;
+    tempWire.value.to.y = y;
+    
+    const start = startPin;
+    const end = { x, y };
+    const midX = (start.x + end.x) / 2;
+
+    tempWire.value.path = `M ${start.x} ${start.y} 
+                          L ${midX} ${start.y} 
+                          L ${midX} ${end.y} 
+                          L ${end.x} ${end.y}`;
   }
 }
 
@@ -613,8 +631,6 @@ function findPortById(componentId, portId) {
   if (!ports) return null;
   return ports.find(port => port.id === portId);
 }
-
-
 
 // 修改 deleteComponent 以删除相关连线
 function deleteComponent() {
@@ -683,6 +699,17 @@ function handleWireConnection(x, y) {
         portId: closestPort.id,             // 端口的ID
         portType:closestPort.type,          // 端口的类型 
       };
+      startPin = wireStart.value; // 记录起点信息
+      // 创建临时连线
+      tempWire.value = {
+        from: wireStart.value,
+        to: { x: 0, y: 0 }, // 临时终点坐标
+        path: '', 
+        color: '#999',  // 灰色
+        strokeWidth: 3,// 线宽
+        isTemp: true, // 标记为临时连线
+      };
+
       wireStartId = closestPort.componentId;// 记录起点port对应的元件ID
       console.log("距离最近的元件ID:", wireStartId)
       return; // 点击端口后不画线
@@ -721,6 +748,7 @@ function handleWireConnection(x, y) {
     console.log("创建新连线成功！")
     wireStart.value = null;// 重置起点
     wireStartId = null;
+    tempWire.value = null; // 清除临时连线
   }
 }
 
