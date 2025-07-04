@@ -1,3 +1,4 @@
+import eventBus from "@/modules/useEventBus";
 import { BaseComponent } from "../BaseComponent";
 import { EventDrivenSimulator } from "../Simulator";
 
@@ -109,6 +110,7 @@ export class OutputPin extends BaseComponent {
 
             this.simulator.checkComponentConnections(this.id); // 检查连线
             this.updatePinPosition();
+            eventBus.emit('updatePinPosition', {id: this.id}); 
         }
     }
 

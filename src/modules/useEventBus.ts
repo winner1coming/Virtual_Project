@@ -9,6 +9,7 @@ type Events = {
   'updateComponentDirection': void;
   'updateComponentInputCount': void;
   'updateComponentBitWidth': void;
+  'updatePinPosition':{id: number};
 };
 
 // 创建事件总线实例
