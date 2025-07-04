@@ -8,8 +8,8 @@ export class AndGate extends BaseComponent{
 		}else {
 			this.simulator = simulator; 
 		}
-		this.changeInputPinCount(2); // 初始化输入引脚数量为2
 		this.offset = [-280, -280];
+		this.initInputPin(2); // 初始化输入引脚数量为2
 		//this.updatePinPosition();
 		////is.inputs = [-1, -1];  
 	}

@@ -105,13 +105,19 @@ export abstract class BaseComponent{
     });
   
   }
-  // 会清空输入与引脚的取反状态
-  changeInputPinCount(num: number){
+  
+  // 初始化输入引脚，不检查连接
+  initInputPin(num: number){
     this.inputCount = num;
     this.inputs.splice(0, this.inputs.length, ...Array(num).fill(-1));    // 将输入全部置-1
     this.inputInverted.splice(0, this.inputInverted.length, ...Array(num).fill(false)); // 初始化输入取反状态
 
     this.updatePinPosition();
+  }
+  // 会清空输入与引脚的取反状态
+  changeInputPinCount(num: number){
+    this.initInputPin(num); 
+
     // 取消与前驱的连接
     this.simulator.disconnectPredecessors(this.id);
     for(let i = 0; i < this.outputs.length; i++){

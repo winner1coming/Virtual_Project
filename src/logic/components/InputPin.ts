@@ -14,7 +14,7 @@ export class InputPin extends BaseComponent {
 		}else {
 			this.simulator = simulator; 
 		}
-        this.changeInputPinCount(0); // InputPin没有输入引脚
+        this.initInputPin(0); // InputPin没有输入引脚
         this.outputs.splice(0, this.outputs.length, 0); 
         this.bitWidth = 1; // 默认为1位
     }
