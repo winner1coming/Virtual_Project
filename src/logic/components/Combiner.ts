@@ -1,9 +1,15 @@
 // Combiner.ts - 合并器
 import { BaseComponent } from "../BaseComponent";
+import { EventDrivenSimulator } from "../Simulator";
 
 export class Combiner extends BaseComponent {
-    constructor(id: number, position: [number, number] = [0, 0], bitWidth: number = 4) {
+    constructor(id: number, position: [number, number] = [0, 0], bitWidth: number = 4, simulator: any = null) {
         super(id, "combiner", position);
+        if (!simulator) {
+            this.simulator = EventDrivenSimulator.getInstance();
+        } else {
+            this.simulator = simulator;
+        }
         this.bitWidth = bitWidth;
         //this.inputs = Array(bitWidth).fill(-1); // n 个输入
         this.inputs.splice(0, this.inputs.length, ...Array(bitWidth).fill(-1));

@@ -6,10 +6,16 @@ export class InputPin extends BaseComponent {
         id: number, 
         type: String = "InputPin", 
         position: [number, number] = [0, 0], 
+        simulator: any = null 
     ) {
         super(id, type, position);
-        this.outputs.splice(0, this.outputs.length, 0); 
+        if(!simulator) {
+			this.simulator = EventDrivenSimulator.getInstance(); 
+		}else {
+			this.simulator = simulator; 
+		}
         this.changeInputPinCount(0); // InputPin没有输入引脚
+        this.outputs.splice(0, this.outputs.length, 0); 
         this.bitWidth = 1; // 默认为1位
     }
 

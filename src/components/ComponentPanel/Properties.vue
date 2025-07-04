@@ -79,7 +79,9 @@
               { label: '是', value: 1 }
             ]"
             @update:value="(value, option) => {
-              circuitStore.getComponent(circuitStore.selectedId).inputInverted[index] = value;
+              if(value !== invert) {
+                circuitStore.getComponent(circuitStore.selectedId).changeInputInverted(index);
+              }
             }"
           >
           </n-select>
