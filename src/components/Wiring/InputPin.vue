@@ -42,7 +42,7 @@
       </text>
     </g>
     <!-- 输出 -->
-    <OutputPort :cx="svgWidth" :cy="svgHeight/2" :active="inputPin.outputs[0]" :bitWidth="inputPin.bitWidth" />
+    <OutputPort :cx="inputPin.outputPinPosition[0][0]" :cy="inputPin.outputPinPosition[0][1]" :active="inputPin.outputs[0]" :bitWidth="inputPin.bitWidth" />
   </g>
 </template>
   
