@@ -8,7 +8,6 @@
 
 
 import { ConnectionManager, Conn } from './ConnectionManager';
-import { useCircuitStore } from '@/store/CircuitStore';
 import { BaseComponent } from './BaseComponent';
 import { Tunnel } from './components/Tunnel';
 import { EventDrivenSimulator } from './Simulator';
@@ -33,7 +32,9 @@ export class SubSimulator {
   
   constructor(projectId: number, componentIdMap: Map<number, BaseComponent> = new Map()) {
     this.connectionManager = EventDrivenSimulator.getInstance().getConnectionManager(projectId);
-    [this.tunnelNameMap, this.InputTunnelMap] = EventDrivenSimulator.getInstance().getProjectTunnel(projectId);
+    if( EventDrivenSimulator.getInstance().getProjectTunnel(projectId)){
+      [this.tunnelNameMap, this.InputTunnelMap] = EventDrivenSimulator.getInstance().getProjectTunnel(projectId);
+    }
     this.componentIdMap = componentIdMap;
   }
 
