@@ -40,7 +40,7 @@ export class Tunnel extends BaseComponent {
   }
 
   updatePinPosition(): void {
-    this.outputPinPosition.splice(0, this.outputPinPosition.length, [183.98, 310]);
+    this.outputPinPosition.splice(0, this.outputPinPosition.length, [183.98*this.scale, 310*this.scale]);
     this.inputPinPosition.splice(0, this.inputPinPosition.length); 
   }
 }
