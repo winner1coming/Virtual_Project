@@ -22,8 +22,8 @@ export class OutputPin extends BaseComponent {
     }
 
     getBits(): number[] {
-        if (this.inputs.length === 0 || this.inputs[0] === -1 || this.inputs[0] === -2) {
-            return []; 
+        if (this.inputs[0] === -1 || this.inputs[0] === -2) {
+            return new Array(this.bitWidth).fill(-1);  
         }
         const bits: number[] = [];
         let value = this.inputs[0]; 
