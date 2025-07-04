@@ -51,6 +51,9 @@ export const useProjectStore = defineStore('project', () => {
   function getAllProjects(): ProjectData[] {
     return Array.from(allProjects.values());
   }
+  function getProjectIds(): number[] {
+    return Array.from(allProjects.keys());
+  }
 
 
   function deleteProject(projectId: number) {
@@ -72,5 +75,6 @@ export const useProjectStore = defineStore('project', () => {
     getProjectById,
     getAllProjects,
     deleteProject,
+    getProjectIds,
   };
 });

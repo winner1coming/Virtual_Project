@@ -189,7 +189,12 @@
             :min="0.5"
             >
               <template #1>
-                <CanvasEditor />
+                <div 
+                  v-for="(id, idx) in projectIds" 
+                  :key="idx" v-show="id === projectStore.selectedProjectId" 
+                  class="canvas">
+                  <CanvasEditor/>
+                </div>
               </template>
               <template #2 v-if="showRightPDF">
                 <div class="pdf-wrapper">
@@ -392,6 +397,12 @@ const resumeSimulator = () => {
 
 // #endregion 导航栏相关方法
 
+// #region 项目
+import { useProjectStore } from '@/store/ProjectStore'
+const projectStore = useProjectStore()
+const projectIds = computed(() => projectStore.getProjectIds())
+
+// #endregion 项目
 </script>
 
 <style scoped>
@@ -551,9 +562,9 @@ const resumeSimulator = () => {
 
 
 .canvas {
-  flex: 1;
-  position: relative;
   background: #fff;
+  height: 100vh;
+  width: 100vw;
 }
 
 .toolbox-item {
