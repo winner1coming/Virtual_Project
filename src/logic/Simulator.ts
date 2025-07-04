@@ -197,13 +197,13 @@ export class EventDrivenSimulator {
     if (!pinMap) return false;
     for (const pinIdx of pinMap.keys()) {
       for(const conn of pinMap.get(pinIdx) || []) {
-        if (conn.legal) {
+        //if (conn.legal) {
           const targetComponent = this.circuitStore.getComponent(conn.id);
           if (!targetComponent) continue;
 
           // 通知其他组件该组件的输出改变
           this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
-        }
+        //}
       }
     }
     this.processQueue();
@@ -251,8 +251,33 @@ export class EventDrivenSimulator {
 
   checkComponentConnections(id: number){
     // 检查与该组件相连的connection的合法性
-    // 检查与该组件的输出相连的位宽
     const component = this.circuitStore.getComponent(id);
+    // 检查与该组件的输入相连的位宽
+    const inputPinMap = this.connectionManager.getInputPinMap(id);
+    if (inputPinMap){
+      for (const pinIdx of inputPinMap.keys()) {
+        for(const conn of inputPinMap.get(pinIdx) || []) {
+          const targetComponent = this.circuitStore.getComponent(conn.id);
+          if (!targetComponent) continue;
+          // 判断位宽是否合法
+          if (component.bitWidth !== targetComponent.bitWidth) {
+            // this.connectionManager.setConnectionLegal(id, pinIdx, conn.id, conn.idx, false); 
+            conn.legal = false;
+            this.enqueue(id, pinIdx, -2); 
+          } else {
+            //if(conn.legal === false){
+              //this.connectionManager.setConnectionLegal(id, pinIdx, conn.id, conn.idx, true); 
+              conn.legal = true;
+              this.enqueue(id, pinIdx, targetComponent.getOutputs()[conn.idx]); // 恢复合法后，重新通知
+            // }
+          }
+        }
+      }
+    }
+
+    this.processQueue();
+
+    // 检查与该组件的输出相连的位宽
     if (!component) return;
     const pinMap = this.connectionManager.getOutputPinMap(id);
     if (pinMap){
@@ -265,31 +290,10 @@ export class EventDrivenSimulator {
             conn.legal = false; 
             this.enqueue(conn.id, conn.idx, -2); 
           } else {
-            if(conn.legal === false){
-              conn.legal = true; 
+            //if(conn.legal === false){
+              conn.legal = true;
               this.enqueue(conn.id, conn.idx, component.getOutputs()[conn.idx]); // 恢复合法后，重新通知
-            }
-          }
-        }
-      }
-    }
-    
-    // 检查与该组件的输入相连的位宽
-    const inputPinMap = this.connectionManager.getInputPinMap(id);
-    if (inputPinMap){
-      for (const pinIdx of inputPinMap.keys()) {
-        for(const conn of inputPinMap.get(pinIdx) || []) {
-          const targetComponent = this.circuitStore.getComponent(conn.id);
-          if (!targetComponent) continue;
-          // 判断位宽是否合法
-          if (component.bitWidth !== targetComponent.bitWidth) {
-            conn.legal = false; 
-            this.enqueue(id, pinIdx, -2); 
-          } else {
-            if(conn.legal === false){
-              conn.legal = true; 
-              this.enqueue(id, pinIdx, targetComponent.getOutputs()[conn.idx]); // 恢复合法后，重新通知
-            }
+            //}
           }
         }
       }

@@ -136,10 +136,16 @@ function updateDirection(value: string, option: SelectOption) {
 function updateBitWidth(value: number, option: SelectOption) {
   // 更新元件的数据位宽
   // eventBus.emit('updateComponentBitWidth');
+  if(value === circuitStore.getComponent(circuitStore.selectedId).bitWidth) {
+    return;
+  }
   circuitStore.getComponent(circuitStore.selectedId).setBitWidth(value);
 }
 
 function updateInputCount(value: number) {
+  if(value === circuitStore.getComponent(circuitStore.selectedId).inputCount) {
+    return;
+  }
   circuitStore.getComponent(circuitStore.selectedId).changeInputPinCount(value);
 }
 </script>
