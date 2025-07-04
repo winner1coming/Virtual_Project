@@ -16,7 +16,7 @@ export class Clock extends BaseComponent {
 		}else {
 			this.simulator = simulator; 
 		}
-        this.changeInputPinCount(0); // 时钟没有输入引脚
+        this.initInputPin(0); // 时钟没有输入引脚
         this.period = period;
 
         this.start(); // 启动时钟

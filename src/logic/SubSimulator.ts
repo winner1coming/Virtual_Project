@@ -59,6 +59,8 @@ export class SubSimulator {
 
   disconnectPredecessors(id: number){}
   disconnectSuccessors(id: number) {}
+  checkComponentConnections(id: number): void { // todo
+    }
 
   // 处理输出改变时的情况（给BaseComponent调用）
   // 参数：id :改变输出的组件的id

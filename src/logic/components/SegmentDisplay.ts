@@ -9,7 +9,7 @@ export class SegmentDisplay extends BaseComponent{
       this.simulator = simulator; 
     }
     this.outputs.splice(0, this.outputs.length); 
-    this.changeInputPinCount(8); // SegmentDisplay有8个输入引脚
+    this.initInputPin(8); // SegmentDisplay有8个输入引脚
   }
 
   compute(){   // 返回输出(int)

@@ -3,7 +3,7 @@ export class Ground extends BaseComponent{
   constructor(id: number, type: String, position:[number, number] = [0,0]){
     super(id, type, position);
     this.outputs.splice(0, this.outputs.length, 0); 
-    this.changeInputPinCount(0); // Ground组件没有输入引脚
+    this.initInputPin(0); // Ground组件没有输入引脚
   }
 
   compute(){   // 返回输出(int)

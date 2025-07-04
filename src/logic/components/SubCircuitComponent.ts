@@ -27,7 +27,7 @@ export class SubCircuitComponent extends BaseComponent {
     this.inputPins = projectStore.getProjectById(projectId).inputPins;
     this.outputPins = projectStore.getProjectById(projectId).outputPins;
 
-    this.changeInputPinCount(this.inputPins.length);
+    this.initInputPin(this.inputPins.length);
     this.changeOutputPinCount(this.outputPins.length);
 
     // 根据id创建组件
