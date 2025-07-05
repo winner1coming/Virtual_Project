@@ -3,7 +3,6 @@ import { EventDrivenSimulator } from "../Simulator";
 
 export class Clock extends BaseComponent {
     private intervalId: any = null;
-    private period: number; // 时钟周期，单位ms
 
     constructor(id: number, 
             type: String, 
@@ -27,8 +26,7 @@ export class Clock extends BaseComponent {
         if (this.intervalId !== null) return;
         this.intervalId = setInterval(() => {
             this.outputs[0] = this.outputs[0] === 0 ? 1 : 0;
-            // todo 增加一个逻辑，可以调用全局的输入改变函数，以通知时钟输出改变
-            //console.log("click", this.outputs[0]);
+            this.simulator.processOutputChange(this.id, 0,this.outputs[0]);
         }, this.period);
     }
 

@@ -100,8 +100,8 @@
 
       <!-- 修改预览组件的定位方式 -->
       <component
-        v-if="currentComponent && SVG_PREVIEW_MAP[currentComponent.value.componentType]"
-        :is="SVG_PREVIEW_MAP[currentComponent.value.componentType]"
+        v-if="currentComponent && SVG_PREVIEW_MAP[currentComponent.componentType]"
+        :is="SVG_PREVIEW_MAP[currentComponent.componentType]"
         class="preview-svg"
         :style="{
           left: previewPos.x + 'px',

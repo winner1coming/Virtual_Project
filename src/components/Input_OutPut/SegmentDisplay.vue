@@ -71,11 +71,16 @@
   import { useCircuitStore } from '@/store/CircuitStore'
   
   const circuitStore = useCircuitStore();
-  const id = circuitStore.addComponent('And', [0,0]);  // debug todo 要改类型
-  
+  //const id = circuitStore.addComponent('And', [0,0]);  
+  const props = defineProps({
+    id: {
+      type: String,
+      required: true
+    }
+  }); 
   const segmentDisplay = computed(() => {
-    return circuitStore.getComponent(id);   // debug
-    // return circuitStore.getComponent(props.id);  
+    //return circuitStore.getComponent(id);   
+    return circuitStore.getComponent(props.id);  
   });
 
   </script>
