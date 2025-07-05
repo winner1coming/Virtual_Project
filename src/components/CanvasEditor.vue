@@ -564,6 +564,8 @@ function generateConnectionPath(start, end) {
 
 // 触发引脚变化
 function updatePinPosition(ID) {
+  console.log("更新元件引脚位置，ID：", ID)
+
   // 获取组件类型对应的逻辑类
   let componentLogic = useCircuitStore().getComponent(ID)
 
@@ -592,6 +594,8 @@ function updatePinPosition(ID) {
 
   // 更新所有相关连线的路径
   updateConnectionPaths(ID);
+
+  console.log("更新电线位置成功！")
 }
 
 // 修改 handleMouseMove 以支持连线拖动
@@ -1044,6 +1048,40 @@ function handleRightClick(event) {
 
   console.log("鼠标右键：x:", x, "y:", y)
 
+  // 删除电线应该放在第一优先级，因为它比较细
+  const wireIndex = connections.findIndex(wire => {
+    const hitThreshold = 6;
+    const midX = (wire.from.x + wire.to.x) / 2;
+    const points = [
+      wire.from,
+      { x: midX, y: wire.from.y },
+      { x: midX, y: wire.to.y },
+      wire.to,
+    ];
+    for (let i = 0; i < points.length - 1; i++) {
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      const dx = p2.x - p1.x;
+      const dy = p2.y - p1.y;
+      const length = Math.hypot(dx, dy);
+      const dot = ((x - p1.x) * dx + (y - p1.y) * dy) / (length * length);
+      if (dot >= 0 && dot <= 1) {
+        const px = p1.x + dot * dx;
+        const py = p1.y + dot * dy;
+        const dist = Math.hypot(x - px, y - py);
+        if (dist <= hitThreshold) return true;
+      }
+    }
+    return false;
+  });
+
+  if (wireIndex !== -1) {
+    console.log("点击中电线，删除该电线，index=", wireIndex);
+    connections.splice(wireIndex, 1); // 删除电线
+    saveHistory(); // 记录历史
+    return; // ✅ 直接 return，不再处理元件删除逻辑
+  }
+
   // 右键时选中的元件
   const ID = selectedComponent.value.ID;
   console.log("当前组件：", ID)
@@ -1094,71 +1132,6 @@ function handleRightClick(event) {
 
     saveHistory();
   }
-
-
-  // // 先判断是否点击在线上（允许误差）
-  // const wireIndex = connections.findIndex(wire => {
-  //   const hitThreshold = 6;
-  //   const midX = (wire.start.x + wire.end.x) / 2;
-  //   // 折线路径点
-  //   const points = [
-  //     wire.start,
-  //     { x: midX, y: wire.start.y },
-  //     { x: midX, y: wire.end.y },
-  //     wire.end
-  //   ];
-  //   // 遍历每一段折线
-  //   for (let i = 0; i < points.length - 1; i++) {
-  //     const p1 = points[i];
-  //     const p2 = points[i + 1];
-  //     const dx = p2.x - p1.x;
-  //     const dy = p2.y - p1.y;
-  //     const length = Math.hypot(dx, dy);
-  //     const dot = ((x - p1.x) * dx + (y - p1.y) * dy) / (length * length);
-  //     if (dot >= 0 && dot <= 1) {
-  //       const px = p1.x + dot * dx;
-  //       const py = p1.y + dot * dy;
-  //       const dist = Math.hypot(x - px, y - py);
-  //       if (dist <= hitThreshold) return true;
-  //     }
-  //   }
-  //   return false;
-  // });
-
-  // if (wireIndex !== -1) {
-  //   contextMenu.visible = true;
-  //   contextMenu.x = event.clientX + 5;
-  //   contextMenu.y = event.clientY + 5;
-  //   contextMenu.targetWireIndex = wireIndex;
-  //   contextMenu.targetIndex = null;
-  //   wireStart.value = null;
-  //   return;
-  // }
-
-  // // 然后判断是否点击在元件上
-  // const compIndex = components.findIndex(
-  //   (c) =>
-  //     x >= c.x &&
-  //     x <= c.x + c.size.width &&
-  //     y >= c.y &&
-  //     y <= c.y + c.size.height
-  // );
-
-  // if (compIndex !== -1) {
-  //   contextMenu.visible = true;
-  //   contextMenu.x = event.clientX + 5;
-  //   contextMenu.y = event.clientY + 5;
-  //   contextMenu.targetIndex = compIndex;
-  //   contextMenu.targetWireIndex = null;
-  //   wireStart.value = null;
-  //   return;
-  // }
-
-  // // 否则关闭菜单
-  // contextMenu.visible = false;
-  // contextMenu.targetIndex = null;
-  // contextMenu.targetWireIndex = null;
-  // wireStart.value = null;
 }
 
 function deleteSelectedItem() {
@@ -1193,6 +1166,7 @@ onMounted(() => {
     updateComponentDirection();
   });
   eventBus.on('updatePinPosition', ({id: number}) => {
+    console.log("更新引脚位置，ID：", id)
     updatePinPosition(id);
   });
   // 确保画布元素可聚焦
