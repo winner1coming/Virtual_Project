@@ -9,7 +9,6 @@
       fill=none
       stroke="black"
       stroke-width="8"
-      rx="6"
     />
     
     <!--填充透明区域以便选中-->

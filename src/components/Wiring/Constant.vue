@@ -21,7 +21,7 @@
         </text>
         
         <!--选中方框-->
-        <SelectedBox :x="0" :y="0" :width="rect_width+12" :height="100" :visible="true"/>
+        <SelectedBox :x="0" :y="0" :width="rect_width+12" :height="100" :visible="circuitStore.selectedId===props.id"/>
 
         <!-- 输出引脚 -->
         <OutputPort :cx="rect_width" :cy="48" :active="1" />

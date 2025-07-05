@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="600" viewBox="0 0 600 600" fill="none">
+      <!-- 分离器图形 -->
+      <!--竖线-->
+      <path
+        stroke="black"
+        stroke-width="12"
+        d="M149 207L149 401"
+      />
+      <!-- 左下角斜线 -->
+      <path stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M149.5 397.34L100 439.34" />
+      <!-- 输出引脚 -->
+    <path d="M149 213L206 213" stroke="black" stroke-width="12" />
+    <path d="M149 263L206 263" stroke="black" stroke-width="12" />
+    <path d="M149 313L206 313" stroke="black" stroke-width="12" />
+    <path d="M149 363L206 363" stroke="black" stroke-width="12" />
+</svg>

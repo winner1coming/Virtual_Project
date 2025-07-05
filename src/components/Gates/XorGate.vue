@@ -53,10 +53,13 @@
       stroke="black"
       stroke-width="12"
     />
+    <!--选中方框-->
+    <SelectedBox :x="35" :y="minY<181? minY-12: 175" :width="471" :height="minY<181? (maxY-minY+24): 226" :visible="circuitStore.selectedId===props.id"/>
+
     <!-- 输入引脚 -->
     <template v-for="(input, index) in xorGate.inputs" :key="input.id">
       <circle
-        v-if="input.inverted"
+        v-if="xorGate.inputInverted[index]"
         :cx="`${getInputLine(index, xorGate.inputPinPosition.map(pin => pin[1])[index], bezierYMin, bezierYMax).x2-76}`"
         :cy="xorGate.inputPinPosition.map(pin => pin[1])[index]"
         r="16"
@@ -65,13 +68,13 @@
         fill="none"
       />
       <path
-        v-if="input.inverted"
+        v-if="xorGate.inputInverted[index]"
         :d="`M${getInputLine(index, xorGate.inputPinPosition.map(pin => pin[1])[index], bezierYMin, bezierYMax).x1-50} ${xorGate.inputPinPosition.map(pin => pin[1])[index]}L${getInputLine(index, xorGate.inputPinPosition.map(pin => pin[1])[index], bezierYMin, bezierYMax).x2-86} ${xorGate.inputPinPosition.map(pin => pin[1])[index]}`"
         stroke="black"
         stroke-width="12"
         />
       <path
-        v-if="!input.inverted"
+        v-if="!xorGate.inputInverted[index]"
         :d="`M${getInputLine(index, xorGate.inputPinPosition.map(pin => pin[1])[index], bezierYMin, bezierYMax).x1-50} ${xorGate.inputPinPosition.map(pin => pin[1])[index]}L${getInputLine(index, xorGate.inputPinPosition.map(pin => pin[1])[index], bezierYMin, bezierYMax).x2-50} ${xorGate.inputPinPosition.map(pin => pin[1])[index]}`"
         stroke="black"
         stroke-width="12"

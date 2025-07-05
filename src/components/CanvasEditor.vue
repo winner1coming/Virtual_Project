@@ -73,7 +73,7 @@
           v-for="(item, index) in components"
           :key="index"
           :transform="`translate(${item.x}, ${item.y})`"
-          @mousedown.prevent.stop="selectComponent(item, $event)"
+          @mousedown="selectComponent(item, $event)"
         >
           <component
             :is="item.type"
@@ -924,7 +924,7 @@ function handleWireConnection(x, y) {
     console.log("没有起点")
     // 起点为空，记录起点，先不画线
     // 找到距离点击点最近的port信息
-    let closestPort = findNearestPort(x, y, 50);
+    let closestPort = findNearestPort(x, y, 10);
     // console.log("找到了最近的port！")
     console.log("调用findNearestPort，返回结果：", closestPort)
 
