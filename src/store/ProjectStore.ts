@@ -37,6 +37,7 @@ export const useProjectStore = defineStore('project', () => {
       throw new Error(`Project ${projectId} not found`);
     }
     selectedProjectId.value = projectId;
+    
   }
 
   function getCurrentProject(): ProjectData {

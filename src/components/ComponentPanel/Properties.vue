@@ -105,6 +105,25 @@
           placeholder="请输入时钟周期（毫秒）"
         />
       </div>
+      
+      <!-- 修改数值-->
+      <div class="property-item" v-if="circuitStore.getComponent(circuitStore.selectedId).type === 'CONSTANT'">
+        <label for="value">数值：</label>
+        <n-input
+          id="value"
+          v-model:value="constantValue"
+          placeholder="请输入数值"
+          @update:value="(value: string) => {
+            const component = circuitStore.getComponent(circuitStore.selectedId) as ConstantInput;
+            const v = parseInt(value);
+            if(!isNaN(v) && v >=0 && v < Math.pow(2, component.bitWidth)) {
+              component.changeInput(0, v);
+            } else{
+              constantValue = component.outputs[0].toString();
+            }
+          }"
+        />
+      </div>
 
     </div>
     <div v-else>
@@ -119,6 +138,7 @@ import { useCircuitStore } from '@/store/CircuitStore';
 import eventBus from '@/modules/useEventBus';
 import { NSelect, NInput } from 'naive-ui';
 import type { SelectOption } from 'naive-ui'
+import { ConstantInput } from '@/logic/components/ConstantInput';
 
 const circuitStore = useCircuitStore();
 
@@ -163,6 +183,8 @@ function updateInputCount(value: number) {
   }
   circuitStore.getComponent(circuitStore.selectedId).changeInputPinCount(value);
 }
+
+const constantValue = ref('0');
 </script>
 
 <style scoped>
