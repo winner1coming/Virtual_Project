@@ -11,9 +11,8 @@ export class Combiner extends BaseComponent {
             this.simulator = simulator;
         }
         this.bitWidth = bitWidth;
-        //this.inputs = Array(bitWidth).fill(-1); // n 个输入
         this.inputs.splice(0, this.inputs.length, ...Array(bitWidth).fill(-1));
-        this.inputCount = bitWidth; // 输入引脚数量
+        this.inputCount = bitWidth;
         this.inputInverted.splice(0, this.inputInverted.length, ...Array(bitWidth).fill(false)); 
     }
 
@@ -41,7 +40,6 @@ export class Combiner extends BaseComponent {
 
     changeInput(idx: number, v: number): number[] {
         if (idx >= 0 && idx < this.bitWidth) {
-            ////is.inputs[idx] = v;
             this.inputs.splice(idx, 1, v); // 替换idx位置的值
         }
         return this.compute();
