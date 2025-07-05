@@ -17,7 +17,7 @@ export class NotGate extends BaseComponent {
             this.outputs.splice(0, this.outputs.length, input); // 保持错误状态
         } else {
             const mask = (1 << this.bitWidth) - 1;
-            this.outputs.splice(0, 1, ~this.outputs[0] & mask);
+            this.outputs.splice(0, 1, ~input & mask);
         }
 
         return this.outputs;

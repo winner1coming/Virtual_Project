@@ -243,10 +243,7 @@ export class EventDrivenSimulator {
       this.removeTunnel(this.circuitStore.getComponent(id)!.name, id);
     }
     // 删除与该组件有关的所有连接
-    // 从输出端查找
-    this.disconnectSuccessors(id);
-    // 从输入端查找
-    this.disconnectPredecessors(id);
+    this.connectionManager.removeComponentConnections(id);
   }
 
   checkComponentConnections(id: number){
