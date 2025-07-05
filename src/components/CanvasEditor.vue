@@ -140,7 +140,7 @@
     v-if="contextMenu.visible"
     class="context-menu"
     :style="{ position: 'absolute', left: contextMenu.x + 'px', top: contextMenu.y + 'px', zIndex: 1000}"
-    @click="deleteComponent"
+    @click="handleRightClick"
   >
     删除
   </div>
@@ -213,6 +213,8 @@ const ports = [];// 存储单个元件的端口信息
 // 纯 JavaScript 版本
 /** @type {Map<number, Array<{id: number, x:number, y:number, componentId:number, type: string}>>} */
 const Ports = new Map();
+const showDeleteConfirm = ref(false); // 是否显示确认框
+
 
 
 // 定义电线的两端
@@ -703,26 +705,42 @@ function findPortById(componentId, portId) {
 
 // 修改 deleteComponent 以删除相关连线
 function deleteComponent() {
+  console.log("删除元件逻辑触发")
+
   if (contextMenu.targetIndex !== null) {
-    const component = components[contextMenu.targetIndex];// 获取删除的元件本体
-    
-    // 删除所有与该元件相关的连线
-    const componentId = contextMenu.targetIndex;// 元件ID
-    useCircuitStore.removeComponent(componentId)// 调用函数删除组件
-    // 删除画布上各组件的连接关系
+    const component = components[contextMenu.targetIndex]; // 获取删除的元件对象
+    const componentId = component.ID; // ✅ 取真实ID
+
+    // 删除逻辑连接
+    useCircuitStore().removeComponent(componentId); // 你需要在 store 里定义这个方法
+
+    // 删除与该元件相关的连线
     for (let i = connections.length - 1; i >= 0; i--) {
-      if (connections[i].from.componentId === componentId || 
-          connections[i].to.componentId === componentId) {
+      const from = connections[i].from;
+      const to = connections[i].to;
+      if (from.componentId === componentId || to.componentId === componentId) {
         connections.splice(i, 1);
       }
     }
-    
+
+    // 删除元件本体
     components.splice(contextMenu.targetIndex, 1);
-    saveHistory();
     contextMenu.visible = false;
     contextMenu.targetIndex = null;
+    contextMenu.targetWireIndex = null;
+
+    saveHistory(); // 撤销历史记录
+  } else if (contextMenu.targetWireIndex !== null) {
+    // 删除的是连线
+    connections.splice(contextMenu.targetWireIndex, 1);
+    contextMenu.visible = false;
+    contextMenu.targetIndex = null;
+    contextMenu.targetWireIndex = null;
+
+    saveHistory();
   }
 }
+
 
 // 鼠标点击（左键右键中轴）：触发电线连接
 function handleMouseDown(event) {
@@ -1006,6 +1024,8 @@ function handleLeftClick(event) {
   }
 }
 
+
+
 // 右键删除元件
 function handleRightClick(event) {
   event.preventDefault();
@@ -1024,69 +1044,121 @@ function handleRightClick(event) {
 
   console.log("鼠标右键：x:", x, "y:", y)
 
-  // 先判断是否点击在线上（允许误差）
-  const wireIndex = connections.findIndex(wire => {
-    const hitThreshold = 6;
-    const midX = (wire.start.x + wire.end.x) / 2;
-    // 折线路径点
-    const points = [
-      wire.start,
-      { x: midX, y: wire.start.y },
-      { x: midX, y: wire.end.y },
-      wire.end
-    ];
-    // 遍历每一段折线
-    for (let i = 0; i < points.length - 1; i++) {
-      const p1 = points[i];
-      const p2 = points[i + 1];
-      const dx = p2.x - p1.x;
-      const dy = p2.y - p1.y;
-      const length = Math.hypot(dx, dy);
-      const dot = ((x - p1.x) * dx + (y - p1.y) * dy) / (length * length);
-      if (dot >= 0 && dot <= 1) {
-        const px = p1.x + dot * dx;
-        const py = p1.y + dot * dy;
-        const dist = Math.hypot(x - px, y - py);
-        if (dist <= hitThreshold) return true;
+  // 右键时选中的元件
+  const ID = selectedComponent.value.ID;
+  console.log("当前组件：", ID)
+
+  // 删除元件本体
+  console.log("预计想要删除的元件ID：", ID)
+  selectedComponent.visible = false; // 隐藏选中元件
+  // 删除元件本体（不要用 ID 当索引）
+  const deleteIndex = components.findIndex(c => c.ID === ID);
+  if (deleteIndex !== -1) {
+    components.splice(deleteIndex, 1);
+  }
+
+  if (ID !== null) {
+    console.log("删除元件逻辑触发")
+    
+    const component = useCircuitStore().getComponent(ID);
+    console.log("获取到的元件：", component)
+
+    console.log("删除元件前，Ports：", Ports)
+    removeComponentPorts(ID); // 删除引脚信息
+    console.log("删除元件后，Ports：", Ports)
+
+    // 删除与该元件相关的连线
+    for (let i = connections.length - 1; i >= 0; i--) {
+      console.log("进行到这， from:", connections[i].from, "to:", connections[i].to)
+      const from = connections[i].from;
+      const to = connections[i].to;
+      console.log("检查连线，from:", from.componentId, "to:", to.componentId)
+      if (from.componentId === ID || to.componentId === ID) {
+        console.log("删除连线：", connections[i])
+        connections.splice(i, 1);
       }
     }
-    return false;
-  });
 
-  if (wireIndex !== -1) {
-    contextMenu.visible = true;
-    contextMenu.x = event.clientX + 5;
-    contextMenu.y = event.clientY + 5;
-    contextMenu.targetWireIndex = wireIndex;
+    useCircuitStore().removeComponent(ID); // 删除元件
+    console.log("删除元件成功，ID:", ID)
+    
+    console.log("删除元件前，电线连接：", connections)
+
+    saveHistory(); // 撤销历史记录
+  } else if (contextMenu.targetWireIndex !== null) {
+    // 删除的是连线
+    connections.splice(contextMenu.targetWireIndex, 1);
+    contextMenu.visible = false;
     contextMenu.targetIndex = null;
-    wireStart.value = null;
-    return;
-  }
-
-  // 然后判断是否点击在元件上
-  const compIndex = components.findIndex(
-    (c) =>
-      x >= c.x &&
-      x <= c.x + c.size.width &&
-      y >= c.y &&
-      y <= c.y + c.size.height
-  );
-
-  if (compIndex !== -1) {
-    contextMenu.visible = true;
-    contextMenu.x = event.clientX + 5;
-    contextMenu.y = event.clientY + 5;
-    contextMenu.targetIndex = compIndex;
     contextMenu.targetWireIndex = null;
-    wireStart.value = null;
-    return;
+
+    saveHistory();
   }
 
-  // 否则关闭菜单
-  contextMenu.visible = false;
-  contextMenu.targetIndex = null;
-  contextMenu.targetWireIndex = null;
-  wireStart.value = null;
+
+  // // 先判断是否点击在线上（允许误差）
+  // const wireIndex = connections.findIndex(wire => {
+  //   const hitThreshold = 6;
+  //   const midX = (wire.start.x + wire.end.x) / 2;
+  //   // 折线路径点
+  //   const points = [
+  //     wire.start,
+  //     { x: midX, y: wire.start.y },
+  //     { x: midX, y: wire.end.y },
+  //     wire.end
+  //   ];
+  //   // 遍历每一段折线
+  //   for (let i = 0; i < points.length - 1; i++) {
+  //     const p1 = points[i];
+  //     const p2 = points[i + 1];
+  //     const dx = p2.x - p1.x;
+  //     const dy = p2.y - p1.y;
+  //     const length = Math.hypot(dx, dy);
+  //     const dot = ((x - p1.x) * dx + (y - p1.y) * dy) / (length * length);
+  //     if (dot >= 0 && dot <= 1) {
+  //       const px = p1.x + dot * dx;
+  //       const py = p1.y + dot * dy;
+  //       const dist = Math.hypot(x - px, y - py);
+  //       if (dist <= hitThreshold) return true;
+  //     }
+  //   }
+  //   return false;
+  // });
+
+  // if (wireIndex !== -1) {
+  //   contextMenu.visible = true;
+  //   contextMenu.x = event.clientX + 5;
+  //   contextMenu.y = event.clientY + 5;
+  //   contextMenu.targetWireIndex = wireIndex;
+  //   contextMenu.targetIndex = null;
+  //   wireStart.value = null;
+  //   return;
+  // }
+
+  // // 然后判断是否点击在元件上
+  // const compIndex = components.findIndex(
+  //   (c) =>
+  //     x >= c.x &&
+  //     x <= c.x + c.size.width &&
+  //     y >= c.y &&
+  //     y <= c.y + c.size.height
+  // );
+
+  // if (compIndex !== -1) {
+  //   contextMenu.visible = true;
+  //   contextMenu.x = event.clientX + 5;
+  //   contextMenu.y = event.clientY + 5;
+  //   contextMenu.targetIndex = compIndex;
+  //   contextMenu.targetWireIndex = null;
+  //   wireStart.value = null;
+  //   return;
+  // }
+
+  // // 否则关闭菜单
+  // contextMenu.visible = false;
+  // contextMenu.targetIndex = null;
+  // contextMenu.targetWireIndex = null;
+  // wireStart.value = null;
 }
 
 function deleteSelectedItem() {
