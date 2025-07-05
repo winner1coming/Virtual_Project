@@ -142,7 +142,7 @@
         </n-button-group>
       </div>
     </div>
-
+    <TeachingGuide v-if="props.mode === 'tutorial'" />
     <div class="main-content">
       <!-- 左侧工具栏按钮区 -->
       <div class="toolbox">
@@ -257,6 +257,7 @@
 import CanvasEditor from '@/components/CanvasEditor.vue'
 import PDFViewer from './Freedom/PDFViewer.vue'
 import { computed, ref, defineAsyncComponent, provide, nextTick} from 'vue'
+import TeachingGuide from './Teaching/TeachingGuide.vue'
 import { useRouter } from 'vue-router'
 import { 
   NBreadcrumb, 

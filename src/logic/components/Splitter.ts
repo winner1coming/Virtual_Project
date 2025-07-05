@@ -20,7 +20,7 @@ export class Splitter extends BaseComponent {
 
     setBitWidth(bitWidth: number) {
         this.bitWidth = bitWidth;
-        this.outputs.splice(0, this.outputs.length, ...Array(bitWidth).fill(-1)); 
+        this.outputs.splice(0, this.outputs.length, ...Array(this.bitWidth).fill(-1)); 
         this.updatePinPosition();
     }
 
