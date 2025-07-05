@@ -571,36 +571,175 @@ function updatePinPosition(ID) {
 
   // 我觉得还是得先去connections里找一下这个元件ID对应的连线
   // 并且记录每条连线跟该元件连接的引脚ID，以及电线另一端连接的元件ID和引脚ID
+  if(!logic) {
+    console.warn("逻辑类未找到，ID：", ID)
+    return
+  }
+  
+  // // Step 1: 提取当前元件所有相关的连线（不修改它们）
+  // const relatedConnections = connections.filter(
+  //   conn => conn.from.componentId === ID || conn.to.componentId === ID
+  // );
+
+  // Step 2: 更新端口信息
+  const portsInfo = logic.getAllPorts()
+  // console.log("端口信息：", portsInfo)
+
+  // 更新全局引脚信息
+  updateComponentPorts(ID, portsInfo, logic.position[0], logic.position[1]);
+  console.log("端口信息：", Ports)
+  console.log("连接信息：", connections)
+
+  // const ports = Ports.get(ID);// 获取当前元件的端口信息
+  // ports.forEach((port) => {
+  //   if (port.type == 'output') {// 只处理输出端口
+  //     connections.forEach((connection) => {
+  //       // 遍历当前元件原有的所有连接
+  //       const fromID = connection.from.componentId;
+  //       const fromPortID = connection.from.portId;
+  //       const toID = connection.to.componentId;
+  //       const toPortID = connection.to.portId;
+  //       if (fromID === ID && connection.from.portType === 'output') {
+  //         // 处理原来的connections中所有与当前元件输出引脚有关的连线，更新output
+  //         connection.from = {
+  //           x: port.x,
+  //           y: port.y,
+  //           componentId: componentID,
+  //           portId: port.id,
+  //           portType: 'output'
+  //         }
+  //       }
+  //       useCircuitStore().connect(connection.from.componentId, connection.from.portId, connection.to.componentId, connection.to.portId);
+  //     })
+  //   } else {
+  //     // 输出引脚下标不变
+  //     connections.forEach((connection) => {
+  //       const fromID = connection.from.componentId;
+  //       const fromPortID = connection.from.portId;
+  //       const toID = connection.to.componentId;
+  //       const toPortID = connection.to.portId;
+  //       useCircuitStore().connect(fromID, fromPortID, toID, toPortID);
+  //     })
+  //   }
+  // })
+
+  // Ports.forEach((ports, componentID) => {
+  //   if (componentID === ID) {// 挑选出当前元件的所有端口
+  //     ports.forEach((port) => {
+  //       if (port.type == 'output') {// 只处理输出端口
+  //         connections.forEach((connection) => {
+  //           // 遍历当前元件原有的所有连接
+  //           const fromID = connection.from.componentId;
+  //           const fromPortID = connection.from.portId;
+  //           const toID = connection.to.componentId;
+  //           const toPortID = connection.to.portId;
+  //           if (fromID === ID && connection.from.portType === 'output') {
+  //             // 处理原来的connections中所有与当前元件输出引脚有关的连线，更新output
+  //             connection.from = {
+  //               x: port.x,
+  //               y: port.y,
+  //               componentId: componentID,
+  //               portId: port.id,
+  //               portType: 'output'
+  //             }
+  //           }
+  //           useCircuitStore().connect(connection.from.componentId, connection.from.portId, connection.to.componentId, connection.to.portId);
+  //         })
+  //       } else {
+  //         // 输出引脚下标不变
+  //         connections.forEach((connection) => {
+  //           const fromID = connection.from.componentId;
+  //           const fromPortID = connection.from.portId;
+  //           const toID = connection.to.componentId;
+  //           const toPortID = connection.to.portId;
+  //           useCircuitStore().connect(fromID, fromPortID, toID, toPortID);
+  //         })
+  //       }
+  //     })
+  //   }
+  // })
+
+  
+
+  // 依次匹配原来电线另一端的元件ID和引脚ID
+  // 调用connect，在逻辑上重新连接
+  
+  connections.forEach((connection) => {
+    // 遍历当前元件原有的所有连接
+    const fromID = connection.from.componentId;
+    const fromPortID = connection.from.portId;
+    const toID = connection.to.componentId;
+    const toPortID = connection.to.portId;
+    if (fromID === ID && connection.from.portType === 'output') {
+      // 重新连接
+      // 找到更新后当前元件的引脚信息
+      const closestPort = findNearestPort(connection.from.x, connection.from.y, 50);
+      console.log("当前元件ID1：", closestPort.componentId, "端口ID：", closestPort.id, "对面元件ID：", toID, "对面端口ID：", toPortID)
+      useCircuitStore().connect(closestPort.componentId, closestPort.id, toID, toPortID);
+      // 画布上的connections也要更新
+      connection.from = {
+        x: closestPort.x,
+        y: closestPort.y,
+        componentId: closestPort.componentId,
+        portId: closestPort.id,
+        portType: closestPort.type
+      }
+    } else if (toID === ID && connection.to.portType === 'input') {
+      // 重新连接
+      // 找到更新后当前元件的引脚信息
+      const closestPort = findNearestPort(connection.to.x, connection.to.y, 50);
+      console.log("当前元件ID2：", closestPort.componentId, "端口ID：", closestPort.id, "对面元件ID：", fromID, "对面端口ID：", fromPortID)
+      useCircuitStore().connect(fromID, fromPortID, closestPort.componentId, closestPort.id);
+      // 画布上的connections也要更新
+      connection.to = {
+        x: closestPort.x,
+        y: closestPort.y,
+        componentId: closestPort.componentId,
+        portId: closestPort.id,
+        portType: closestPort.type
+      };
+    }
+  })
+
+  console.log("连接信息：", connections)
+
+  nextTick(() => {
+    // 更新所有相关连线的路径
+    updateConnectionPaths(ID);
+  })
+
+  // 我觉得还是得先去connections里找一下这个元件ID对应的连线
+  // 并且记录每条连线跟该元件连接的引脚ID，以及电线另一端连接的元件ID和引脚ID
 
   // 记录当前ID的端口信息
   // 延迟后获取端口信息，确保见组件挂载完成
-  nextTick(() => {
-    if(!logic) {
-      console.warn("逻辑类未找到，ID：", ID)
-      return
-    }
-    const portsInfo = logic.getAllPorts()
+  // nextTick(() => {
+  //   if(!logic) {
+  //     console.warn("逻辑类未找到，ID：", ID)
+  //     return
+  //   }
+  //   const portsInfo = logic.getAllPorts()
 
-    updateComponentPorts(ID, portsInfo, logic.position[0], logic.position[1]);
+  //   updateComponentPorts(ID, portsInfo, logic.position[0], logic.position[1]);
 
-    // 更新所有相关连线的路径
-    updateConnectionPaths(ID);
+  //   // 更新所有相关连线的路径
+  //   updateConnectionPaths(ID);
 
-    // 依次匹配原来电线另一端的元件ID和引脚ID
-    // 调用connect，在逻辑上重新连接
-    connections.forEach((connection) => {
-      const fromID = connection.from.componentId;
-      const fromPortID = connection.from.portId;
-      const toID = connection.to.componentId;
-      const toPortID = connection.to.portId;
-      if (fromID === ID || toID === ID) {
-        // 重新连接
-        useCircuitStore().connect(fromID, fromPortID, toID, toPortID);
-      }
-    })
+  //   // 依次匹配原来电线另一端的元件ID和引脚ID
+  //   // 调用connect，在逻辑上重新连接
+  //   connections.forEach((connection) => {
+  //     const fromID = connection.from.componentId;
+  //     const fromPortID = connection.from.portId;
+  //     const toID = connection.to.componentId;
+  //     const toPortID = connection.to.portId;
+  //     if (fromID === ID || toID === ID) {
+  //       // 重新连接
+  //       useCircuitStore().connect(fromID, fromPortID, toID, toPortID);
+  //     }
+  //   })
 
-    console.log("更新电线位置成功！")
-  })
+  //   console.log("更新电线位置成功！")
+  // })
 }
 
 // 修改 handleMouseMove 以支持连线拖动
