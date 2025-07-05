@@ -169,6 +169,8 @@ function updateInputCount(value: number) {
 .component-properties {
   padding: 10px;
   background-color: transparent;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .property-item {

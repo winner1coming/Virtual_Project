@@ -18,8 +18,8 @@
         <!-- 右侧菜单 -->
         <div class="nav-right">
             <n-button 
-            bordered:false
-            focusable:false
+            :bordered="false"
+            :focusable="false"
             quaternary circle @click="handleClick">
               <template #icon>
                 <n-icon >
@@ -503,7 +503,7 @@ const projectIds = computed(() => projectStore.getProjectIds())
 
 /* 自定义抽屉区域 */
 .local-drawer {
-  height: 100%;
+  height: 100vh;
   background: #ffffff;
   border-right: 1px solid #E0E6ED;
   padding: 0;
@@ -515,11 +515,11 @@ const projectIds = computed(() => projectStore.getProjectIds())
 .drawer-container {
   flex: 1;
   position: relative;
-  height: 100%;
+  height: 100vh;
 }
 
 .split-container {
-  height: 100%;
+  height: 100vh;
   border-right: 1px solid #ddd;
 }
 
@@ -547,7 +547,7 @@ const projectIds = computed(() => projectStore.getProjectIds())
 
 .pdf-wrapper{
   position: relative;
-  height: 100%;
+  height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;

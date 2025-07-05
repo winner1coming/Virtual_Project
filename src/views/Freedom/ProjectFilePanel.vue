@@ -16,7 +16,8 @@
     <!-- 新建项目按钮 -->
     <n-button
       text-color="#000"
-      
+      :bordered="false"
+      :focusable="false"
       color="#d2e6ee"
       type="primary"
       class="new-project-btn"

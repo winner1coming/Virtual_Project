@@ -11,7 +11,7 @@ export abstract class BaseComponent{
   name: String;
   inputs: number[];
   inputCount: number; // 输入引脚数量
-  inputInverted: boolean[]; // 输入引脚是否取反   todo 内部逻辑未实现!
+  inputInverted: boolean[]; // 输入引脚是否取反   
   outputs: number[];
   bitWidth: number;
   // height: number;
