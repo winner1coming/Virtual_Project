@@ -165,6 +165,7 @@ import Constant from './Wiring/Constant.vue'
 import Power from './Wiring/Power.vue'
 import Splitter from './Wiring/Splitter.vue'
 import Ground from './Wiring/Ground.vue'
+import Combiner from './Wiring/Combiner.vue'
 
 
 // 逻辑类建模
@@ -281,7 +282,7 @@ const componentMap = {
   CONSTANT: Constant,
   POWER: Power,
   SPLITTER: Splitter,
-  COMBINER: LogicCombiner,
+  COMBINER: Combiner,
   SEGMENT_DISPLAY: SegmentDisplay,
   GROUND: Ground
 }
