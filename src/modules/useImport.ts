@@ -91,7 +91,14 @@ export async function loadProject(importData: any, canvasRef: any){
       if (comp.type === "INPUT") {
         addedComponent.changeInput(0, 0);
       }
+      // if(comp.type === "SUB_CIRCUIT") {
+      //   addedComponent.inputPins = comp.inputPins || [];
+      //   addedComponent.outputPins = comp.outputPins || [];
+      //   addedComponent.inputNames = comp.inputNames || [];
+      //   addedComponent.outputNames = comp.outputNames || [];
+      // }
       componentsIdMap.set(comp.id, addedComponent.id);
+    
     }
   }
 
