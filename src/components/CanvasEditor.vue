@@ -566,36 +566,27 @@ function generateConnectionPath(start, end) {
 function updatePinPosition(ID) {
   console.log("更新元件引脚位置，ID：", ID)
 
+  console.log("所有端口：", Ports)
   // 获取组件类型对应的逻辑类
-  let componentLogic = useCircuitStore().getComponent(ID)
+  let logic = useCircuitStore().getComponent(ID)
 
-  // 创建Vue组件实例
-  const componentInstance = {
-    component: componentMap[component.type],
-    props: {ID},
-    logic: componentLogic,
-  }
-
-  // 存储Vue实例引用
-  vueComponentMap.set(ID, componentInstance);
-
-  // 4：记录当前ID的端口信息
-  // 延迟4后获取端口信息，确保见组件挂载完成
+  // 记录当前ID的端口信息
+  // 延迟后获取端口信息，确保见组件挂载完成
   nextTick(() => {
-    const logic = vueComponentMap.get(ID)?.logic;
     if(!logic) {
       console.warn("逻辑类未找到，ID：", ID)
       return
     }
     const portsInfo = logic.getAllPorts()
-    updateComponentPorts(ID, portsInfo, componentLogic.position[0], componentLogic.position[1]);
     console.log("所有端口：", Ports)
-  })
+    updateComponentPorts(ID, portsInfo, logic.position[0], logic.position[1]);
+    console.log("所有端口：", Ports)
 
-  // 更新所有相关连线的路径
+    // 更新所有相关连线的路径
   updateConnectionPaths(ID);
 
   console.log("更新电线位置成功！")
+  })
 }
 
 // 修改 handleMouseMove 以支持连线拖动
@@ -675,6 +666,8 @@ function handleMouseMove(event) {
 
 // 更新所有跟该元件相关的连线路径
 function updateConnectionPaths(componentId = null) {
+
+  console.log("元件拖拽/更新引脚/更新位宽时需要同步更新电线")
   connections.forEach((connection) => {
     const fromId = connection.from.componentId;
     const toId = connection.to.componentId;
@@ -950,6 +943,8 @@ function selectComponent(item, event) {
   isDragging.value = true
   
   useCircuitStore().selectComponent(item.ID);
+
+  console.log("全局Ports：", Ports)
 }
 
 let projectTypeId = 0;
@@ -1077,9 +1072,16 @@ function handleRightClick(event) {
 
   if (wireIndex !== -1) {
     console.log("点击中电线，删除该电线，index=", wireIndex);
+    console.log("该电线信息：", connections[wireIndex]);
+    useCircuitStore().disconnect(
+      connections[wireIndex].from.componentId, 
+      connections[wireIndex].from.portId, 
+      connections[wireIndex].to.componentId, 
+      connections[wireIndex].to.portId
+    ); // 调用store断开连接
     connections.splice(wireIndex, 1); // 删除电线
     saveHistory(); // 记录历史
-    return; // ✅ 直接 return，不再处理元件删除逻辑
+    return; 
   }
 
   // 右键时选中的元件
