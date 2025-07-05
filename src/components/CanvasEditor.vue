@@ -147,7 +147,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 // 元件建模
 import AndGate from './Gates/AndGate.vue'
 import NandGate from './Gates/NandGate.vue'
@@ -1174,6 +1174,17 @@ function toggleInput(component, index) {
 }
 
 // #region 项目导入模拟
+import { useProjectStore } from '@/store/ProjectStore'
+const projectStore = useProjectStore();
+watch(projectStore.selectedProjectId, (newValue) => {
+  if (newValue) {
+    currentComponent.value = null; // 清空当前组件
+    wireStart.value = null; // 清空电线起点
+    wireStartId = null; // 清空电线起点ID
+    tempWire.value = null; // 清除临时连线
+  }
+});
+
 function addComponentByScript(type, position) {
   const Component = componentMap[type]
   if (Component) {
