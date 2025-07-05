@@ -15,9 +15,9 @@ export class Splitter extends BaseComponent {
         this.outputs.splice(0, this.outputs.length, ...Array(bitWidth).fill(-1)); // 初始化输出引脚
     }
 
-    changeBitWidth(bitWidth: number) {
+    setBitWidth(bitWidth: number) {
         this.bitWidth = bitWidth;
-        this.outputs.splice(0, this.outputs.length, ...Array(bitWidth).fill(-1)); 
+        this.outputs.splice(0, this.outputs.length, ...Array(this.bitWidth).fill(-1)); 
     }
 
     compute(): number[] {

@@ -7,7 +7,7 @@ export class ConstantInput extends BaseComponent {
 
     constructor(
         id: number,
-        type: String = "ConstantInput", 
+        type: String = "CONSTANT", 
         position: [number, number] = [0, 0],
         simulator: any = null,
         maxValue = 1
@@ -18,11 +18,9 @@ export class ConstantInput extends BaseComponent {
         } else {
             this.simulator = simulator;
         }
-        //this.inputs = []; // 常量输入没有输入引脚
-        this.inputs.splice(0, this.inputs.length); // 清空输入引脚
+        this.inputs.splice(0, this.inputs.length);
         this.inputCount = 0; 
-        this.inputInverted.splice(0, this.inputInverted.length); // 清空输入反转状态
-        //this.outputs = [0]; // 初始输出值为0
+        this.inputInverted.splice(0, this.inputInverted.length);
         this.outputs.splice(0, this.outputs.length, 0); 
         this.bitWidth = 1; // 默认1位
         this.currentValue = 0;
@@ -45,23 +43,19 @@ export class ConstantInput extends BaseComponent {
     // 设置常量的值（十进制）
     setValue(value: number): void {
         if (value < 0) {
-            // this.outputs = [-2]; // 错误状态
             this.outputs.splice(0, this.outputs.length, -2);
             return;
         }
 
         if (value > this.maxValue) {
-            // this.outputs = [-2]; // 超出范围错误
             this.outputs.splice(0, this.outputs.length, -2);
             return;
         }
 
         this.currentValue = value;
-        //this.outputs = [value]; // 单值输出
         this.outputs.splice(0, this.outputs.length, value); 
     }
 
-    // 获取当前值
     getValue(): number {
         return this.currentValue;
     }
@@ -82,7 +76,6 @@ export class ConstantInput extends BaseComponent {
             // 调整当前值以适应新的位数
             if (this.currentValue > this.maxValue) {
                 this.currentValue = this.maxValue;
-                //this.outputs = [this.currentValue];
                 this.outputs.splice(0, this.outputs.length, this.currentValue);
             }
         }
