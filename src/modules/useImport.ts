@@ -60,7 +60,7 @@ export function exportProject(projectDate: ProjectData): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'level.json';
+  a.download = projectDate.name + '.json';
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -101,10 +101,11 @@ export async function loadProject(importData: any, canvasRef: any){
     simulator.InputTunnelMap = new Map(importData.tunnels.InputTunnelMap);
   }
 
+  await nextTick();
   // 加载连接关系
   if (importData.connections) {
     for (const conn of importData.connections) {
-      await nextTick();
+      
       //await new Promise(resolve => setTimeout(resolve, 100)); // 粗暴等 100ms
       // 画布连线
       canvasRef.connectByScript(componentsIdMap.get(conn.fromId), conn.fromPin, componentsIdMap.get(conn.toId), conn.toPin);

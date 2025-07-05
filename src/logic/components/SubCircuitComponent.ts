@@ -11,6 +11,8 @@ export class SubCircuitComponent extends BaseComponent {
   private inputPins: number[];   // 输入引脚的id
   private outputPins: number[];
   private componentIdMap: Map<number, BaseComponent> = new Map(); // 用于映射元件的id
+  public inputNames: string[] = []; // 输入引脚的名称
+  public outputNames: string[] = []; // 输出引脚的名称
 
   constructor(
     id: number,
@@ -28,6 +30,7 @@ export class SubCircuitComponent extends BaseComponent {
     this.inputPins = projectStore.getProjectById(projectId).inputPins;
     this.outputPins = projectStore.getProjectById(projectId).outputPins;
 
+
     this.initInputPin(this.inputPins.length);
     this.initOutputPin(this.outputPins.length);
 
@@ -36,8 +39,12 @@ export class SubCircuitComponent extends BaseComponent {
       const comp = store.getComponent(id);
       if (comp) {
         this.componentIdMap.set(id, createComponentByType(id, comp.type, comp.position, comp.name));
-        if(comp.type === "INPUT" || comp.type === "OUTPUT") {
+        if(comp.type === "INPUT") {
           this.componentIdMap.get(id)!.changeInput(0, -1);
+          this.inputNames.push(comp.name.toString());
+        }else if(comp.type === "OUTPUT") {
+          this.componentIdMap.get(id)!.changeInput(0, -1);
+          this.outputNames.push(comp.name.toString());
         }
         // 复制关键属性
         this.componentIdMap.get(id)!.setPosition(comp.position);
