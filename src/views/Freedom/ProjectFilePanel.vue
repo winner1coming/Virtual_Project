@@ -71,6 +71,8 @@ const createNewProject = () => {
   const projectName = prompt('请输入新项目名称：', `新项目 ${projects.length + 1}`);
   if (projectName) {
     projectStore.createProject(projectName);
+    // 通知模拟器
+    useCircuitStore().simulator.changeProject(projectStore.selectedProjectId);
     loadProjects(); // 更新项目列表
   }
 };
@@ -101,6 +103,8 @@ const loadProject = (projectId: number) => {
     clickTimer = null; // 清除定时器
   }
   projectStore.loadProject(projectId);
+  // 通知模拟器
+  useCircuitStore().simulator.changeProject(projectId);
 };
 
 // 根据项目ID创建子组件（单击）
