@@ -1165,8 +1165,8 @@ onMounted(() => {
   eventBus.on('updateComponentDirection', () => {
     updateComponentDirection();
   });
-  eventBus.on('updatePinPosition', ({id: number}) => {
-    console.log("更新引脚位置，ID：", id)
+
+  eventBus.on('updatePinPosition', ({id}) => {
     updatePinPosition(id);
   });
   // 确保画布元素可聚焦
