@@ -1192,7 +1192,7 @@ onMounted(() => {
   eventBus.on('updateComponentDirection', () => {
     updateComponentDirection();
   });
-  eventBus.on('updatePinPosition', ({id: number}) => {
+  eventBus.on('updatePinPosition', ({id}) => {
     updatePinPosition(id);
   });
   // 确保画布元素可聚焦

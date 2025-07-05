@@ -29,9 +29,6 @@ export const useCircuitStore = defineStore('circuit', {
     // 用法：const A = computed(() => store.components.get(1));
     getComponent(id: number): BaseComponent{
       const component = this.components.get(id);
-      if(!component){
-        throw new Error(`Component with id ${id} not found`);
-      } 
       return component;
     },
     getComponentOutputs(id:number): number[]{

@@ -209,32 +209,32 @@ export class EventDrivenSimulator {
     this.processQueue();
   }
 
-  // // 取消一个组件与前驱的连接
-  // disconnectPredecessors(id: number) {
-  //   // 从输入端查找
-  //   const pinMap = this.connectionManager.getInputPinMap(id);
-  //   if (pinMap) {
-  //     for (const pinIdx of pinMap.keys()) {
-  //       for(const conn of pinMap.get(pinIdx) || []) {
-  //         this.disconnect(conn.id, conn.idx, id, pinIdx);
-  //       }
-  //     }
-  //   }
-  // }
-  // // 取消一个组件与后继的连接
-  // disconnectSuccessors(id: number) {
-  //   // 从输出端查找
-  //   const pinMap = this.connectionManager.getOutputPinMap(id);
-  //   if (pinMap) {
-  //     for (const pinIdx of pinMap.keys()) {
-  //       for(const conn of pinMap.get(pinIdx) || []) {
-  //         this.disconnect(id, pinIdx, conn.id, conn.idx);
-  //          // 通知后继组件该引脚的输入已断开 todo 没考虑两个元件连一个引脚的情况
-  //         this.enqueue(conn.id, conn.idx, -1);
-  //       }
-  //     }
-  //   }
-  // }
+  // 取消一个组件与前驱的连接
+  disconnectPredecessors(id: number) {
+    // 从输入端查找
+    const pinMap = this.connectionManager.getInputPinMap(id);
+    if (pinMap) {
+      for (const pinIdx of pinMap.keys()) {
+        for(const conn of pinMap.get(pinIdx) || []) {
+          this.disconnect(conn.id, conn.idx, id, pinIdx);
+        }
+      }
+    }
+  }
+  // 取消一个组件与后继的连接
+  disconnectSuccessors(id: number) {
+    // 从输出端查找
+    const pinMap = this.connectionManager.getOutputPinMap(id);
+    if (pinMap) {
+      for (const pinIdx of pinMap.keys()) {
+        for(const conn of pinMap.get(pinIdx) || []) {
+          this.disconnect(id, pinIdx, conn.id, conn.idx);
+           // 通知后继组件该引脚的输入已断开 todo 没考虑两个元件连一个引脚的情况
+          this.enqueue(conn.id, conn.idx, -1);
+        }
+      }
+    }
+  }
 
   // 移除一个组件，删除与其有关的所有连接
   removeComponent(id: number) {
