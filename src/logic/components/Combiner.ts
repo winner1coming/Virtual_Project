@@ -50,7 +50,7 @@ export class Combiner extends BaseComponent {
     // 更新引脚位置
     updatePinPosition(): void{
         // 修改输ru
-        const inputYs = calcInputYs(this.outputs.length);
+        const inputYs = calcInputYs(this.inputs.length);
         let minY = Math.min(...inputYs);
         let maxY = Math.max(...inputYs);
         this.inputPinPosition.splice(0, this.inputPinPosition.length,
