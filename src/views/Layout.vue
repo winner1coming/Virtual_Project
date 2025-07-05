@@ -443,6 +443,7 @@ const uploadProject = () => {
 }
 const handleFileUpload = (event) => {
   projectStore.createProject('new project');
+  circuitStore.simulator.changeProject(projectStore.selectedProjectId);
   nextTick(() => {
     const canvasRef = canvasEditorRefs.get(projectStore.selectedProjectId);
     importProjectFromFile(event, canvasRef);

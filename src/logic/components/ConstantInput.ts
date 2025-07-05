@@ -39,7 +39,10 @@ export class ConstantInput extends BaseComponent {
 
     // 实现基类抽象方法（常量输入没有输入引脚，所以空实现）
     changeInput(idx: number, v: number): number[] {
-        // 常量输入不应该被外部改变输入，所以直接返回当前输出
+        // 输入引脚的改变会导致电路的改变
+        this.outputs.splice(0, this.outputs.length, v); // 更新输出
+        this.simulator.enqueue(this.id, 0, this.outputs[0]);
+        this.simulator.processQueue();
         return this.outputs;
     }
 
