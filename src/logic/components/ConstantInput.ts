@@ -25,7 +25,6 @@ export class ConstantInput extends BaseComponent {
         this.outputs.splice(0, this.outputs.length, 0); 
         this.bitWidth = 1; // 默认1位
         this.currentValue = 0;
-        this.updateMaxValue();
         this.maxValue = maxValue;
     }
 
@@ -71,7 +70,6 @@ export class ConstantInput extends BaseComponent {
         return paddedStr.split('').map(bit => parseInt(bit, 10));
     }
 
-    // 覆盖基类方法：设置位数
     setBitWidth(bitWidth: number): void {
         if (bitWidth > 0 && bitWidth !== this.bitWidth) {
             super.setBitWidth(bitWidth);
