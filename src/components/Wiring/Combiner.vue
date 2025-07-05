@@ -3,7 +3,8 @@
       <!-- 合并器图形 -->
       <!--选中方框-->
       <SelectedBox :x="94" :y="minY<246? minY-6: 246" :width="206-100+12" :height="minY<246? maxY-minY+48: 401-246+48" :visible="circuitStore.selectedId===props.id"/>
-
+      <!--透明-->
+      <rect x="94" :y="minY<246? minY-6: 246" :width="206-100+12" :height="minY<246? maxY-minY+48: 401-246+48" fill="transparent"></rect>
       <!--竖线-->
       <path
         stroke="black"
@@ -49,7 +50,7 @@ const combiner = computed(() => {
 // let minY = computed(()=>Math.min(...outputYs.value));
 // let maxY = computed(()=>Math.max(...outputYs.value));
 
-let outputYs = computed(()=>useGateLayout(combiner.value.outputs.length))
+let outputYs = computed(()=>useGateLayout(combiner.value.inputCount))
 
 let minY = computed(()=>Math.min(...outputYs.value.value));
 let maxY = computed(()=>Math.max(...outputYs.value.value));

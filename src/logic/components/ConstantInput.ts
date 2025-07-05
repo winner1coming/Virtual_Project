@@ -26,6 +26,7 @@ export class ConstantInput extends BaseComponent {
         this.bitWidth = 1; // 默认1位
         this.currentValue = 0;
         this.maxValue = maxValue;
+        this.updatePinPosition();
     }
 
     // 实现基类抽象方法
@@ -87,4 +88,11 @@ export class ConstantInput extends BaseComponent {
     private updateMaxValue(): void {
         this.maxValue = Math.pow(2, this.bitWidth) - 1;
     }
+
+    // 更新引脚位置
+    updatePinPosition(): void{
+        // 修改输出
+        this.outputPinPosition.splice(0, this.outputPinPosition.length, [71, 48]);
+    }
+
 }

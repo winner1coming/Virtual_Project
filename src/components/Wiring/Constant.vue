@@ -62,6 +62,7 @@ function updateRect() {
   if (constantTextBox.value) {
     const bbox = constantTextBox.value.getBBox()
     rect_width.value = bbox.width + 40
+    constant.value.outputPinPosition.splice(0,constant.value.outputPinPosition.length,[rect_width.value,48])
   }
 }
 
