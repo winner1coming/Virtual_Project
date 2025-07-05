@@ -7,7 +7,7 @@ export class ConstantInput extends BaseComponent {
 
     constructor(
         id: number,
-        type: String = "ConstantInput", 
+        type: String = "CONSTANT", 
         position: [number, number] = [0, 0],
         simulator: any = null,
         maxValue = 1

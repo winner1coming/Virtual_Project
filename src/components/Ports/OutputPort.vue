@@ -5,7 +5,10 @@
     r="10"
     :fill="fillColor"
     @click.stop="toggle"
-  />
+    style="cursor:pointer"
+  >
+    <title>输出{{ label }}</title>
+  </circle>
 </template>
 
 <script setup>
@@ -18,6 +21,10 @@ const props = defineProps({
       type: Number,
       default: 1,
   },
+  label:{
+    type: String,
+    default: "",
+  }
 })
 
 // 计算颜色逻辑

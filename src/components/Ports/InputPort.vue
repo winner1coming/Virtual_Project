@@ -5,7 +5,9 @@
     r="10"
     :fill="fillColor"
     style="cursor:pointer"
-  />
+  >
+    <title>输入{{ label }}</title>
+  </circle>
 </template>
 
 <script setup>
@@ -18,6 +20,10 @@ const props = defineProps({
       type: Number,
       default: 1
   },
+  label:{
+    type: String,
+    default: "",
+  }
 })
 
 // const emit = defineEmits(['toggle'])
