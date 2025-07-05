@@ -17,7 +17,7 @@ export class Clock extends BaseComponent {
 		}
         this.initInputPin(0); // 时钟没有输入引脚
         this.period = period;
-
+        this.updatePinPosition();
         this.start(); // 启动时钟
     }
 
@@ -50,5 +50,9 @@ export class Clock extends BaseComponent {
 
     changeInput(idx: number, v: number): number[] {
         throw new Error("shouldn't be here")
+    }
+    // 更新引脚位置
+    updatePinPosition(): void{
+        this.outputPinPosition.splice(0, this.outputPinPosition.length, [235, 118]);
     }
 }
