@@ -142,7 +142,7 @@ export class SubSimulator {
               const targetComponent = this.componentIdMap.get(conn.id)!;
               if (!targetComponent) continue;
 
-              this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
+              this.enqueue(conn.id, conn.idx, conn.legal?newOutputs[pinIdx]: -2);
             //}
           }
         }

@@ -110,6 +110,35 @@
             停止模拟器
           </n-tooltip>
 
+          <n-tooltip trigger="hover">
+            <template #trigger>
+              <n-button quaternary @click="saveProject">
+                <template #icon>
+                  <n-icon><save-icon /></n-icon>
+                </template>
+              </n-button>
+            </template>
+            保存项目
+          </n-tooltip>
+
+          <n-tooltip trigger="hover">
+            <template #trigger>
+              <n-button quaternary @click="uploadProject">
+                <template #icon>
+                  <n-icon><UploadIcon /></n-icon>
+                </template>
+              </n-button>
+            </template>
+            上传项目
+          </n-tooltip>
+          <!-- 隐藏的文件输入框 -->
+          <input 
+            type="file" 
+            ref="fileInput" 
+            style="display: none;" 
+            @change="handleFileUpload"
+          />
+
         </n-button-group>
       </div>
     </div>
@@ -196,7 +225,7 @@
                   v-for="(id, idx) in projectIds" 
                   :key="idx" v-show="id === projectStore.selectedProjectId" 
                   class="canvas">
-                  <CanvasEditor/>
+                  <CanvasEditor :ref="el => setCanvasEditorRef(id, el)" />
                 </div>
               </template>
               <template #2 v-if="showRightPDF">
@@ -227,7 +256,7 @@
 <script setup>
 import CanvasEditor from '@/components/CanvasEditor.vue'
 import PDFViewer from './Freedom/PDFViewer.vue'
-import { computed, ref, defineAsyncComponent, provide} from 'vue'
+import { computed, ref, defineAsyncComponent, provide, nextTick} from 'vue'
 import { useRouter } from 'vue-router'
 import { 
   NBreadcrumb, 
@@ -254,7 +283,8 @@ import {
   DocumentTextOutline as textoutline,
   CubeOutline as cube,
   FolderOpenOutline as folder,
-  CloseOutline as close
+  CloseOutline as close,
+  CloudUploadOutline as UploadIcon,
 } from '@vicons/ionicons5'
 
 const props = defineProps(['mode'])
@@ -338,10 +368,6 @@ const closePDF = () => {
   showRightPDF.value = false
 }
 
-const saveProject = () => {
-  console.log('保存项目')
-}
-
 // 历史记录相关
 const prevStep = () => {
   undo();
@@ -402,8 +428,37 @@ const resumeSimulator = () => {
 
 // #region 项目
 import { useProjectStore } from '@/store/ProjectStore'
+import {loadProject, exportProject, importProjectFromFile} from '@/modules/useImport'
 const projectStore = useProjectStore()
 const projectIds = computed(() => projectStore.getProjectIds())
+
+// 另存项目
+const saveProject = () => {
+  exportProject(projectStore.getCurrentProject());
+}
+const fileInput = ref(null);
+// 上传项目
+const uploadProject = () => {
+  fileInput.value.click();
+}
+const handleFileUpload = (event) => {
+  projectStore.createProject('new project');
+  nextTick(() => {
+    const canvasRef = canvasEditorRefs.get(projectStore.selectedProjectId);
+    importProjectFromFile(event, canvasRef);
+  });
+}
+
+// 维护画布
+const canvasEditorRefs = new Map();
+
+function setCanvasEditorRef(projectId, el) {
+  if (el) {
+    canvasEditorRefs.set(projectId, el);
+  } else {
+    canvasEditorRefs.delete(projectId);
+  }
+}
 
 // #endregion 项目
 </script>

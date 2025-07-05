@@ -20,7 +20,7 @@ interface WorkItem {
 
 export class EventDrivenSimulator {
   private static instance: EventDrivenSimulator | null = null;
-  private connectionManager: ConnectionManager;
+  public connectionManager: ConnectionManager;
   private connManagerMap: Map<number, ConnectionManager> = new Map(); // 用于存储每个项目的连接管理器
   private circuitStore = useCircuitStore();
   private workQueue: WorkItem[] = [];
@@ -260,13 +260,31 @@ export class EventDrivenSimulator {
           if (component.bitWidth !== targetComponent.bitWidth) {
             // this.connectionManager.setConnectionLegal(id, pinIdx, conn.id, conn.idx, false); 
             conn.legal = false;
+            const outputPinMap = this.connectionManager.getOutputPinMap(conn.id);
+            if (!outputPinMap) continue;
+            for(const conn1 of outputPinMap.get(conn.idx) || []) {
+              if(conn1.id === id && conn1.idx === pinIdx){
+                conn1.legal = false;
+                break; 
+              }
+            }
+
             this.enqueue(id, pinIdx, -2); 
           } else {
-            //if(conn.legal === false){
+            if(conn.legal === false){
               //this.connectionManager.setConnectionLegal(id, pinIdx, conn.id, conn.idx, true); 
               conn.legal = true;
+              const outputPinMap = this.connectionManager.getOutputPinMap(conn.id);
+              if (!outputPinMap) continue;
+              for(const conn1 of outputPinMap.get(conn.idx) || []) {
+                if(conn1.id === id && conn1.idx === pinIdx){
+                  conn1.legal = true;
+                  break; 
+                }
+              }
+
               this.enqueue(id, pinIdx, targetComponent.getOutputs()[conn.idx]); // 恢复合法后，重新通知
-            // }
+            }
           }
         }
       }
@@ -285,12 +303,29 @@ export class EventDrivenSimulator {
           // 判断位宽是否合法
           if (component.bitWidth !== targetComponent.bitWidth) {
             conn.legal = false; 
+            const inputPinMap = this.connectionManager.getInputPinMap(conn.id);
+            if (!inputPinMap) continue;
+            for(const conn1 of inputPinMap.get(conn.idx) || []) {
+              if(conn1.id === id && conn1.idx === pinIdx){
+                conn1.legal = false;
+                break; 
+              }
+            }
+
             this.enqueue(conn.id, conn.idx, -2); 
           } else {
-            //if(conn.legal === false){
+            if(conn.legal === false){
               conn.legal = true;
+              const inputPinMap = this.connectionManager.getInputPinMap(conn.id);
+              if (!inputPinMap) continue;
+              for(const conn1 of inputPinMap.get(conn.idx) || []) {
+                if(conn1.id === id && conn1.idx === pinIdx){
+                  conn1.legal = true;
+                  break; 
+                }
+              }
               this.enqueue(conn.id, conn.idx, component.getOutputs()[conn.idx]); // 恢复合法后，重新通知
-            //}
+            }
           }
         }
       }
@@ -446,7 +481,7 @@ export class EventDrivenSimulator {
                 const targetComponent = this.circuitStore.getComponent(conn.id);
                 if (!targetComponent) continue;
                 if(conn.id === id && conn.idx === idx) continue; // 防止自己通知自己
-                this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
+                this.enqueue(conn.id, conn.idx, conn.legal?newOutputs[pinIdx]:-2);
               }
             //}
           }
