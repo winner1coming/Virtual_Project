@@ -570,6 +570,9 @@ function updatePinPosition(ID) {
   // 获取组件类型对应的逻辑类
   let logic = useCircuitStore().getComponent(ID)
 
+  // 我觉得还是得先去connections里找一下这个元件ID对应的连线
+  // 并且记录每条连线跟该元件连接的引脚ID，以及电线另一端连接的元件ID和引脚ID
+
   // 记录当前ID的端口信息
   // 延迟后获取端口信息，确保见组件挂载完成
   nextTick(() => {
@@ -578,14 +581,26 @@ function updatePinPosition(ID) {
       return
     }
     const portsInfo = logic.getAllPorts()
-    console.log("所有端口：", Ports)
+
     updateComponentPorts(ID, portsInfo, logic.position[0], logic.position[1]);
-    console.log("所有端口：", Ports)
 
     // 更新所有相关连线的路径
-  updateConnectionPaths(ID);
+    updateConnectionPaths(ID);
 
-  console.log("更新电线位置成功！")
+    // 依次匹配原来电线另一端的元件ID和引脚ID
+    // 调用connect，在逻辑上重新连接
+    connections.forEach((connection) => {
+      const fromID = connection.from.componentId;
+      const fromPortID = connection.from.portId;
+      const toID = connection.to.componentId;
+      const toPortID = connection.to.portId;
+      if (fromID === ID || toID === ID) {
+        // 重新连接
+        useCircuitStore().connect(fromID, fromPortID, toID, toPortID);
+      }
+    })
+
+    console.log("更新电线位置成功！")
   })
 }
 
