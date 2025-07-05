@@ -39,6 +39,13 @@ export class SubCircuitComponent extends BaseComponent {
         if(comp.type === "INPUT" || comp.type === "OUTPUT") {
           this.componentIdMap.get(id)!.changeInput(0, -1);
         }
+        // 复制关键属性
+        this.componentIdMap.get(id)!.setPosition(comp.position);
+        this.componentIdMap.get(id)!.setBitWidth(comp.bitWidth);
+        this.componentIdMap.get(id)!.initInputPin(comp.inputCount);
+        this.componentIdMap.get(id)!.initOutputPin(comp.outputs.length);
+        this.componentIdMap.get(id)!.inputInverted.splice(0, this.componentIdMap.get(id)!.inputInverted.length,
+          ...comp.inputInverted.map((v) => v))
       }
     });
 

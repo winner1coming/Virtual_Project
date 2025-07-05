@@ -29,7 +29,7 @@ import ComponentList from '@/components/ComponentPanel/ComponentList.vue';
 
 <style scoped>
 .split-container {
-  height: 100%;
+  height: 100vh;
   background-color: transparent;
 }
 

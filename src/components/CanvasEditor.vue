@@ -1146,7 +1146,7 @@ onUnmounted(() => {
 }
 .editor-wrapper {
   display: flex;
-  height: 100%;
+  height: 100vh;
   width: 100%;
   overflow: hidden; /* 防止整体页面滚动 */
 }
