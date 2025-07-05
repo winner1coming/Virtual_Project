@@ -25,17 +25,17 @@
           fill="none"
         />
         <path v-if="!customizeComponent.inputInverted[index]":d="`M92 ${customizeComponent.inputPinPosition[index][1]}L149 ${customizeComponent.inputPinPosition[index][1]}`" stroke="black" stroke-width="12" style="cursor: pointer;">
-          <title>输入{{ index }}</title>
+          <title>{{ customizeComponent.inputNames[index]}}</title>
         </path>
-        <InputPort :cx="92" :cy="customizeComponent.inputPinPosition[index][1]" :active="input" :bitWidth="customizeComponent.bitWidth" :label="index"/>
+        <InputPort :cx="92" :cy="customizeComponent.inputPinPosition[index][1]" :active="input" :bitWidth="customizeComponent.bitWidth" :label="customizeComponent.inputNames[index]"/>
       </template>
 
       <!-- 输出引脚 -->
       <template v-for="(output, index) in customizeComponent.outputs" :key="output.id">
         <path :d="`M372 ${customizeComponent.outputPinPosition[index][1]}L429 ${customizeComponent.outputPinPosition[index][1]}`" stroke="black" stroke-width="12" style="cursor: pointer;">
-          <title>输出{{ index }}</title>
+          <title>{{ customizeComponent.outputNames[index] }}</title>
         </path>
-        <OutputPort :cx="149+223+57" :cy="customizeComponent.outputPinPosition[index][1]" :active="output" :label="index"/>
+        <OutputPort :cx="149+223+57" :cy="customizeComponent.outputPinPosition[index][1]" :active="output" :label="customizeComponent.outputNames[index]"/>
       </template>
        
       <!--选中方框-->
