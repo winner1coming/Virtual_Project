@@ -113,15 +113,6 @@
           id="value"
           v-model:value="constantValue"
           placeholder="请输入数值"
-          @update:value="(value: string) => {
-            const component = circuitStore.getComponent(circuitStore.selectedId) as ConstantInput;
-            const v = parseInt(value);
-            if(!isNaN(v) && v >=0 && v < Math.pow(2, component.bitWidth)) {
-              component.changeInput(0, v);
-            } else{
-              constantValue = component.outputs[0].toString();
-            }
-          }"
         />
       </div>
 
@@ -185,6 +176,26 @@ function updateInputCount(value: number) {
 }
 
 const constantValue = ref('0');
+
+watch(constantValue, (newValue) => {
+  const component = circuitStore.getComponent(circuitStore.selectedId) as ConstantInput;
+  if (!component || component.type !== 'CONSTANT') {
+    return;
+  }
+
+  if (newValue === '') {
+    // 允许清空输入框
+    return;
+  }
+
+  const v = parseInt(newValue);
+  if (!isNaN(v) && v >= 0 && v < Math.pow(2, component.bitWidth)) {
+    component.setValue(v);
+  } else {
+    // 回退到当前实际输出值
+    constantValue.value = component.outputs[0].toString();
+  }
+});
 </script>
 
 <style scoped>

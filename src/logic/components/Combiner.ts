@@ -19,9 +19,9 @@ export class Combiner extends BaseComponent {
         this.updatePinPosition();
     }
 
-    changeBitWidth(bitWidth: number) {
+    setBitWidth(bitWidth: number) {
         this.bitWidth = bitWidth;
-         this.inputs.splice(0, this.inputs.length, ...Array(bitWidth).fill(-1));
+         this.inputs.splice(0, this.inputs.length, ...Array(this.bitWidth).fill(-1));
     }
 
     compute(): number[] {

@@ -173,6 +173,7 @@ export abstract class BaseComponent{
         id: number,
         x: number,
         y: number
+        // type: 'input' | 'output'
       }>
     };
     for(let i = 0; i < this.getInputPinCount(); i++){
@@ -180,7 +181,9 @@ export abstract class BaseComponent{
         id: i,
         x: (this.inputPinPosition[i][0]+this.offset[0])*this.scale,
         y: (this.inputPinPosition[i][1]+this.offset[1])*this.scale,
+        // type: 'input'
       });
+        
     }  
 
     for(let i = 0; i < this.outputPinPosition.length; i++){
@@ -188,6 +191,7 @@ export abstract class BaseComponent{
         id: i + this.getInputPinCount(),
         x: (this.outputPinPosition[i][0]+this.offset[0])*this.scale, 
         y: (this.outputPinPosition[i][1]+this.offset[1])*this.scale,
+        // type: 'output'
       });
     }
     return result;
