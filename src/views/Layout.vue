@@ -322,7 +322,7 @@ const togglePDF = (file) => {
     CanvasSize.value = 1
     showRightPDF.value = false
   }else{
-    CanvasSize.value = 0.3
+    CanvasSize.value = 0.6
     currentPdfFile.value = file
     showRightPDF.value = true
   }
@@ -564,7 +564,7 @@ const projectIds = computed(() => projectStore.getProjectIds())
 .canvas {
   background: #fff;
   height: 100vh;
-  width: 100vw;
+  width: auto;
 }
 
 .toolbox-item {
