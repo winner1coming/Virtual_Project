@@ -14,6 +14,8 @@ import { SubCircuitComponent } from '@/logic/components/SubCircuitComponent';
 import { Power } from '@/logic/components/Power';
 import { Ground } from '@/logic/components/Ground';
 import { SegmentDisplay } from '@/logic/components/SegmentDisplay';
+import {Combiner } from '@/logic/components/Combiner'
+import {Splitter} from '@/logic/components/Splitter'
 
 
 export function createComponentByType(id: number, type: String, position:[number, number] = [0,0], name:String="", projectId: number=0): BaseComponent {
@@ -48,6 +50,10 @@ export function createComponentByType(id: number, type: String, position:[number
       return new SegmentDisplay(id, type, position);
     case 'SUB_CIRCUIT':
       return new SubCircuitComponent(id, type, position, name, projectId);
+    case 'SPLITTER':
+      return new Splitter(id,type,position);
+    case 'COMBINER':
+      return new Combiner(id,type,position);
     // 添加其他组件类型
     default:
       throw new Error(`Unknown component type: ${type}`);

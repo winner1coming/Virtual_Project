@@ -3,8 +3,8 @@ import { BaseComponent } from "../BaseComponent";
 import { EventDrivenSimulator } from "../Simulator";
 
 export class Combiner extends BaseComponent {
-    constructor(id: number, position: [number, number] = [0, 0], bitWidth: number = 4, simulator: any = null) {
-        super(id, "combiner", position);
+    constructor(id: number,type: String, position: [number, number] = [0, 0], bitWidth: number = 4, simulator: any = null) {
+        super(id, type, position);
         if (!simulator) {
             this.simulator = EventDrivenSimulator.getInstance();
         } else {
