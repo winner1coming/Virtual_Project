@@ -25,7 +25,6 @@
 
         <!-- 输出引脚 -->
         <OutputPort :cx="rect_width" :cy="48" :active="1" />
-        <InputPort :cx="200" :cy="310" :active="0" @toggle="() => handleToggleInput()"/><!--调试用，记得删这行 todo-->
     </g>
 </template>
   
@@ -78,11 +77,6 @@ onMounted(async () => {
   updateRect()
 })
 
-//调试用，要删 todo
-function handleToggleInput() {
-    //constant_value.value = "3fffffff";
-    constant.value.setValue(2)
-}
 
 </script>
 
