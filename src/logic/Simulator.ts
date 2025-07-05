@@ -20,7 +20,7 @@ interface WorkItem {
 
 export class EventDrivenSimulator {
   private static instance: EventDrivenSimulator | null = null;
-  private connectionManager: ConnectionManager;
+  public connectionManager: ConnectionManager;
   private connManagerMap: Map<number, ConnectionManager> = new Map(); // 用于存储每个项目的连接管理器
   private circuitStore = useCircuitStore();
   private workQueue: WorkItem[] = [];
