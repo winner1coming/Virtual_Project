@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${clock.position[0]}, ${clock.position[1]}) scale(${clock.scale})`" cursor="move">
+    <g :transform="`translate(${clock.offset[0]*clock.scale}, ${clock.offset[1]*clock.scale}) scale(${clock.scale})`" cursor="move">
       <!-- 图形 -->
       <rect x="0" y="0" width="235" height="236" stroke="rgba(0, 0, 0, 1)" stroke-width="12" fill="#FFFFFF" />
 
@@ -18,13 +18,13 @@
       <path :stroke="clock.outputs[0] === 1 ? 'green' : 'transparent'" stroke-width="12" d="M112 160.24L202.5 160.24" />
 
       <!--选中方框-->
-      <SelectedBox :x="-6" :y="-6" :width="235+12" :height="236+12" :visible="true"/>
+      <SelectedBox :x="-6" :y="-6" :width="235+12" :height="236+12" :visible="circuitStore.selectedId===props.id"/>
 
       <!-- 输出状态 -->
       <OutputPort :cx="235" :cy="118" :active="clock.outputs[0]" />
 
       <!--调试用  todo-->
-      <InputPort :cx="140" :cy="288" :active=0 @toggle="() => handleToggleInput()" />
+      <!-- <InputPort :cx="140" :cy="288" :active=0 @toggle="() => handleToggleInput()" /> -->
     </g>
 </template>
 
