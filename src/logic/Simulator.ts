@@ -66,6 +66,7 @@ export class EventDrivenSimulator {
   }
 
   connect(id1: number, pinIndex1: number, id2: number, pinIndex2: number){
+    if(id1 === id2 && pinIndex1 === pinIndex2) return; // 防止连接到自己
     const comp1 = this.circuitStore.getComponent(id1);
     const comp2 = this.circuitStore.getComponent(id2);
     if (!comp1 || !comp2) return false;
