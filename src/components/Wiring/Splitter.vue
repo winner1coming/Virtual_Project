@@ -45,14 +45,18 @@ const splitter = computed(() => {
   return circuitStore.getComponent(props.id);  
 });
 
-let outputYs = useGateLayout(splitter.value.outputs.length)
+// let outputYs = computed(()=>splitter.outputPinPosition.map(item => item[1]));
+// let minY = computed(()=>Math.min(...outputYs.value));
+// let maxY = computed(()=>Math.max(...outputYs.value));
 
-let minY = Math.min(...outputYs.value);
-let maxY = Math.max(...outputYs.value);
+let outputYs = computed(()=>useGateLayout(splitter.value.outputs.length))
 
-function handleToggleInput(index) {
-    //setOutputCount(9)
-}
+let minY = computed(()=>Math.min(...outputYs.value.value));
+let maxY = computed(()=>Math.max(...outputYs.value.value));
+
+// function handleToggleInput(index) {
+//     //setOutputCount(9)
+// }
 
 // function handleSetScale(newScale) {
 //   setScale(splitter, newScale)

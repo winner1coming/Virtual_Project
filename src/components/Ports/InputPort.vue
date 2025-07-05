@@ -4,7 +4,7 @@
     :cy="cy"
     r="10"
     :fill="fillColor"
-    @click.stop="toggle"
+    style="cursor:pointer"
   />
 </template>
 
@@ -20,11 +20,11 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['toggle'])
+// const emit = defineEmits(['toggle'])
 
-function toggle() {
-  emit('toggle')
-}
+// function toggle() {
+//   emit('toggle')
+// }
 
 // 计算颜色逻辑
 const fillColor = computed(() => {

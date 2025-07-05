@@ -6,6 +6,7 @@ import { calcInputYs } from "@/logic/utils/useGateLayout";
 export class Splitter extends BaseComponent {
     constructor(id: number,type: String, position: [number, number] = [0, 0], simulator = null,bitWidth: number = 4) {
         super(id, type, position);
+        this.offset = [-150, -280];
         if (!simulator) {
             this.simulator = EventDrivenSimulator.getInstance();
         } else {
@@ -17,9 +18,10 @@ export class Splitter extends BaseComponent {
         this.updatePinPosition();
     }
 
-    changeBitWidth(bitWidth: number) {
+    setBitWidth(bitWidth: number) {
         this.bitWidth = bitWidth;
         this.outputs.splice(0, this.outputs.length, ...Array(bitWidth).fill(-1)); 
+        this.updatePinPosition();
     }
 
     compute(): number[] {
@@ -62,12 +64,16 @@ export class Splitter extends BaseComponent {
             ];
         }));
         // 修改输入
-        this.inputPinPosition = this.inputPinPosition.map(pin => {
-        return [
+        this.inputPinPosition.splice(0, this.inputPinPosition.length,[
             100,
             minY<246? maxY+36: 439.34,
-        ];
-        });
+        ]);
+        // this.inputPinPosition = this.inputPinPosition.map(pin => {
+        // return [
+        //     100,
+        //     minY<246? maxY+36: 439.34,
+        // ];
+        // });
     
     }
 }
