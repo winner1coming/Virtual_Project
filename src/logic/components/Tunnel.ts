@@ -15,7 +15,11 @@ export class Tunnel extends BaseComponent {
     }
     this.offset=[-253,-310];
     this.initInputPin(0); 
-    this.name = name; 
+    if(name){
+      this.name = name; 
+    }else{
+      this.name = "unnamed"; // 默认隧道名称
+    }
     EventDrivenSimulator.getInstance().addTunnel(name, id);
   }
 
