@@ -77,8 +77,7 @@
         >
           <component
             :is="item.type"
-            :width="item.size.width"
-            :height="item.size.height"
+           
             :inputs="item.inputs"
             :output="item.output"
             :id="item.ID"
@@ -1173,6 +1172,66 @@ function toggleInput(component, index) {
     component.output = !component.inputs[0].value
   }
 }
+
+// #region 项目导入模拟
+function addComponentByScript(type, position) {
+  const Component = componentMap[type]
+  if (Component) {
+    currentComponent.value = {
+      type: Component,
+      componentType: type,
+      x: 0,
+      y: 0,
+      size:{...COMPONENT_SIZES[type]},// 组件尺寸
+      inputs: type === 'NOT' ? [{ id: 1, value: false }] : [{ id: 1, value: false }, { id: 2, value: false }],
+      output: false,
+      //direction: 'east' // 默认方向
+    }
+  }
+  const fakeEvent = {
+    clientX: position[0] + canvasContainer.value.getBoundingClientRect().left,
+    clientY: position[1] + canvasContainer.value.getBoundingClientRect().top,
+    preventDefault: () => {},
+    button: 0,
+  };
+  handleLeftClick(fakeEvent);
+}
+
+function connectByScript(fromId, fromPin, toId, toPin) {
+  const fromPort = getPortPosition(fromId, fromPin);
+  const toPort = getPortPosition(toId, toPin);
+  if (!fromPort || !toPort) return;
+
+  wireStart.value = {
+    x: fromPort.x,
+    y: fromPort.y,
+    componentId: fromId,
+    portId: fromPin,
+    portType: fromPort.type,
+  };
+  wireStartId = fromId;
+
+  const fakeEvent = {
+    clientX: toPort.x + canvasContainer.value.getBoundingClientRect().left,
+    clientY: toPort.y + canvasContainer.value.getBoundingClientRect().top,
+    button: 0,
+    preventDefault: () => {},
+    stopPropagation: () => {},
+  };
+  handleMouseDown(fakeEvent);
+}
+
+function getPortPosition(componentId, portId) {
+  const portsList = Ports.get(componentId);
+  if (!portsList) return null;
+  return portsList.find(p => p.id === portId);
+}
+
+defineExpose({
+  addComponentByScript,
+  connectByScript,
+});
+// #endregion 项目导入模拟
 
 onMounted(() => {
   eventBus.on('start-place-component', ({type:type, projectId: projectId=0}) => {

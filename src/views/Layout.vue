@@ -125,7 +125,7 @@
             <template #trigger>
               <n-button quaternary @click="uploadProject">
                 <template #icon>
-                  <n-icon><save-icon /></n-icon>
+                  <n-icon><UploadIcon /></n-icon>
                 </template>
               </n-button>
             </template>
@@ -225,7 +225,7 @@
                   v-for="(id, idx) in projectIds" 
                   :key="idx" v-show="id === projectStore.selectedProjectId" 
                   class="canvas">
-                  <CanvasEditor/>
+                  <CanvasEditor :ref="el => setCanvasEditorRef(id, el)" />
                 </div>
               </template>
               <template #2 v-if="showRightPDF">
@@ -256,7 +256,7 @@
 <script setup>
 import CanvasEditor from '@/components/CanvasEditor.vue'
 import PDFViewer from './Freedom/PDFViewer.vue'
-import { computed, ref, defineAsyncComponent, provide} from 'vue'
+import { computed, ref, defineAsyncComponent, provide, nextTick} from 'vue'
 import { useRouter } from 'vue-router'
 import { 
   NBreadcrumb, 
@@ -283,7 +283,8 @@ import {
   DocumentTextOutline as textoutline,
   CubeOutline as cube,
   FolderOpenOutline as folder,
-  CloseOutline as close
+  CloseOutline as close,
+  CloudUploadOutline as UploadIcon,
 } from '@vicons/ionicons5'
 
 const props = defineProps(['mode'])
@@ -441,7 +442,22 @@ const uploadProject = () => {
   fileInput.value.click();
 }
 const handleFileUpload = (event) => {
- importProjectFromFile(event);
+  projectStore.createProject('new project');
+  nextTick(() => {
+    const canvasRef = canvasEditorRefs.get(projectStore.selectedProjectId);
+    importProjectFromFile(event, canvasRef);
+  });
+}
+
+// 维护画布
+const canvasEditorRefs = new Map();
+
+function setCanvasEditorRef(projectId, el) {
+  if (el) {
+    canvasEditorRefs.set(projectId, el);
+  } else {
+    canvasEditorRefs.delete(projectId);
+  }
 }
 
 // #endregion 项目
