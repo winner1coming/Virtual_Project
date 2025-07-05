@@ -13,6 +13,7 @@ export class ConstantInput extends BaseComponent {
         maxValue = 1
     ) {
         super(id, type, position);
+        this.offset = [-60, -50];
         if(!simulator) {
             this.simulator = EventDrivenSimulator.getInstance();
         } else {
