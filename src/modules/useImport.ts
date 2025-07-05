@@ -2,6 +2,7 @@ import { ProjectData } from "@/logic/ProjectData";
 import { useProjectStore } from "@/store/ProjectStore";
 import { useCircuitStore } from "@/store/CircuitStore";
 import { createComponentByType } from "./useComponentType";
+import { nextTick } from "vue";
 const circuitStore = useCircuitStore();
 const projectStore = useProjectStore();
 
@@ -63,19 +64,21 @@ export function exportProject(projectDate: ProjectData): void {
 }
 
 
-export function loadProject(importData: any): void {
+export async function loadProject(importData: any, canvasRef: any){
   const simulator = circuitStore.simulator;
   if (!importData || !importData.name || !Array.isArray(importData.components)) {
     console.error("导入的关卡数据格式不正确！");
     return;
   }
-  projectStore.createProject(importData.name);
+  projectStore.getCurrentProject().name = importData.name;
 
   const componentsIdMap = new Map<number, number>();  // 旧到新
   // 加载元件
   for (const comp of importData.components) {
-    circuitStore.addComponent(comp.type, comp.position, comp.name, 0);
-    const addedComponent = circuitStore.getComponent(comp.id);
+    // circuitStore.addComponent(comp.type, comp.position, comp.name, 0);
+    await canvasRef.addComponentByScript(comp.type, comp.position);
+    // 插入后，元件id即为最新的id-1
+    const addedComponent = circuitStore.getComponent(circuitStore.currentId - 1);
     if (addedComponent) {
       addedComponent.setPosition(comp.position);
       addedComponent.setBitWidth(comp.bitWidth);
@@ -93,22 +96,27 @@ export function loadProject(importData: any): void {
     simulator.InputTunnelMap = new Map(importData.tunnels.InputTunnelMap);
   }
 
-  // 加载连接关系
-  if (importData.connections) {
-    for (const conn of importData.connections) {
-      circuitStore.connect(
-        componentsIdMap.get(conn.fromId) || -1,
-        conn.fromPin,
-        componentsIdMap.get(conn.toId) || -1,
-        conn.toPin,
-      );
+  nextTick(() => {
+    // 加载连接关系
+    if (importData.connections) {
+      for (const conn of importData.connections) {
+        circuitStore.connect(
+          componentsIdMap.get(conn.fromId) || -1,
+          conn.fromPin,
+          componentsIdMap.get(conn.toId) || -1,
+          conn.toPin,
+        );
+
+        // 画布连线
+        canvasRef.connectByScript(conn.fromId, conn.fromPin, conn.toId, conn.toPin);
+      }
     }
-  }
+  });
 
   console.log("成功导入关卡！");
 }
 
-export function importProjectFromFile(event: Event): void {
+export function importProjectFromFile(event: Event, canvasRef: any): void {
   const input = event.target as HTMLInputElement;
   const file = input.files?.[0];
   if (!file) {
@@ -120,7 +128,7 @@ export function importProjectFromFile(event: Event): void {
   reader.onload = () => {
     try {
       const importData = JSON.parse(reader.result as string);
-      loadProject(importData);
+      loadProject(importData, canvasRef);
     } catch (error) {
       console.error("文件解析失败！", error);
     }
