@@ -9,8 +9,10 @@
         <path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M62 15L62 55">
         </path>
 
+        <rect :x="6" :y="0" :width="110" :height="110" fill="transparent"></rect>
+
         <!--选中方框-->
-        <SelectedBox :x="10" :y="10" :width="60" :height="130" :visible="circuitStore.selectedId===props.id"/>
+        <SelectedBox :x="6" :y="0" :width="110" :height="110" :visible="circuitStore.selectedId===props.id"/>
     
         <!-- 输出状态 -->
         <OutputPort :cx="62" :cy="13" :active="ground.outputs[0]" />

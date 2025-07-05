@@ -15,6 +15,10 @@
 
     <!-- 新建项目按钮 -->
     <n-button
+      text-color="#000"
+      :bordered="false"
+      :focusable="false"
+      color="#d2e6ee"
       type="primary"
       class="new-project-btn"
       @click="createNewProject"
@@ -149,7 +153,9 @@ onMounted(() => {
 
 <style scoped>
 .project-panel {
+  display: flex;
   padding: 10px;
+  flex-direction: column;
 }
 
 .project-item {
@@ -160,8 +166,9 @@ onMounted(() => {
   border-radius: 4px;
   cursor: pointer;
 }
+
 .project-item.selected {
-  background-color: #E0E6ED;
+  background-color: #ffffff;
   border-color: #E0E6ED;
 }
 
@@ -170,7 +177,25 @@ onMounted(() => {
 }
 
 .new-project-btn {
+  background-color: #d2e6ee;
+  color: black;
+  border: 1px solid #b8d6e0;
+  border-color: #b8d6e0;
   margin-top: 15px;
   width: 100%;
 }
+
+.new-project-btn:hover{
+  background-color: #a5ceda;
+  color: #000;
+  border-color: #9ec6d2;
+}
+
+.new-project-btn:active{
+  background-color: #a5ceda;
+  color: #000;
+  border-color: #9ec6d2;
+}
+
+
 </style>

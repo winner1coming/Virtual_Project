@@ -26,20 +26,17 @@ const openPdf = (file) => {
 .pdf-buttons {
   display: flex;
   flex-direction: column;
-  align-items: center;
   padding: 1rem 0;
   gap: 8px;
 }
 
 .item {
-  width: 100px;
   padding: 10px;
   margin: 8px;
   background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
-  text-align: center;
 }
 .item:hover {
     background-color: #f0f5ff;

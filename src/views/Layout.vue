@@ -17,9 +17,12 @@
 
         <!-- 右侧菜单 -->
         <div class="nav-right">
-            <n-button quaternary circle @click="handleClick">
+            <n-button 
+            :bordered="false"
+            :focusable="false"
+            quaternary circle @click="handleClick">
               <template #icon>
-                <n-icon>
+                <n-icon >
                   <component :is = "showToolbar ? downIcon : forwardIcon"/>
                 </n-icon>
               </template>

@@ -3,6 +3,7 @@ import { EventDrivenSimulator } from "../Simulator";
 export class SegmentDisplay extends BaseComponent{
   constructor(id: number, type: String, position:[number, number] = [0,0], simulator: any = null){
     super(id, type, position);
+    this.offset = [-250, -200];
     if(!simulator) {
       this.simulator = EventDrivenSimulator.getInstance(); 
     } else {
@@ -22,5 +23,8 @@ export class SegmentDisplay extends BaseComponent{
     }
     this.inputs.splice(idx, 1, v); // 替换idx位置的值
     return this.outputs;
+  }
+  updatePinPosition(): void{
+    this.inputPinPosition.splice(0, this.inputPinPosition.length, [182, 61], [234,61],[286,61], [340,61],[182,426],[234,426],[286,426],[340,426]);
   }
 }
