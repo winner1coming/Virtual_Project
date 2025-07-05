@@ -18,8 +18,8 @@
         <!-- 右侧菜单 -->
         <div class="nav-right">
             <n-button 
-            bordered:false
-            focusable:false
+            :bordered="false"
+            :focusable="false"
             quaternary circle @click="handleClick">
               <template #icon>
                 <n-icon >
