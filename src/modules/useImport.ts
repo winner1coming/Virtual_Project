@@ -31,14 +31,16 @@ export function exportProject(projectDate: ProjectData): void {
 
   // 导出连接关系
   const connections = [];
-  for (const [fromId, pinMap] of simulator.connectionManager.connections.entries()) {
+  for(const id of projectDate.componentsId) {
+    const pinMap = simulator.connectionManager.getOutputPinMap(id);
+    if (!pinMap) continue; 
     for (const pinIdx of pinMap.keys()) {
       for (const conn of pinMap.get(pinIdx) || []) {
         connections.push({
-          fromId,
-          fromPin: pinIdx,
+          fromId:id,
+          fromPin: pinIdx + circuitStore.getComponent(id).inputCount,
           toId: conn.id,
-          toPin: conn.idx,
+          toPin: conn.idx, 
         });
       }
     }
@@ -86,6 +88,9 @@ export async function loadProject(importData: any, canvasRef: any){
       addedComponent.initOutputPin(comp.outputCount);
       addedComponent.inputInverted.splice(0, addedComponent.inputInverted.length,
         ...(comp.inputInverted || []).map((v: boolean) => v));
+      if (comp.type === "INPUT") {
+        addedComponent.changeInput(0, 0);
+      }
       componentsIdMap.set(comp.id, addedComponent.id);
     }
   }
@@ -96,22 +101,16 @@ export async function loadProject(importData: any, canvasRef: any){
     simulator.InputTunnelMap = new Map(importData.tunnels.InputTunnelMap);
   }
 
-  nextTick(() => {
-    // 加载连接关系
-    if (importData.connections) {
-      for (const conn of importData.connections) {
-        circuitStore.connect(
-          componentsIdMap.get(conn.fromId) || -1,
-          conn.fromPin,
-          componentsIdMap.get(conn.toId) || -1,
-          conn.toPin,
-        );
-
-        // 画布连线
-        canvasRef.connectByScript(conn.fromId, conn.fromPin, conn.toId, conn.toPin);
-      }
+  // 加载连接关系
+  if (importData.connections) {
+    for (const conn of importData.connections) {
+      await nextTick();
+      //await new Promise(resolve => setTimeout(resolve, 100)); // 粗暴等 100ms
+      // 画布连线
+      canvasRef.connectByScript(componentsIdMap.get(conn.fromId), conn.fromPin, componentsIdMap.get(conn.toId), conn.toPin);
+      
     }
-  });
+  }
 
   console.log("成功导入关卡！");
 }

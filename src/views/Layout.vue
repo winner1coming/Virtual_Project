@@ -125,7 +125,7 @@
             <template #trigger>
               <n-button quaternary @click="uploadProject">
                 <template #icon>
-                  <n-icon><save-icon /></n-icon>
+                  <n-icon><UploadIcon /></n-icon>
                 </template>
               </n-button>
             </template>
@@ -283,7 +283,8 @@ import {
   DocumentTextOutline as textoutline,
   CubeOutline as cube,
   FolderOpenOutline as folder,
-  CloseOutline as close
+  CloseOutline as close,
+  CloudUploadOutline as UploadIcon,
 } from '@vicons/ionicons5'
 
 const props = defineProps(['mode'])
