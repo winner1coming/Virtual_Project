@@ -1,6 +1,7 @@
 // Splitter.ts - 分离器
 import { BaseComponent } from "../BaseComponent";
 import { EventDrivenSimulator } from "../Simulator";
+import { calcInputYs } from "@/logic/utils/useGateLayout";
 
 export class Splitter extends BaseComponent {
     constructor(id: number,type: String, position: [number, number] = [0, 0], simulator = null,bitWidth: number = 4) {
@@ -13,6 +14,7 @@ export class Splitter extends BaseComponent {
         this.bitWidth = bitWidth;
         this.initInputPin(1)
         this.outputs.splice(0, this.outputs.length, ...Array(bitWidth).fill(-1)); // 初始化输出引脚
+        this.updatePinPosition();
     }
 
     changeBitWidth(bitWidth: number) {
@@ -45,5 +47,27 @@ export class Splitter extends BaseComponent {
             this.outputs.splice(0, this.outputs.length, -2);
         }
         return this.compute();
+    }
+    // 更新引脚位置
+    updatePinPosition(): void{
+        // 修改输出
+        const outputYs = calcInputYs(this.outputs.length);
+        let minY = Math.min(...outputYs);
+        let maxY = Math.max(...outputYs);
+        this.outputPinPosition.splice(0, this.outputPinPosition.length,
+        ...outputYs.map((pin, index): [number, number] => {
+            return [
+            206,
+            pin,
+            ];
+        }));
+        // 修改输入
+        this.inputPinPosition = this.inputPinPosition.map(pin => {
+        return [
+            100,
+            minY<246? maxY+36: 439.34,
+        ];
+        });
+    
     }
 }

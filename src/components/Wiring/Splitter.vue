@@ -17,8 +17,8 @@
       <InputPort :cx="100" :cy="minY<246? maxY+36: 439.34" :active="1" :bitWidth="splitter.bitWidth"/>
       <!-- 输出引脚 -->
       <template v-for="(output, index) in splitter.outputs" :key="output.id">
-        <path :d="`M149 ${outputYs[index]}L206 ${outputYs[index]}`" stroke="black" stroke-width="12" />
-        <OutputPort :cx="206" :cy="outputYs[index]" :active="splitter.outputs[index]"/>
+        <path :d="`M149 ${splitter.outputPinPosition[index][1]}L206 ${splitter.outputPinPosition[index][1]}`" stroke="black" stroke-width="12" />
+        <OutputPort :cx="206" :cy="splitter.outputPinPosition[index][1]" :active="splitter.outputs[index]"/>
       </template>
     </g>
 </template>
@@ -45,7 +45,7 @@ const splitter = computed(() => {
   return circuitStore.getComponent(props.id);  
 });
 
-let outputYs = useGateLayout(splitter.outputCount)
+let outputYs = useGateLayout(splitter.value.outputs.length)
 
 let minY = Math.min(...outputYs.value);
 let maxY = Math.max(...outputYs.value);

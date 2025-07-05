@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${constant.position[0]}, ${constant.position[1]}) scale(${constant.scale})`" cursor="move">
+    <g :transform="`translate(${constant.position[0]*constant.scale}, ${constant.position[1]*constant.scale}) scale(${constant.scale})`" cursor="move">
         <rect
             x="0"
             y="0"

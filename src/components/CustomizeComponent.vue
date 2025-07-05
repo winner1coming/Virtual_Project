@@ -10,10 +10,6 @@
         stroke="black"
         stroke-width="8"
       />
-       
-      <!--选中方框-->
-      <!-- <SelectedBox :x="82" :y="minY<181? minY-12: 175" :width="424" :height="minY<181? (maxY-minY+24): 226" :visible="circuitStore.selectedId===props.id"/>
-       -->
 
       <!-- 输入引脚 -->
       <template v-for="(input, index) in customizeComponent.inputs" :key="index">
@@ -30,12 +26,15 @@
         <InputPort :cx="92" :cy="customizeComponent.inputPinPosition[index][1]" :active="input" :bitWidth="customizeComponent.bitWidth" @toggle="() => handleToggleInput(index)"/>
       </template>
 
-      <!-- 输出引脚 --待改写 -->
+      <!-- 输出引脚 -->
       <template v-for="(output, index) in customizeComponent.outputs" :key="output.id">
         <path :d="`M372 ${customizeComponent.outputPinPosition[index][1]}L429 ${customizeComponent.outputPinPosition[index][1]}`" stroke="black" stroke-width="12" />
         <OutputPort :cx="149+223+57" :cy="customizeComponent.outputPinPosition[index][1]" :active="output" />
       </template>
-
+       
+      <!--选中方框-->
+      <SelectedBox :x="142" :y="minY<181? minY-12 : 175" :width="235" :height="minY<181? (maxY-minY+20): 232" :visible="circuitStore.selectedId===props.id"/>
+      
     </g>
 </template>
 

@@ -183,7 +183,7 @@ export abstract class BaseComponent{
       });
     }  
 
-    for(let i = 0; i < this.outputs.length; i++){
+    for(let i = 0; i < this.outputPinPosition.length; i++){
       result.ports.push({
         id: i + this.getInputPinCount(),
         x: (this.outputPinPosition[i][0]+this.offset[0])*this.scale, 
