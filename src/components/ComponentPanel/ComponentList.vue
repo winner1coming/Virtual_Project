@@ -26,6 +26,8 @@ const components = [
   { type: 'OUTPUT', name: '输出引脚' },
   { type: 'CLOCK', name: '时钟' },
   { type: 'REGISTER', name: '寄存器' },
+  { type: 'SPLITTER', name : '分离器'},
+  { type: 'COMBINER', name: '合并器'},
   // { type: 'MUX', name: '多路选择器' },
   // { type: 'DEMUX', name: '解多路选择器' },
   { type: 'AND', name: '与门' },

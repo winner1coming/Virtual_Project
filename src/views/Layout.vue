@@ -322,7 +322,7 @@ const togglePDF = (file) => {
     CanvasSize.value = 1
     showRightPDF.value = false
   }else{
-    CanvasSize.value = 0.6
+    CanvasSize.value = 0.7
     currentPdfFile.value = file
     showRightPDF.value = true
   }
