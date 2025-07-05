@@ -7,7 +7,7 @@
     @click.stop="toggle"
     style="cursor:pointer"
   >
-    <title>输出{{ label }}</title>
+    <title>{{ label }}</title>
   </circle>
 </template>
 

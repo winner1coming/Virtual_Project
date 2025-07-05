@@ -6,7 +6,7 @@
     :fill="fillColor"
     style="cursor:pointer"
   >
-    <title>输入{{ label }}</title>
+    <title>{{ label }}</title>
   </circle>
 </template>
 
