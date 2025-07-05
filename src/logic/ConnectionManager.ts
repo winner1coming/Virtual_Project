@@ -63,6 +63,42 @@ export class ConnectionManager {
         //return false;
     }
 
+    removeComponentConnections(id: number) {
+        // 删除与某个组件相关的所有连线
+        // 删除正向连线
+        if (this.connections.has(id)) {
+            const pinMap = this.connections.get(id);
+            if(pinMap){
+                // 删除其在反向连线中的所有连接
+                for (const pinIdx of pinMap.keys()) {
+                    for (const conn of pinMap.get(pinIdx) || []) {
+                        const reversePinMap = this.reverseConnections.get(conn.id);
+                        if (reversePinMap) {
+                            reversePinMap.remove(conn.idx, { id: id, idx: pinIdx, legal: conn.legal });
+                        }
+                    }
+                }
+            }
+            this.connections.delete(id);
+        }
+        // 删除反向连线
+        if (this.reverseConnections.has(id)) {
+            const pinMap = this.reverseConnections.get(id);
+            if(pinMap){
+                // 删除其在正向连线中的所有连接
+                for (const pinIdx of pinMap.keys()) {
+                    for (const conn of pinMap.get(pinIdx) || []) {
+                        const forwardPinMap = this.connections.get(conn.id);
+                        if (forwardPinMap) {
+                            forwardPinMap.remove(conn.idx, { id: id, idx: pinIdx, legal: conn.legal });
+                        }
+                    }
+                }
+            }
+            this.reverseConnections.delete(id);
+        }
+    }
+
     // // 查找连线
     // getConnection(id: number, idx: number): Conn|null {    // 返回{id, idx, legal}
     //     if (this.connections.has(id)) {
