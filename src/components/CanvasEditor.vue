@@ -20,20 +20,6 @@
           </div>
         <!-- </div> -->
       </div>
-
-      <!-- 输入输出分类 -->
-
-      <!-- 其他 -->
-
-      <!-- 操作按钮（固定在工具栏底部） -->
-      <!-- <div class="category">
-        <div class="category-title">操作</div>
-        <div class="category-content">
-          <button @click="clearAll">清空</button>
-          <button @click="undo">回滚</button>
-          <button @click="redo">前进</button>
-        </div>
-      </div> -->
     </div>
     
 
@@ -112,18 +98,23 @@
         />
       </svg>
 
-      <!-- 拖动时的预览阴影（使用 PNG 图片显示） -->
-      <img
-        v-if="currentComponent"
-        :src="IMAGE_MAP[currentComponent.componentType].src"
-        class="preview-image"
+      <!-- 修改预览组件的定位方式 -->
+      <component
+        v-if="currentComponent && SVG_PREVIEW_MAP[currentComponent.value.componentType]"
+        :is="SVG_PREVIEW_MAP[currentComponent.value.componentType]"
+        class="preview-svg"
         :style="{
-          width: currentComponent.size.width * 0.6 + 'px',
-          height: currentComponent.size.height * 0.3 + 'px',    
           left: previewPos.x + 'px',
           top: previewPos.y + 'px',
+          transform: 'translate(-50%, -50%)' // 添加此变换使元件中心对准鼠标
         }"
       />
+
+      <!-- 调试信息 -->
+      <div v-if="currentComponent" style="position: absolute; top: 0; left: 0; background: white; z-index: 10000;">
+        预览状态: {{ currentComponent.componentType }}<br>
+        位置: {{ previewPos.x }}, {{ previewPos.y }}
+      </div>
     </div>
 
     <!-- 右侧编辑栏 移除 todo-->
@@ -166,6 +157,7 @@ import NorGate from './Gates/NorGate.vue'
 import NotGate from './Gates/NotGate.vue'
 import XorGate from './Gates/XorGate.vue'
 import XnorGate from './Gates/XnorGate.vue'
+import SegmentDisplay from './Input_OutPut/SegmentDisplay.vue'
 import Tunnel from './Wiring/Tunnel.vue'
 import InputPin from './Wiring/InputPin.vue'
 import CustomizeComponent from './CustomizeComponent.vue'
@@ -173,23 +165,27 @@ import Clock from './Wiring/Clock.vue'
 import Constant from './Wiring/Constant.vue'
 import Power from './Wiring/Power.vue'
 import Splitter from './Wiring/Splitter.vue'
+import Ground from './Wiring/Ground.vue'
 
 
 // 逻辑类建模
-import { AndGate as LogicAndGate } from '@/logic/components/AndGate.js'
-import { NandGate as LogicNandGate } from '@/logic/components/NandGate'
-import { OrGate as LogicOrGate } from '@/logic/components/OrGate.js'
-import { NorGate as LogicNorGate } from '@/logic/components/NorGate.js'
-import { NotGate as LogicNotGate } from '@/logic/components/NotGate.js'
-import {Clock as LogicClock} from '@/logic/components/Clock.js'
-import {Combiner as LogicCombiner} from '@/logic/components/Combiner.js'
-import {ConstantInput as LogicConstantInput} from '@/logic/components/ConstantInput.js'
-import {Ground as LogicGround} from '@/logic/components/Ground.js'
-import {Power as LogicPower} from '@/logic/components/Power.js'
-import { Tunnel as LogicTunnel} from '@/logic/components/Tunnel'
-import { InputPin as LogicInputPin} from '@/logic/components/InputPin'
-import { SubCircuitComponent as LogicSubCircuit } from '@/logic/components/SubCircuitComponent'
-import { BaseComponent } from '@/logic/BaseComponent'
+import { AndGate as LogicAndGate } from '@/logic/components/AndGate.ts'
+import { NandGate as LogicNandGate } from '@/logic/components/NandGate.ts'
+import { OrGate as LogicOrGate } from '@/logic/components/OrGate.ts'
+import { NorGate as LogicNorGate } from '@/logic/components/NorGate.ts'
+import { NotGate as LogicNotGate } from '@/logic/components/NotGate.ts'
+import {Clock as LogicClock} from '@/logic/components/Clock.ts'
+import {Combiner as LogicCombiner} from '@/logic/components/Combiner.ts'
+import {ConstantInput as LogicConstantInput} from '@/logic/components/ConstantInput.ts'
+import {Ground as LogicGround} from '@/logic/components/Ground.ts'
+import {Power as LogicPower} from '@/logic/components/Power.ts'
+import {SegmentDisplay as LogicSegmentDisplay} from '@/logic/components/SegmentDisplay.ts'
+import {Splitter as LogicSplitter} from '@/logic/components/Splitter.ts'
+import { Tunnel as LogicTunnel} from '@/logic/components/Tunnel.ts'
+import { InputPin as LogicInputPin} from '@/logic/components/InputPin.ts'
+import { SubCircuitComponent as LogicSubCircuit } from '@/logic/components/SubCircuitComponent.ts'
+import {XorGate as LogicXorGate} from '@/logic/components/XorGate.ts'
+import { BaseComponent } from '@/logic/BaseComponent.ts'
 
 // 其他
 import { useHistory } from '@/modules/useHistory';
@@ -199,6 +195,8 @@ import { nextTick } from 'vue'
 import { convertCompilerOptionsFromJson } from 'typescript'
 import OutputPin from './Wiring/OutputPin.vue'
 
+// 预览的svg文件
+import AndGateSvg from './preview/andGate.vue' 
 
 const canvasContainer = ref(null)
 const components = reactive([])
@@ -283,6 +281,8 @@ const componentMap = {
   POWER: Power,
   SPLITTER: Splitter,
   COMBINER: LogicCombiner,
+  SEGMENT_DISPLAY: SegmentDisplay,
+  GROUND: Ground
 }
 
 // 逻辑类映射表
@@ -300,6 +300,11 @@ const COMPONENT_LOGIC = {
   INPUT: LogicInputPin,
   // OUTPUT: LogicInputPin, 
   SUB_CIRCUIT: LogicSubCircuit,
+  CONSTANT: LogicConstantInput,
+  SEGMENT_DISPLAY: LogicSegmentDisplay,
+  SPLITTER: LogicSplitter,
+  XOR: LogicXorGate,
+  XNOR: LogicXorGate, // XNOR 逻辑门
 }
 
 // 初始化各元件尺寸配置
@@ -313,28 +318,36 @@ const COMPONENT_SIZES = {
   NAND: { width: 30, height: 30 },
   SUB_CIRCUIT: { width: 300, height: 200 }, 
 }
- 
-// 按钮图片资源映射表
-const IMAGE_MAP = {
-  AND: new Image(),
-  OR: new Image(),
-  NOT: new Image(),
-  TUNNEL: new Image(),
-  INPUT: new Image(),
-  OUTPUT: new Image(),
-  NAND: new Image(),
-  SUB_CIRCUIT: new Image(),
-}
 
-// 初始化图片资源
-IMAGE_MAP.AND.src = '/assets/AND.png'
-IMAGE_MAP.OR.src = '/assets/OR.png'
-IMAGE_MAP.NOT.src = '/assets/NOT.png'
-IMAGE_MAP.TUNNEL.src = '/assets/TUNNEL.png'
-IMAGE_MAP.INPUT.src = '/assets/INPUT.png'
-IMAGE_MAP.OUTPUT.src = '/assets/OUTPUT.png'
-IMAGE_MAP.NAND.src = '/assets/INPUT.png'
-IMAGE_MAP.SUB_CIRCUIT.src = '/assets/INPUT.png'
+// SVG预览文件映射表
+const SVG_PREVIEW_MAP = {
+  AND: AndGateSvg
+  // OR: OrGateSvg,
+  // NOT: NotGateSvg,
+  // ... 后续扩展
+}
+ 
+// // 按钮图片资源映射表
+// const IMAGE_MAP = {
+//   AND: new Image(),
+//   OR: new Image(),
+//   NOT: new Image(),
+//   TUNNEL: new Image(),
+//   INPUT: new Image(),
+//   OUTPUT: new Image(),
+//   NAND: new Image(),
+//   SUB_CIRCUIT: new Image(),
+// }
+
+// // 初始化图片资源
+// IMAGE_MAP.AND.src = '/assets/AND.png'
+// IMAGE_MAP.OR.src = '/assets/OR.png'
+// IMAGE_MAP.NOT.src = '/assets/NOT.png'
+// IMAGE_MAP.TUNNEL.src = '/assets/TUNNEL.png'
+// IMAGE_MAP.INPUT.src = '/assets/INPUT.png'
+// IMAGE_MAP.OUTPUT.src = '/assets/OUTPUT.png'
+// IMAGE_MAP.NAND.src = '/assets/INPUT.png'
+// IMAGE_MAP.SUB_CIRCUIT.src = '/assets/INPUT.png'
 
 function updateComponentDirection() {
   // 更新完方向后重新绘制画布
@@ -492,6 +505,7 @@ function handlePinMouseUp(component, { pinType, pinIndex }) {
   tempWire.value = null;
 }
 
+// 检测电线连接是否合法
 function isConnectionValid(startPin, endPin) {
   // 不能连接到自身：其实也能改，到时候直接取消这句就行
   if (startPin.component === endPin.component) return false;
@@ -510,6 +524,7 @@ function isConnectionValid(startPin, endPin) {
   return !exists;
 }
 
+// 更新电线连接：传导数据
 function updateComponentConnection(startPin, endPin) {
   // 将输出元件的输出值连接到输入元件的输入值
   endPin.component.inputs[endPin.pinIndex].value = startPin.component.output;
@@ -518,6 +533,7 @@ function updateComponentConnection(startPin, endPin) {
   updateComponentState(endPin.component);
 }
 
+// 更新元件状态
 function updateComponentState(component) {
   if (component.type === AndGate) {
     component.output = component.inputs.every(input => input.value);
@@ -537,6 +553,7 @@ function updateComponentState(component) {
     });
 }
 
+// 更新连线路径
 function generateConnectionPath(start, end) {
   // 贝塞尔曲线路径
   const midX = (start.x + end.x) / 2;
@@ -583,7 +600,7 @@ function handleMouseMove(event) {
   const y = event.clientY - rect.top;
 
   if (currentComponent.value) {
-    // 单纯选中，但是不拖动
+    // 预览位置更新
     previewPos.x = x;
     previewPos.y = y;
   } else if (isDragging.value && selectedComponent.value) {
@@ -597,7 +614,7 @@ function handleMouseMove(event) {
     let ID = selectedComponent.value.ID// 获取元件ID
 
     // 获取组件类型对应的逻辑类
-    let componentLogic = useCircuitStore().getComponent(ID)
+    let componentLogic = useCircuitStore().getComponent(ID);
 
     // 触发引脚坐标更新（非常重要）
     componentLogic.setPosition([selectedComponent.value.x, selectedComponent.value.y]);
@@ -709,11 +726,12 @@ function deleteComponent() {
 
 // 鼠标点击（左键右键中轴）：触发电线连接
 function handleMouseDown(event) {
+  if (event.button !== 0) return; // 只响应左键
+
   event.stopPropagation(); // 阻止事件冒泡
   event.preventDefault();  // 防止默认行为
 
   console.log("画布鼠标按下事件触发")
-  // if (event.button !== 0) return; // 只响应左键
 
   const rect = canvasContainer.value.getBoundingClientRect();
   const x = event.clientX - rect.left;
@@ -836,7 +854,7 @@ function drawConnections(ctx) {
   ctx.restore();
 }
 
-
+// 绘制临时连线
 function handlePinMouseDown(component, { pinType, pinIndex }) {
   const pinPos = getPinPosition(component, pinType, pinIndex);
   startPin = { component, pinType, pinIndex, x: pinPos.x, y: pinPos.y };
@@ -890,7 +908,7 @@ function findNearestPort(clickX, clickY, maxDistance = 500) {
   return closestPort;
 }
 
-
+// 拖动过程
 function handleMouseUp() {
   if (isDragging.value) {// 拖动结束，保存状态
     saveHistory()
@@ -950,8 +968,9 @@ function handleLeftClick(event) {
     });
     // 3：将元件ID存起来，方便后面查找各元件的引脚信息
     componentID.push(id)
+    
     // 获取组件类型对应的逻辑类
-    let componentLogic = useCircuitStore().getComponent(id)
+    let componentLogic = useCircuitStore().getComponent(id);
 
     // 触发引脚坐标更新（非常重要）
     componentLogic.setPosition([x, y]);
@@ -987,7 +1006,7 @@ function handleLeftClick(event) {
   }
 }
 
-
+// 右键删除元件
 function handleRightClick(event) {
   event.preventDefault();
 
@@ -998,18 +1017,6 @@ function handleRightClick(event) {
     wireStartId = null; // 重置起点ID
     tempWire.value = null; // 清除临时连线
   }
-
-  // if (currentComponent.value) {
-  //   // 如果当前有元件在放置状态，清空当前元件
-  //   currentComponent.value = null;
-  //   console.log("右键点击，清空当前元件")
-  // }
-
-  // if (selectedComponent.value) {
-  //   // 如果有选中元件，清空选中状态
-  //   selectedComponent.value = null;
-  //   console.log("右键点击，清空选中元件")
-  // }
 
   const rect = canvasContainer.value.getBoundingClientRect();
   const x = event.clientX - rect.left;
@@ -1128,6 +1135,15 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.preview-svg {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.6;
+  z-index: 9999;
+  /* 添加以下样式确保SVG正常显示 */
+  display: block;
+  overflow: visible;
+}
 .editor-wrapper {
   display: flex;
   height: 100%;
