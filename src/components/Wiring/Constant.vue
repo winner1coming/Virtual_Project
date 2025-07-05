@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${constant.position[0]*constant.scale}, ${constant.position[1]*constant.scale}) scale(${constant.scale})`" cursor="move">
+    <g :transform="`translate(${constant.offset[0]*constant.scale}, ${constant.offset[1]*constant.scale}) scale(${constant.scale})`" cursor="move">
         <rect
             x="0"
             y="0"
@@ -9,7 +9,7 @@
         />
         <!-- 文本 -->
         <text
-            :key="constant_value"
+            :key="constant.getValue()"
             ref="constantTextBox"
             :x="16"
             :y="71"
@@ -17,7 +17,7 @@
             :font-size="48"
             letter-spacing="5"
         >
-        {{ constant_value }}
+        {{ constant.getValue() }}
         </text>
         
         <!--选中方框-->
@@ -55,7 +55,8 @@ const constant = computed(() => {
 });
 
 const constantTextBox = ref(null);
-let constant_value = ref('1f');
+// let constant_value = ref('1f');
+const constant_value = computed(()=>constant.value.getValue());
 const rect_width = ref(95);
 
 function updateRect() {
@@ -79,7 +80,8 @@ onMounted(async () => {
 
 //调试用，要删 todo
 function handleToggleInput() {
-    constant_value.value = "3fffffff";
+    //constant_value.value = "3fffffff";
+    constant.value.setValue(2)
 }
 
 </script>

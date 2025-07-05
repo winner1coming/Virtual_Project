@@ -23,6 +23,7 @@ export class SubCircuitComponent extends BaseComponent {
   ) {
     super(id, type, position);
     this.name = name;
+    this.offset = [-280, -280];
 
     const store = useCircuitStore();
     const projectStore = useProjectStore();
