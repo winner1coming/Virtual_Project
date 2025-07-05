@@ -105,6 +105,9 @@ const loadProject = (projectId: number) => {
 
 // 根据项目ID创建子组件（单击）
 const createSubComponent = (projectId: number) => {
+  if(projectId === projectStore.selectedProjectId) {
+    return; // 如果当前项目已选中，则不再创建子组件
+  }
   clickTimer = setTimeout(() => {
     console.log("创建子组件", projectId);
     // // 画布那边不用再addComponent todo （预览图的处理）
@@ -168,7 +171,7 @@ onMounted(() => {
 }
 
 .project-item.selected {
-  background-color: #ffffff;
+  background-color: #dad5d5;
   border-color: #E0E6ED;
 }
 
