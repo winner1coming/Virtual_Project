@@ -52,8 +52,8 @@ export class InputPin extends BaseComponent {
             this.outputs[0] = value ^ mask; // 使用按位异或操作切换位
 
             // 输入引脚的改变会导致电路的改变
-            EventDrivenSimulator.getInstance().enqueue(this.id, 0, this.outputs[0]);
-            EventDrivenSimulator.getInstance().processQueue();
+            this.simulator.enqueue(this.id, 0, this.outputs[0]);
+            this.simulator.processQueue();
         }
     }
 
