@@ -23,6 +23,7 @@ import { HexDisplay } from '@/logic/components/HexDisplay';
 import { Register } from '@/logic/components/Register';
 import { DFlipFlop } from '@/logic/components/DFlipFlop';
 import { Button } from '@/logic/components/Button';
+import { Light } from '@/logic/components/Light';
 
 
 export function createComponentByType(id: number, type: String, position:[number, number] = [0,0], name:String="", projectId: number=-1, simulator:null|SubSimulator|EventDrivenSimulator=null): BaseComponent {
@@ -71,6 +72,8 @@ export function createComponentByType(id: number, type: String, position:[number
       return new DFlipFlop(id, type, position, simulator);
     case 'BUTTON':
       return new Button(id, type, position);
+    case 'LIGHT':
+      return new Light(id, type, position);
     // 添加其他组件类型
     default:
       throw new Error(`Unknown component type: ${type}`);
