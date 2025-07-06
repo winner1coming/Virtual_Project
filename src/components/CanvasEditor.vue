@@ -373,6 +373,7 @@ const SVG_OFFSET = {
   LIGHT: {x: tempLight.offset[0], y: tempLight.offset[1]},
   BUTTON: {x: tempButton.offset[0], y: tempButton.offset[1]},
   REGISTER: {x: tempRegister.offset[0], y: tempRegister.offset[1]},
+  SUB_CIRCUIT: {x: tempRegister.offset[0], y: tempRegister.offset[1]},
 }
 
  
@@ -392,6 +393,8 @@ const IMAGE_MAP = {
   OUTPUT: new Image(),
   SPLITTER: new Image(),
   TUNNEL: new Image(),
+  SUB_CIRCUIT: new Image(),
+  REGISTER: new Image(),
 }
 
 // 初始化图片资源
@@ -409,6 +412,9 @@ IMAGE_MAP.INPUT.src = '/assets/inputPin.svg'
 IMAGE_MAP.OUTPUT.src = '/assets/outputpin.svg'
 IMAGE_MAP.SPLITTER.src = '/assets/splitter.svg'
 IMAGE_MAP.TUNNEL.src = '/assets/Tunnel.svg'
+IMAGE_MAP.SUB_CIRCUIT.src = '/assets/子组件.svg'
+IMAGE_MAP.REGISTER.src = '/assets/寄存器.svg'
+
 
 // IMAGE_MAP.NAND.src = '/assets/'
 // IMAGE_MAP.SUB_CIRCUIT.src = '/assets/INPUT.png'
@@ -452,21 +458,21 @@ function drawCanvas() {
     ctx.save();// 保存当前画布
     ctx.translate(x + size.width / 2, y + size.height / 2);// 平移到组件中心
     // 旋转元件
-    switch (direction) {
-      case 'east':
-        ctx.rotate(0);
-        break;
-      case 'south':
-        ctx.rotate(Math.PI / 2);
-        break;
-      case 'west':
-        ctx.rotate(Math.PI);
-        break;
-      case 'north':
-        ctx.rotate(-Math.PI / 2);
-        break;
-    }
-    ctx.restore();
+    // switch (direction) {
+    //   case 'east':
+    //     ctx.rotate(0);
+    //     break;
+    //   case 'south':
+    //     ctx.rotate(Math.PI / 2);
+    //     break;
+    //   case 'west':
+    //     ctx.rotate(Math.PI);
+    //     break;
+    //   case 'north':
+    //     ctx.rotate(-Math.PI / 2);
+    //     break;
+    // }
+    // ctx.restore();
   })
   drawConnections(ctx);// 绘制所有连线
 }

@@ -93,14 +93,14 @@ export abstract class BaseComponent{
         return [
           // 0 + 92 * this.scale,
           // 0 + pin * this.scale,
-          92,
+          this.direction==='east'? 92:497,
           pin,
         ];
     }));
     // 修改输出
     this.outputPinPosition = this.outputPinPosition.map(pin => {
       return [
-        0 + 497,
+        this.direction==='east'? 497:92,
         0 + 288,
       ];
     });

@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${andGate.offset[0]*andGate.scale}, ${andGate.offset[1]*andGate.scale}) scale(${andGate.scale})`" cursor="move">
+    <g :transform="`translate(${andGate.offset[0]*andGate.scale}, ${andGate.offset[1]*andGate.scale}) scale(${andGate.scale}) rotate(${directionToAngle[andGate.direction]},310,${(minY+maxY)/2})`" cursor="move">
       <!-- AND 门图形 -->
        <!--左侧竖线-->
       <path
@@ -16,7 +16,15 @@
         d="M366.5 180C507 259.301 410.965 399.972 366.5 395"
       />
       <path stroke="black" stroke-width="12" d="M440 288L497 288" />
-
+      <!-- <text
+        x="260.5" 
+        :y="minY<181? maxY+18 : 175+226+12" 
+        text-anchor="middle"
+        font-size="48"
+        fill="#333"
+      >
+        这是小字
+      </text> -->
       <!--填充透明区域以便选中-->
       <rect
         :x="149"
@@ -77,6 +85,12 @@ const andGate = computed(() => {
 let minY = computed(()=>Math.min(...andGate.value.inputPinPosition.map(pin => pin[1])));
 let maxY = computed(()=>Math.max(...andGate.value.inputPinPosition.map(pin => pin[1])));
 
+const directionToAngle = {
+  east: 0,
+  south: 90,
+  west: 180,
+  north: 270
+}
 
 // 以下为调试用代码，后期可删除---------------------------------------
 

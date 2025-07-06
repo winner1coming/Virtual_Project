@@ -12,7 +12,16 @@
         stroke-width="8">
         <title> {{customizeComponent.name}} </title>
       </rect>
-
+      <!--显示名字-->
+      <text
+        x="260.5" 
+        :y="minY<181? maxY+18 : 175+226+52" 
+        text-anchor="middle"
+        font-size="48"
+        fill="#333"
+      >
+      {{customizeComponent.name}}
+      </text>
       <!-- 输入引脚 -->
       <template v-for="(input, index) in customizeComponent.inputs" :key="index">
         <!-- <title>输入{{ index }}</title> -->
