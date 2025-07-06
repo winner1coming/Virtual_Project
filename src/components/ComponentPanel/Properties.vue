@@ -143,7 +143,8 @@ const showPinCountOptions = computed(() => {
   return selectedComponent.type !== 'NOT' && selectedComponent.type !== 'CLOCK' &&
         selectedComponent.type !== 'INPUT' && selectedComponent.type !== 'OUTPUT' &&
         selectedComponent.type !== 'SegmentDisplay' && selectedComponent.type !== 'TUNNEL' &&
-         selectedComponent.type !== 'POWER' && selectedComponent.type !== 'GROUND';
+         selectedComponent.type !== 'POWER' && selectedComponent.type !== 'GROUND'
+         && selectedComponent.type !== 'SPLITTER' && selectedComponent.type !== 'COMBINER';
 });
 // 判断是否显示输入反转的选项
 const showInvertInputOption = computed(() => {
