@@ -14,6 +14,7 @@ export class Clock extends BaseComponent {
             simulator: any = null,
             ) {
         super(id, type, position);
+        this.offset=[-120,-120];
         if(!simulator) {
 			this.simulator = EventDrivenSimulator.getInstance(); 
 		}else {

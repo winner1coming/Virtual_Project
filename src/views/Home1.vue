@@ -92,6 +92,15 @@
       <myButton :id="myButtonId"/>
     </svg>
 
+    <svg
+      viewBox="-600 -600 600 600"
+      width="300"
+      height="300"
+      style="overflow: visible;"
+    >
+      <LED :id="LEDId"/>
+    </svg>
+
     <!-- <button @click="toggleInputPin"> 改InputPin的位宽 </button> -->
   </div>
 </template>
@@ -110,8 +119,10 @@ import Splitter from '@/components/Wiring/Splitter.vue'
 import CustomizeComoponent from '@/components/CustomizeComponent.vue'
 import andGate from '@/components/preview/andGate.vue'
 import myButton from '@/components/Input_OutPut/Button.vue'
+import LED from '@/components/Input_OutPut/LED.vue'
 
 import { useCircuitStore } from '@/store/CircuitStore.js'
+import { c } from 'naive-ui'
 const circuitStore = useCircuitStore();
 
 // 预先添加组件并保存 ID
@@ -125,6 +136,7 @@ const clockId = circuitStore.addComponent('CLOCK');
 // const splitterId = circuitStore.addComponent('SPLITTER')
 const CustomizeComponentId = circuitStore.addComponent('AND')
 const myButtonId = circuitStore.addComponent('BUTTON');
+const LEDId = circuitStore.addComponent('LIGHT');
 
 function toggleInputPin()
 {
