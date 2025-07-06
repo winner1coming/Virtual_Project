@@ -487,7 +487,7 @@ function setCanvasEditorRef(projectId, el) {
 // 加载闯关模式关卡
 import { loadChallengesOnStartup} from '@/config/init'
 nextTick(() => {
-  if(projectStore.currentProjectId === 1){
+  if(projectStore.currentProjectId === -3){
     // 确保在组件挂载后加载关卡
     projectStore.createProject('new project');
     circuitStore.simulator.changeProject(projectStore.selectedProjectId);
