@@ -97,15 +97,15 @@
         />
       </svg>
 
-      <!-- 修改预览组件的定位方式 -->
-      <component
-        v-if="currentComponent && SVG_PREVIEW_MAP[currentComponent.componentType]"
-        :is="SVG_PREVIEW_MAP[currentComponent.componentType]"
-        class="preview-svg"
+      <img
+        v-if="currentComponent"
+        :src="IMAGE_MAP[currentComponent.componentType].src"
+        class="preview-image"
         :style="{
-          left: previewPos.x + 'px',
-          top: previewPos.y + 'px',
-          transform: 'translate(-50%, -50%)' // 添加此变换使元件中心对准鼠标
+          // width: currentComponent.size.width * 0.6 + 'px',
+          // height: currentComponent.size.height * 0.3 + 'px',    
+          left: previewPos.x  + SVG_OFFSET[currentComponent.componentType].x * 0.25 + 'px',// 新增了offset偏移
+          top: previewPos.y + SVG_OFFSET[currentComponent.componentType].y * 0.25 + 'px',
         }"
       />
 
@@ -321,34 +321,75 @@ const COMPONENT_SIZES = {
   SUB_CIRCUIT: { width: 300, height: 200 }, 
 }
 
-// SVG预览文件映射表
-const SVG_PREVIEW_MAP = {
-  AND: AndGateSvg
-  // OR: OrGateSvg,
-  // NOT: NotGateSvg,
-  // ... 后续扩展
-}
- 
-// // 按钮图片资源映射表
-// const IMAGE_MAP = {
-//   AND: new Image(),
-//   OR: new Image(),
-//   NOT: new Image(),
-//   TUNNEL: new Image(),
-//   INPUT: new Image(),
-//   OUTPUT: new Image(),
-//   NAND: new Image(),
-//   SUB_CIRCUIT: new Image(),
-// }
+// SVG映射offset
+const tempSegmentDisplay = new LogicSegmentDisplay(-1, "SEGMENT_DISPLAY");
+const tempPower = new LogicPower(-1, "POWER");
+const tempNot = new LogicNotGate(-1, "NOT");
+const tempNor = new LogicNorGate(-1, "NOR");
+const tempOr = new LogicOrGate(-1, "OR");
+const tempGround = new LogicGround(-1, "GROUND");
+const tempClock = new LogicClock(-1, "CLOCK");
+const tempXor = new LogicXorGate(-1, "XOR");
+const tempAnd = new LogicAndGate(-1, "AND");
+const tempConstant = new LogicConstantInput(-1, "CONSTANT");
+const tempInput = new LogicInputPin(-1, "INPUT");
+const tempOutput = new LogicInputPin(-1, "OUTPUT");
+const tempSplitter = new LogicSplitter(-1, "SPLITTER");
+const tempTunnel = new LogicTunnel(-1, "TUNNEL");
 
-// // 初始化图片资源
-// IMAGE_MAP.AND.src = '/assets/AND.png'
-// IMAGE_MAP.OR.src = '/assets/OR.png'
-// IMAGE_MAP.NOT.src = '/assets/NOT.png'
-// IMAGE_MAP.TUNNEL.src = '/assets/TUNNEL.png'
-// IMAGE_MAP.INPUT.src = '/assets/INPUT.png'
-// IMAGE_MAP.OUTPUT.src = '/assets/OUTPUT.png'
-// IMAGE_MAP.NAND.src = '/assets/INPUT.png'
+const SVG_OFFSET = {
+  SEGMENT_DISPLAY: {x: tempSegmentDisplay.offset[0], y: tempSegmentDisplay.offset[1]},
+  POWER: {x: tempPower.offset[0], y: tempPower.offset[1]},
+  NOT: {x: tempNot.offset[0], y: tempNot.offset[1]},
+  NOR: {x: tempNor.offset[0], y: tempNor.offset[1]},
+  OR: {x: tempOr.offset[0], y: tempOr.offset[1]},
+  GROUND: {x: tempGround.offset[0], y: tempGround.offset[1]},
+  CLOCK: {x: tempClock.offset[0], y: tempClock.offset[1]},
+  XOR: {x: tempXor.offset[0], y: tempXor.offset[1]},
+  AND: {x: tempAnd.offset[0], y: tempAnd.offset[1]},
+  CONSTANT: {x: tempConstant.offset[0], y: tempConstant.offset[1]},
+  INPUT: {x: tempInput.offset[0], y: tempInput.offset[1]},
+  OUTPUT: {x: tempOutput.offset[0], y: tempOutput.offset[1]},
+  SPLITTER: {x: tempSplitter.offset[0], y: tempSplitter.offset[1]},
+  TUNNEL: {x: tempTunnel.offset[0], y: tempTunnel.offset[1]},
+}
+
+ 
+// 按钮图片资源映射表
+const IMAGE_MAP = {
+  SEGMENT_DISPLAY: new Image(),
+  POWER: new Image(),
+  NOT: new Image(),
+  NOR: new Image(),
+  OR: new Image(),
+  GROUND: new Image(),
+  CLOCK: new Image(),
+  XOR: new Image(),
+  AND: new Image(),
+  CONSTANT: new Image(),
+  INPUT: new Image(),
+  OUTPUT: new Image(),
+  SPLITTER: new Image(),
+  TUNNEL: new Image(),
+}
+
+// 初始化图片资源
+IMAGE_MAP.SEGMENT_DISPLAY.src = '/assets/7段数码管.svg'
+IMAGE_MAP.POWER.src = '/assets/电源.svg'
+IMAGE_MAP.NOT.src = '/assets/非门.svg'
+IMAGE_MAP.NOR.src = '/assets/或非门.svg'
+IMAGE_MAP.OR.src = '/assets/或门.svg'
+IMAGE_MAP.GROUND.src = '/assets/接地.svg'
+IMAGE_MAP.CLOCK.src = '/assets/时钟.svg'
+IMAGE_MAP.XOR.src = '/assets/异或门.svg'
+IMAGE_MAP.AND.src = '/assets/AND.svg'
+IMAGE_MAP.CONSTANT.src = '/assets/constant.svg'
+IMAGE_MAP.INPUT.src = '/assets/inputPin.svg'
+IMAGE_MAP.OUTPUT.src = '/assets/outputpin.svg'
+IMAGE_MAP.SPLITTER.src = '/assets/splitter.svg'
+IMAGE_MAP.TUNNEL.src = '/assets/Tunnel.svg'
+
+// IMAGE_MAP.NAND.src = '/assets/'
 // IMAGE_MAP.SUB_CIRCUIT.src = '/assets/INPUT.png'
 
 function updateComponentDirection() {
@@ -577,11 +618,6 @@ function updatePinPosition(ID) {
     return
   }
   
-  // // Step 1: 提取当前元件所有相关的连线（不修改它们）
-  // const relatedConnections = connections.filter(
-  //   conn => conn.from.componentId === ID || conn.to.componentId === ID
-  // );
-
   // Step 2: 更新端口信息
   const portsInfo = logic.getAllPorts()
   // console.log("端口信息：", portsInfo)
@@ -591,80 +627,6 @@ function updatePinPosition(ID) {
   console.log("端口信息：", Ports)
   console.log("连接信息：", connections)
 
-  // const ports = Ports.get(ID);// 获取当前元件的端口信息
-  // ports.forEach((port) => {
-  //   if (port.type == 'output') {// 只处理输出端口
-  //     connections.forEach((connection) => {
-  //       // 遍历当前元件原有的所有连接
-  //       const fromID = connection.from.componentId;
-  //       const fromPortID = connection.from.portId;
-  //       const toID = connection.to.componentId;
-  //       const toPortID = connection.to.portId;
-  //       if (fromID === ID && connection.from.portType === 'output') {
-  //         // 处理原来的connections中所有与当前元件输出引脚有关的连线，更新output
-  //         connection.from = {
-  //           x: port.x,
-  //           y: port.y,
-  //           componentId: componentID,
-  //           portId: port.id,
-  //           portType: 'output'
-  //         }
-  //       }
-  //       useCircuitStore().connect(connection.from.componentId, connection.from.portId, connection.to.componentId, connection.to.portId);
-  //     })
-  //   } else {
-  //     // 输出引脚下标不变
-  //     connections.forEach((connection) => {
-  //       const fromID = connection.from.componentId;
-  //       const fromPortID = connection.from.portId;
-  //       const toID = connection.to.componentId;
-  //       const toPortID = connection.to.portId;
-  //       useCircuitStore().connect(fromID, fromPortID, toID, toPortID);
-  //     })
-  //   }
-  // })
-
-  // Ports.forEach((ports, componentID) => {
-  //   if (componentID === ID) {// 挑选出当前元件的所有端口
-  //     ports.forEach((port) => {
-  //       if (port.type == 'output') {// 只处理输出端口
-  //         connections.forEach((connection) => {
-  //           // 遍历当前元件原有的所有连接
-  //           const fromID = connection.from.componentId;
-  //           const fromPortID = connection.from.portId;
-  //           const toID = connection.to.componentId;
-  //           const toPortID = connection.to.portId;
-  //           if (fromID === ID && connection.from.portType === 'output') {
-  //             // 处理原来的connections中所有与当前元件输出引脚有关的连线，更新output
-  //             connection.from = {
-  //               x: port.x,
-  //               y: port.y,
-  //               componentId: componentID,
-  //               portId: port.id,
-  //               portType: 'output'
-  //             }
-  //           }
-  //           useCircuitStore().connect(connection.from.componentId, connection.from.portId, connection.to.componentId, connection.to.portId);
-  //         })
-  //       } else {
-  //         // 输出引脚下标不变
-  //         connections.forEach((connection) => {
-  //           const fromID = connection.from.componentId;
-  //           const fromPortID = connection.from.portId;
-  //           const toID = connection.to.componentId;
-  //           const toPortID = connection.to.portId;
-  //           useCircuitStore().connect(fromID, fromPortID, toID, toPortID);
-  //         })
-  //       }
-  //     })
-  //   }
-  // })
-
-  
-
-  // 依次匹配原来电线另一端的元件ID和引脚ID
-  // 调用connect，在逻辑上重新连接
-  
   connections.forEach((connection) => {
     // 遍历当前元件原有的所有连接
     const fromID = connection.from.componentId;
@@ -709,38 +671,6 @@ function updatePinPosition(ID) {
     updateConnectionPaths(ID);
   })
 
-  // 我觉得还是得先去connections里找一下这个元件ID对应的连线
-  // 并且记录每条连线跟该元件连接的引脚ID，以及电线另一端连接的元件ID和引脚ID
-
-  // 记录当前ID的端口信息
-  // 延迟后获取端口信息，确保见组件挂载完成
-  // nextTick(() => {
-  //   if(!logic) {
-  //     console.warn("逻辑类未找到，ID：", ID)
-  //     return
-  //   }
-  //   const portsInfo = logic.getAllPorts()
-
-  //   updateComponentPorts(ID, portsInfo, logic.position[0], logic.position[1]);
-
-  //   // 更新所有相关连线的路径
-  //   updateConnectionPaths(ID);
-
-  //   // 依次匹配原来电线另一端的元件ID和引脚ID
-  //   // 调用connect，在逻辑上重新连接
-  //   connections.forEach((connection) => {
-  //     const fromID = connection.from.componentId;
-  //     const fromPortID = connection.from.portId;
-  //     const toID = connection.to.componentId;
-  //     const toPortID = connection.to.portId;
-  //     if (fromID === ID || toID === ID) {
-  //       // 重新连接
-  //       useCircuitStore().connect(fromID, fromPortID, toID, toPortID);
-  //     }
-  //   })
-
-  //   console.log("更新电线位置成功！")
-  // })
 }
 
 // 修改 handleMouseMove 以支持连线拖动
@@ -1547,6 +1477,9 @@ onUnmounted(() => {
   pointer-events: none;
   opacity: 0.6;
   z-index: 10;
+  max-width: 150px;
+  max-height: 150px;
+  object-fit: fill;
 }
 
 
