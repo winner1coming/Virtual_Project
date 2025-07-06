@@ -101,9 +101,7 @@
         v-if="currentComponent"
         :src="IMAGE_MAP[currentComponent.componentType].src"
         class="preview-image"
-        :style="{
-          // width: currentComponent.size.width * 0.6 + 'px',
-          // height: currentComponent.size.height * 0.3 + 'px',    
+        :style="{   
           left: previewPos.x  + SVG_OFFSET[currentComponent.componentType].x * 0.25 + 'px',// 新增了offset偏移
           top: previewPos.y + SVG_OFFSET[currentComponent.componentType].y * 0.25 + 'px',
         }"
@@ -149,6 +147,7 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 // 元件建模
+// 逻辑门
 import AndGate from './Gates/AndGate.vue'
 import NandGate from './Gates/NandGate.vue'
 import OrGate from './Gates/OrGate.vue'
@@ -156,36 +155,48 @@ import NorGate from './Gates/NorGate.vue'
 import NotGate from './Gates/NotGate.vue'
 import XorGate from './Gates/XorGate.vue'
 import XnorGate from './Gates/XnorGate.vue'
+// 输入输出
+import Button from './Input_OutPut/Button.vue'
+import HEX_DISPLAY from './Input_OutPut/HexDigitalDisplay.vue'
+import LED from './Input_OutPut/LED.vue'
 import SegmentDisplay from './Input_OutPut/SegmentDisplay.vue'
-import Tunnel from './Wiring/Tunnel.vue'
-import InputPin from './Wiring/InputPin.vue'
-import CustomizeComponent from './CustomizeComponent.vue'
+// 线路？
 import Clock from './Wiring/Clock.vue'
+import Combiner from './Wiring/Combiner.vue'
 import Constant from './Wiring/Constant.vue'
+import Ground from './Wiring/Ground.vue'
+import InputPin from './Wiring/InputPin.vue'
+import OutputPin from './Wiring/OutputPin.vue'
 import Power from './Wiring/Power.vue'
 import Splitter from './Wiring/Splitter.vue'
-import Ground from './Wiring/Ground.vue'
-import Combiner from './Wiring/Combiner.vue'
-
+import Tunnel from './Wiring/Tunnel.vue'
+import Register from './Register.vue'
+import CustomizeComponent from './CustomizeComponent.vue'
 
 // 逻辑类建模
 import { AndGate as LogicAndGate } from '@/logic/components/AndGate.ts'
+import { Button as LogicButton} from '@/logic/components/Button.ts'
+import { Clock as LogicClock} from '@/logic/components/Clock.ts'
+import { Combiner as LogicCombiner} from '@/logic/components/Combiner.ts'
+import { ConstantInput as LogicConstantInput} from '@/logic/components/ConstantInput.ts'
+import { DFlipFlop as LogicDFlipFlop} from '@/logic/components/DFlipFlop.ts'
+import { Ground as LogicGround} from '@/logic/components/Ground.ts'
+import { HexDisplay as LogicHexDisplay } from '@/logic/components/HexDisplay.ts'
+import { InputPin as LogicInputPin} from '@/logic/components/InputPin.ts'
+import { Light as LogicLED } from '@/logic/components/Light.ts'
 import { NandGate as LogicNandGate } from '@/logic/components/NandGate.ts'
-import { OrGate as LogicOrGate } from '@/logic/components/OrGate.ts'
 import { NorGate as LogicNorGate } from '@/logic/components/NorGate.ts'
 import { NotGate as LogicNotGate } from '@/logic/components/NotGate.ts'
-import {Clock as LogicClock} from '@/logic/components/Clock.ts'
-import {Combiner as LogicCombiner} from '@/logic/components/Combiner.ts'
-import {ConstantInput as LogicConstantInput} from '@/logic/components/ConstantInput.ts'
-import {Ground as LogicGround} from '@/logic/components/Ground.ts'
-import {Power as LogicPower} from '@/logic/components/Power.ts'
-import {SegmentDisplay as LogicSegmentDisplay} from '@/logic/components/SegmentDisplay.ts'
-import {Splitter as LogicSplitter} from '@/logic/components/Splitter.ts'
-import { Tunnel as LogicTunnel} from '@/logic/components/Tunnel.ts'
-import { InputPin as LogicInputPin} from '@/logic/components/InputPin.ts'
+import { NxorGate as LogicXnorGate } from '@/logic/components/Nxor.ts'
+import { OrGate as LogicOrGate } from '@/logic/components/OrGate.ts'
+import {  Power as LogicPower} from '@/logic/components/Power.ts'
+import { Register as LogicRegister } from '@/logic/components/Register.ts'
+import { SegmentDisplay as LogicSegmentDisplay} from '@/logic/components/SegmentDisplay.ts'
+import { Splitter as LogicSplitter} from '@/logic/components/Splitter.ts'
 import { SubCircuitComponent as LogicSubCircuit } from '@/logic/components/SubCircuitComponent.ts'
-import {XorGate as LogicXorGate} from '@/logic/components/XorGate.ts'
-import { BaseComponent } from '@/logic/BaseComponent.ts'
+import { Tunnel as LogicTunnel} from '@/logic/components/Tunnel.ts'
+import { XorGate as LogicXorGate} from '@/logic/components/XorGate.ts'
+import { BaseComponent } from '@/logic/BaseComponent.ts'// 父类
 
 // 其他
 import { useHistory } from '@/modules/useHistory';
@@ -193,15 +204,11 @@ import eventBus from '@/modules/useEventBus';
 import { useCircuitStore } from '@/store/CircuitStore';
 import { nextTick } from 'vue'
 import { convertCompilerOptionsFromJson } from 'typescript'
-import OutputPin from './Wiring/OutputPin.vue'
-
-// 预览的svg文件
-import AndGateSvg from './preview/andGate.vue' 
 
 const canvasContainer = ref(null)
 const components = reactive([])
 const currentComponent = ref(null)
-const selectedComponent = ref(null)
+const selectedComponent = ref(null)// 鼠标选中的元件
 const isDragging = ref(false)
 const dragOffset = reactive({ x: 0, y: 0 })// 拖动偏移量
 const previewPos = reactive({ x: 0, y: 0 })// 预览的位置
@@ -214,8 +221,6 @@ const ports = [];// 存储单个元件的端口信息
 /** @type {Map<number, Array<{id: number, x:number, y:number, componentId:number, type: string}>>} */
 const Ports = new Map();
 const showDeleteConfirm = ref(false); // 是否显示确认框
-
-
 
 // 定义电线的两端
 const wireStart = ref(null) // 记录起始点
@@ -284,7 +289,11 @@ const componentMap = {
   SPLITTER: Splitter,
   COMBINER: Combiner,
   SEGMENT_DISPLAY: SegmentDisplay,
-  GROUND: Ground
+  GROUND: Ground,
+  HEX_DISPLAY: HEX_DISPLAY,
+  LIGHT: LED,
+  BUTTON: Button,
+  REGISTER: Register,
 }
 
 // 逻辑类映射表
@@ -307,6 +316,10 @@ const COMPONENT_LOGIC = {
   SPLITTER: LogicSplitter,
   XOR: LogicXorGate,
   XNOR: LogicXorGate, // XNOR 逻辑门
+  HEX_DISPLAY: LogicHexDisplay,
+  LIGHT: LogicLED,
+  BUTTON: LogicButton,
+  REGISTER: LogicRegister,
 }
 
 // 初始化各元件尺寸配置
@@ -336,6 +349,10 @@ const tempInput = new LogicInputPin(-1, "INPUT");
 const tempOutput = new LogicInputPin(-1, "OUTPUT");
 const tempSplitter = new LogicSplitter(-1, "SPLITTER");
 const tempTunnel = new LogicTunnel(-1, "TUNNEL");
+const tempHexDisplay = new LogicHexDisplay(-1, "HEX_DISPLAY");
+const tempLight = new LogicLED(-1, "LIGHT");
+const tempButton = new LogicButton(-1, "BUTTON");
+const tempRegister = new LogicRegister(-1, "REGISTER");
 
 const SVG_OFFSET = {
   SEGMENT_DISPLAY: {x: tempSegmentDisplay.offset[0], y: tempSegmentDisplay.offset[1]},
@@ -352,6 +369,10 @@ const SVG_OFFSET = {
   OUTPUT: {x: tempOutput.offset[0], y: tempOutput.offset[1]},
   SPLITTER: {x: tempSplitter.offset[0], y: tempSplitter.offset[1]},
   TUNNEL: {x: tempTunnel.offset[0], y: tempTunnel.offset[1]},
+  HEX_DISPLAY: {x: tempHexDisplay.offset[0], y: tempHexDisplay.offset[1]},
+  LIGHT: {x: tempLight.offset[0], y: tempLight.offset[1]},
+  BUTTON: {x: tempButton.offset[0], y: tempButton.offset[1]},
+  REGISTER: {x: tempRegister.offset[0], y: tempRegister.offset[1]},
 }
 
  
@@ -680,6 +701,8 @@ function handleMouseMove(event) {
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
 
+  // console.log("选中的元件selectedComponent.value：", selectedComponent.value)
+
   if (currentComponent.value) {
     // 预览位置更新
     previewPos.x = x;
@@ -840,6 +863,8 @@ function handleMouseDown(event) {
 
   handleWireConnection(x, y)// 处理连线逻辑
 
+  deselectComponent(x, y);
+
   console.log("处理完连线逻辑了！")
 
   saveSnapshot();
@@ -887,6 +912,11 @@ function handleWireConnection(x, y) {
   }
 
   console.log("电线起点：", wireStart.value, "现在开始找终点！")
+
+  if (!wireStart.value) {
+    console.log("未找到起点端口");
+    return; // 没有起点，直接返回
+  }
 
   // 找到距离点击点最近的port信息
   let endPort = findNearestPort(x, y, 50);
@@ -1010,6 +1040,28 @@ function findNearestPort(clickX, clickY, maxDistance = 500) {
   return closestPort;
 }
 
+ // 取消选中
+function deselectComponent(clickX, clickY) {
+  let clickedOnComponent = false;
+  const threshold = 20; // 判定“点击到元件”的最大距离，和你选中时的范围一致即可
+
+  components.forEach(component => {
+    const dx = clickX - component.x;
+    const dy = clickY - component.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < threshold) {
+      clickedOnComponent = true;
+    }
+  });
+
+  if (!clickedOnComponent) {
+    console.log("点击空白区域，取消选中");
+    selectedComponent.value = null;
+    useCircuitStore().unselectComponent(); // 通知逻辑层取消选中
+  }
+}
+
 // 拖动过程
 function handleMouseUp() {
   if (isDragging.value) {// 拖动结束，保存状态
@@ -1031,7 +1083,7 @@ function selectComponent(item, event) {
   
   useCircuitStore().selectComponent(item.ID);
 
-  console.log("全局Ports：", Ports)
+  console.log("选中的元件：", selectedComponent.value)
 }
 
 let projectTypeId = -1;
