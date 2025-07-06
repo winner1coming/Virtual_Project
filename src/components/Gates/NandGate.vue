@@ -1,5 +1,5 @@
 <template>
-  <g :transform="`translate(${nandGate.offset[0]*nandGate.scale}, ${nandGate.offset[1]*nandGate.scale}) scale(${nandGate.scale})`" cursor="move">
+  <g :transform="transform" cursor="move">
     <!-- AND 门图形 -->
      <!--左侧竖线-->
     <path
@@ -79,6 +79,26 @@ return circuitStore.getComponent(props.id);
 let minY = computed(()=>Math.min(...nandGate.value.inputPinPosition.map(pin => pin[1])));
 let maxY = computed(()=>Math.max(...nandGate.value.inputPinPosition.map(pin => pin[1])));
 
+const transform = computed(() => {
+  const [x, y] = nandGate.value.offset;
+  const scale = nandGate.value.scale;
+  const cx = 295;
+
+  if (nandGate.value.direction === 'west') {
+    return `
+      translate(${x*scale}, ${y*scale})
+      scale(${scale})
+      translate(${cx}, 0)
+      scale(-1, 1)
+      translate(${-cx}, 0)
+    `;
+  } else {
+    return `
+      translate(${x*scale}, ${y*scale})
+      scale(${scale})
+    `;
+  }
+});
 
 // 以下为调试用代码，后期可删除---------------------------------------
 

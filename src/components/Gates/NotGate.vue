@@ -1,5 +1,5 @@
 <template>
-      <g :transform="`translate(${notGate.offset[0]*notGate.scale}, ${notGate.offset[1]*notGate.scale}) scale(${notGate.scale})`" cursor="move">
+        <g :transform="transform" cursor="move">
         <!-- NOT门主体（三角形） -->
         <path
           d="M438.075 288.5L147.769 392.856L147.769 184.144L438.075 288.5Z"
@@ -60,6 +60,27 @@ const props = defineProps({
 
 const notGate = computed(() => {
   return circuitStore.getComponent(props.id);  
+});
+
+const transform = computed(() => {
+  const [x, y] = notGate.value.offset;
+  const scale = notGate.value.scale;
+  const cx = 295;
+
+  if (notGate.value.direction === 'west') {
+    return `
+      translate(${x*scale}, ${y*scale})
+      scale(${scale})
+      translate(${cx}, 0)
+      scale(-1, 1)
+      translate(${-cx}, 0)
+    `;
+  } else {
+    return `
+      translate(${x*scale}, ${y*scale})
+      scale(${scale})
+    `;
+  }
 });
 
 </script>

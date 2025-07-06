@@ -1,5 +1,5 @@
 <template>
-  <g :transform="`translate(${norGate.offset[0]*norGate.scale}, ${norGate.offset[1]*norGate.scale}) scale(${norGate.scale})`" cursor="move">
+    <g :transform="transform" cursor="move">
     <!-- OR 门图形 -->
     <path stroke="black" stroke-width="12" d="M145.999 181L315.999 181" /> <!--上下两条横线-->
     <path stroke="black" stroke-width="12" d="M146 395.115L316 395.115" />
@@ -117,6 +117,27 @@ const bezierYMin = 179.5;
 const bezierYMax = 397;
 let minY = computed(()=>Math.min(...norGate.value.inputPinPosition.map(pin => pin[1])));
 let maxY = computed(()=>Math.max(...norGate.value.inputPinPosition.map(pin => pin[1])));
+
+const transform = computed(() => {
+  const [x, y] = norGate.value.offset;
+  const scale = norGate.value.scale;
+  const cx = 295;
+
+  if (norGate.value.direction === 'west') {
+    return `
+      translate(${x*scale}, ${y*scale})
+      scale(${scale})
+      translate(${cx}, 0)
+      scale(-1, 1)
+      translate(${-cx}, 0)
+    `;
+  } else {
+    return `
+      translate(${x*scale}, ${y*scale})
+      scale(${scale})
+    `;
+  }
+});
 
 </script>
 

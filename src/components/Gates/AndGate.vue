@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${andGate.offset[0]*andGate.scale}, ${andGate.offset[1]*andGate.scale}) scale(${andGate.scale}) rotate(${directionToAngle[andGate.direction]},298,${(minY+maxY)/2})`" cursor="move">
+    <g :transform="transform" cursor="move">
       <!-- AND 门图形 -->
        <!--左侧竖线-->
       <path
@@ -91,6 +91,27 @@ const directionToAngle = {
   west: 180,
   north: 270
 }
+
+const transform = computed(() => {
+  const [x, y] = andGate.value.offset;
+  const scale = andGate.value.scale;
+  const cx = 295;
+
+  if (andGate.value.direction === 'west') {
+    return `
+      translate(${x*scale}, ${y*scale})
+      scale(${scale})
+      translate(${cx}, 0)
+      scale(-1, 1)
+      translate(${-cx}, 0)
+    `;
+  } else {
+    return `
+      translate(${x*scale}, ${y*scale})
+      scale(${scale})
+    `;
+  }
+});
 
 // 以下为调试用代码，后期可删除---------------------------------------
 
