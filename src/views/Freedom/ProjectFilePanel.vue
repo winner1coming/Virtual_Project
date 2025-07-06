@@ -3,13 +3,14 @@
     <h3>项目文件</h3>
     <!-- 项目列表 -->
     <div
-      v-for="project in projects"
+      v-for="project in projects.filter(p => p.mode === circuitStore.currentMode)"
       :key="project.projectId"
       class="project-item"
       :class="{ selected: project.projectId === projectStore.selectedProjectId }"
       @mousedown="handleMouseDown(project.projectId)"
       @contextmenu.prevent="showContextMenu($event, project)"
     >
+
       {{ project.name }}
     </div>
 

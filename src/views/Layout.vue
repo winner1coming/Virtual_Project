@@ -137,7 +137,7 @@
             <template #trigger>
               <n-button quaternary @click="testTruthTable">
                 <template #icon>
-                  <n-icon><UploadIcon /></n-icon>
+                  <n-icon><Book /></n-icon>
                 </template>
               </n-button>
             </template>
@@ -299,8 +299,8 @@ import {
   FolderOpenOutline as folder,
   CloseOutline as close,
   CloudUploadOutline as UploadIcon,
+  Book
 } from '@vicons/ionicons5'
-
 const props = defineProps(['mode'])
 
 // 添加新状态
@@ -478,6 +478,35 @@ function setCanvasEditorRef(projectId, el) {
 
 // #endregion 项目
 // #region 测试真值表
+// 加载闯关模式关卡
+import { loadChallengesOnStartup} from '@/config/init'
+nextTick(() => {
+  if(projectStore.currentProjectId === 1){
+    // 确保在组件挂载后加载关卡
+    projectStore.createProject('new project');
+    circuitStore.simulator.changeProject(projectStore.selectedProjectId);
+    nextTick(async() => {
+    
+    // 获取文件列表（需要手动维护文件名列表）
+    const fileNames = ['1.一位全加器.json', '一位全加器_答案.json'];
+
+    for (const fileName of fileNames) {
+        const response = await fetch(`/assets/challenges/${fileName}`);
+        if (!response.ok) {
+          throw new Error(`无法加载文件: ${fileName}`);
+        }
+        const module = await response.json();
+        console.log(`加载关卡文件: ${fileName}`);
+        const canvasRef = canvasEditorRefs.get(projectStore.selectedProjectId);
+        await loadProject(module, canvasRef); 
+        projectStore.createProject('new project');
+        circuitStore.simulator.changeProject(projectStore.selectedProjectId);
+        await nextTick();
+      }
+    });
+    console.log('所有关卡加载完成！');
+  }
+});
 // 答案
 // 一位全加器（sum, cout)
 const oneBitFullAdder = [
@@ -493,7 +522,7 @@ const oneBitFullAdder = [
 
 const answer ={
   "unnamed":[], 
-  "一位全加器":oneBitFullAdder,
+  "1.一位全加器":oneBitFullAdder,
 };
 import { calculateTruthTable } from '@/modules/useTruthTable'
 const testTruthTable = () => {

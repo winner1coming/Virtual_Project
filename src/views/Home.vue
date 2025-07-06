@@ -25,10 +25,21 @@ const modes = [
 ]
 
 import { useCircuitStore } from '@/store/CircuitStore'
+import { useProjectStore } from '@/store/ProjectStore'
+const projectStore = useProjectStore()
 const circuitStore = useCircuitStore()
 const router = useRouter()
 const navigateToWorkspace = (mode) => {
   circuitStore.currentMode = mode 
+  if(projectStore.currentProjectId !== 1 &&mode !== 'tutorial') {
+    for(const project of projectStore.getAllProjects()) {
+      if(project.mode === mode) {
+        projectStore.loadProject(project.projectId)
+        circuitStore.changeProject(project.projectId)
+        break
+      }
+    }
+  }
   router.push({ path: '/workspace', query: { mode } })
 }
 </script>
