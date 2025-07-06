@@ -10,6 +10,7 @@ export class HexDisplay extends BaseComponent{
       this.simulator = simulator; 
     }
     this.outputs.splice(0, this.outputs.length); 
+    this.bitWidth = 4;
     this.initInputPin(2); 
   }
 
