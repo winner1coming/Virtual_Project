@@ -133,6 +133,7 @@ export abstract class BaseComponent{
 
     eventBus.emit('updatePinPosition', {id: this.id}); 
   }
+  
   changeOutputPinCount(num: number){
     this.outputs.splice(0, this.outputs.length, ...Array(num).fill(-1));
 
