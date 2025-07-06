@@ -35,6 +35,7 @@ const components = [
   { type: 'OR', name: '或门' },
   { type: 'NOT', name: '非门' },
   { type: 'XOR', name: '异或门' },
+  {type: 'NXOR', name: '异或非门'},
   {type: 'NAND', name: '与非门'},
   {type: 'NOR', name: '或非门'},
   { type: 'POWER', name: '电源' },
