@@ -41,6 +41,7 @@ export class ConstantInput extends BaseComponent {
         this.outputs.splice(0, this.outputs.length, v); // 更新输出
         this.simulator.enqueue(this.id, 0, this.outputs[0]);
         this.simulator.processQueue();
+        this.currentValue = v;
         return this.outputs;
     }
 
