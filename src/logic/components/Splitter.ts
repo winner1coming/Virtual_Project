@@ -2,6 +2,7 @@
 import { BaseComponent } from "../BaseComponent";
 import { EventDrivenSimulator } from "../Simulator";
 import { calcInputYs } from "@/logic/utils/useGateLayout";
+import eventBus from "@/modules/useEventBus";
 
 export class Splitter extends BaseComponent {
     constructor(id: number,type: String, position: [number, number] = [0, 0], simulator = null,bitWidth: number = 4) {
@@ -22,6 +23,7 @@ export class Splitter extends BaseComponent {
         this.bitWidth = bitWidth;
         this.outputs.splice(0, this.outputs.length, ...Array(this.bitWidth).fill(-1)); 
         this.updatePinPosition();
+        eventBus.emit('updatePinPosition', {id: this.id});
     }
 
     compute(): number[] {
