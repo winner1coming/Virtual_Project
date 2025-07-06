@@ -28,6 +28,7 @@ export function exportProject(projectDate: ProjectData): void {
         inputNames: sub.inputNames ? [...sub.inputNames] : [],
         outputNames: sub.outputNames ? [...sub.outputNames] : [],
         copyProjectId: sub.copyProjectId,
+        projectUUID: sub.projectUUID,
         truthTable: sub.truthTable,
       });
     }else{
@@ -119,6 +120,7 @@ export async function loadProject(importData: any, canvasRef: any){
         subComp.truthTable = comp.truthTable || [];
         subComp.initInputPin(subComp.inputs.length);
         subComp.initOutputPin(subComp.outputs.length);
+        subComp.projectUUID = comp.projectUUID || "";
       }
       componentsIdMap.set(comp.id, addedComponent.id);
     
