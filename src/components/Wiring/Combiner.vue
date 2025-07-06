@@ -17,9 +17,9 @@
       <!-- 输出引脚 -->
       <OutputPort :cx="198" :cy="minY<246? maxY+36: 439.34" :active="1" :bitWidth="combiner.bitWidth"/>
       <!-- 输入引脚 -->
-      <template v-for="(output, index) in combiner.inputs" :key="output.id">
+      <template v-for="(input, index) in combiner.inputs" :key="input.id">
         <path :d="`M149 ${combiner.inputPinPosition[index][1]}L92 ${combiner.inputPinPosition[index][1]}`" stroke="black" stroke-width="12" />
-        <InputPort :cx="92" :cy="combiner.inputPinPosition[index][1]" :active="combiner.inputs[index]"/>
+        <InputPort :cx="92" :cy="combiner.inputPinPosition[index][1]" :active="input"/>
       </template>
     </g>
 </template>
