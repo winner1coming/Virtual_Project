@@ -83,8 +83,16 @@
     </svg> -->
 
     <!-- <Splitter /> -->
-    <myButton />
-    <button @click="toggleInputPin"> 改InputPin的位宽 </button>
+    <svg
+      viewBox="-300 -300 600 600"
+      width="300"
+      height="300"
+      style="overflow: visible;"
+    >
+      <myButton :id="myButtonId"/>
+    </svg>
+
+    <!-- <button @click="toggleInputPin"> 改InputPin的位宽 </button> -->
   </div>
 </template>
 
@@ -116,6 +124,7 @@ const constantId = circuitStore.addComponent('CONSTANT');
 const clockId = circuitStore.addComponent('CLOCK');
 // const splitterId = circuitStore.addComponent('SPLITTER')
 const CustomizeComponentId = circuitStore.addComponent('AND')
+const myButtonId = circuitStore.addComponent('BUTTON');
 
 function toggleInputPin()
 {
