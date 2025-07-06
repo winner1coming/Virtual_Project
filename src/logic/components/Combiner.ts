@@ -21,6 +21,7 @@ export class Combiner extends BaseComponent {
 
     setBitWidth(bitWidth: number) {
         this.bitWidth = bitWidth;
+        this.inputCount = bitWidth;
          this.inputs.splice(0, this.inputs.length, ...Array(this.bitWidth).fill(-1));
     }
 
