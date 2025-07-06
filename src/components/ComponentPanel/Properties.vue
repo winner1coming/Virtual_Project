@@ -181,6 +181,7 @@ const showInvertInputOption = computed(() => {
 
 function updateDirection(value: string, option: SelectOption) {
   circuitStore.getComponent(circuitStore.selectedId).updatePinPosition();
+  eventBus.emit('updatePinPosition', { id: circuitStore.selectedId});
   // // 更新元件的方向
   // eventBus.emit('updateComponentDirection');
 }
