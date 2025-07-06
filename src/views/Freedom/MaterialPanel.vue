@@ -1,18 +1,22 @@
 <template>
   <div class="pdf-buttons">
+    <button class="item" @click="openPdf(labAdd)">
+      <span>全加器实现</span>
+    </button>
     <button class="item" @click="openPdf(lab8PdfUrl)">
-      <span>教材一</span>
+      <span>8位可控加法器</span>
     </button>
     <button class="item" @click="openPdf(lab9PdfUrl)">
-      <span>教材二</span>
+      <span>4位快速加法器</span>
     </button>
   </div>
 </template>
 
 <script setup>
 import { inject } from 'vue'
-import lab8PdfUrl from '@/assets/studySource/lab8.pdf'
-import lab9PdfUrl from '@/assets/studySource/lab9.pdf'
+import labAdd from '@/assets/studySource/allAdd.pdf'
+import lab8PdfUrl from '@/assets/studySource/8bitAdd.pdf'
+import lab9PdfUrl from '@/assets/studySource/4bitFast.pdf'
 
 const togglePDF = inject('togglePDF')
 
