@@ -28,7 +28,7 @@ export const useCircuitStore = defineStore('circuit', {
     // getComponent返回的对象并不是响应式的，返回时需要用compute手动包装
     // 用法：const A = computed(() => store.components.get(1));
     getComponent(id: number): BaseComponent{
-      const component = this.components.get(id);
+      const component = this.components.get(id)!;
       return component;
     },
     getComponentOutputs(id:number): number[]{
@@ -153,7 +153,7 @@ export const useCircuitStore = defineStore('circuit', {
       return this.projectStore.selectedProjectId;
     },
     changeProject(projectId: number) {
-      this.selectComponent(-1); // 取消选中任何组件
+      this.unselectComponent(); // 取消选中任何组件
       this.simulator.changeProject(projectId);
     }
     // // 创建新项目
