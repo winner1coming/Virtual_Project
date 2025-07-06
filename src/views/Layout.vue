@@ -526,6 +526,7 @@ const answer ={
   "一位全加器_答案": oneBitFullAdder,
 };
 import { calculateTruthTable } from '@/modules/useTruthTable'
+
 const testTruthTable = () => {
   const projectId = projectStore.selectedProjectId; // 获取当前选中的项目ID
   if (!projectId) {
@@ -535,11 +536,15 @@ const testTruthTable = () => {
   console.log('测试真值表:', truthTable);
   console.log('答案:', answer[projectStore.getCurrentProject().name]);
   if (JSON.stringify(truthTable) === JSON.stringify(answer[projectStore.getCurrentProject().name])) {
-    alert('测试通过！');
+    message.success('测试通过！');
   } else {
-    alert('测试未通过，请检查您的电路设计。');
+    message.error('测试失败，请检查电路设计。');
   }
 }
+
+// 消息显示
+import { useMessage } from "naive-ui";
+const message = useMessage();
 // #endregion 测试真值表
 </script>
 
