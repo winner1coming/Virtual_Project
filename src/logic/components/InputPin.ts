@@ -85,6 +85,7 @@ export class InputPin extends BaseComponent {
     changeInput(idx: number, v: number): number[] {
         // 该函数是在有外部输入时调用
         this.outputs.splice(0, this.outputs.length, v); // 更新输出为输入值
+        this.simulator.processOutputChange(this.id, 0, v); 
         return this.outputs;
     }
 

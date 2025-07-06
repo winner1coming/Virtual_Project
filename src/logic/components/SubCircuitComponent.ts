@@ -9,12 +9,13 @@ import { calcInputYs } from "@/logic/utils/useGateLayout";
 import { Clock } from './Clock';
 
 export class SubCircuitComponent extends BaseComponent {
-  public inputPins: number[]=[];   // 输入引脚的id
-  public outputPins: number[]=[];
-  public componentIdMap: Map<number, BaseComponent> = new Map(); // 用于映射元件的id
+  // public inputPins: number[]=[];   // 输入引脚的id
+  // public outputPins: number[]=[];
+  // public componentIdMap: Map<number, BaseComponent> = new Map(); // 用于映射元件的id
   public inputNames: string[] = []; // 输入引脚的名称
   public outputNames: string[] = []; // 输出引脚的名称
   public copyProjectId: number = 0;
+  public truthTable: number[][] = []; // 真值表
 
   constructor(
     id: number,
@@ -29,47 +30,75 @@ export class SubCircuitComponent extends BaseComponent {
     if(projectId === -1) return;  // 延后创建
     this.copyProjectId = projectId;
 
-    const store = useCircuitStore();
+    const circuitStore = useCircuitStore();
     const projectStore = useProjectStore();
 
-    this.inputPins = projectStore.getProjectById(projectId).inputPins;
-    this.outputPins = projectStore.getProjectById(projectId).outputPins;
+    const projectData = projectStore.getProjectById(projectId);
+    this.initInputPin(projectData.inputPins.length);
+    this.initOutputPin(projectData.outputPins.length);
 
-
-    this.initInputPin(this.inputPins.length);
-    this.initOutputPin(this.outputPins.length);
-
-    this.simulator = new SubSimulator(projectId, this.componentIdMap);
-
-    // 根据id创建组件
-    projectStore.getProjectById(projectId).componentsId.forEach(id => {
-      const comp = store.getComponent(id);
+   
+    // 计算真值表
+    // 切换项目
+    const oldProjectId = projectStore.selectedProjectId;
+    projectStore.loadProject(projectId);
+    circuitStore.changeProject(projectId);
+    // 存储旧的输入，顺带存inputName
+    const oldInputs = [];
+    for(const inputPinId of projectData.inputPins) {
+      const comp = circuitStore.getComponent(inputPinId);
       if (comp) {
-        if(comp.type === "SUB_CIRCUIT") {
-          this.componentIdMap.set(id, createComponentByType(id, comp.type, comp.position, comp.name, (comp as SubCircuitComponent).copyProjectId, this.simulator));
-        }else{
-          this.componentIdMap.set(id, createComponentByType(id, comp.type, comp.position, comp.name, 0, this.simulator));
-        }
-        if(comp.type === "INPUT") {
-          this.componentIdMap.get(id)!.changeInput(0, -1);
-          this.inputNames.push(comp.name.toString());
-        }else if(comp.type === "OUTPUT") {
-          this.componentIdMap.get(id)!.changeInput(0, -1);
-          this.outputNames.push(comp.name.toString());
-        }else if(comp.type === "CLOCK") {
-          // 时钟组件需要设置父组件
-          (this.componentIdMap.get(id)! as Clock).setParent(this);
-          (this.componentIdMap.get(id)! as Clock).period = (comp as Clock).period;
-        }
-        // 复制关键属性
-        //this.componentIdMap.get(id)!.setPosition(comp.position);
-        this.componentIdMap.get(id)!.setBitWidth(comp.bitWidth);
-        this.componentIdMap.get(id)!.initInputPin(comp.inputCount);
-        this.componentIdMap.get(id)!.initOutputPin(comp.outputs.length);
-        this.componentIdMap.get(id)!.inputInverted.splice(0, this.componentIdMap.get(id)!.inputInverted.length,
-          ...comp.inputInverted.map((v) => v))
+        oldInputs.push(comp.getOutputs()[0]);
+        this.inputNames.push(comp.name.toString());
+      } else {
+        oldInputs.push(0); 
       }
-    });
+    }
+    // 存outputName
+    for(const outputPinId of projectData.outputPins) {
+      const comp = circuitStore.getComponent(outputPinId);
+      if (comp) {
+        this.outputNames.push(comp.name.toString());
+      } else {
+        this.outputNames.push(""); // 如果没有找到组件，输出名称为空
+      }
+    }
+    // 遍历引脚，计算真值表
+    const inputCount = projectData.inputPins.length;
+    const outputCount = projectData.outputPins.length;
+    const totalCombinations = 1 << inputCount; // 2^inputCount
+    for (let i = 0; i < totalCombinations; i++) {
+      // 暂停模拟器
+      circuitStore.simulator.pauseSimulator();
+      // 设置输入
+      for (let j = 0; j < inputCount; j++) {
+        const value = (i >> j) & 1;
+        circuitStore.getComponent(projectData.inputPins[j]).changeInput(0, value);
+      }
+      // 恢复模拟器
+      circuitStore.simulator.resumeSimulator();
+      const outputs = [];
+      // 获取输出
+      for (let j = 0; j < outputCount; j++) {
+        const outputPinId = projectData.outputPins[j];
+        const comp = circuitStore.getComponent(outputPinId);
+        if (comp) {
+          outputs.push(comp.getOutputs()[0]);
+        } else {
+          outputs.push(0); // 如果没有找到组件，输出为0
+        }
+      }
+      this.truthTable.push([...outputs]);
+    }
+
+    // 恢复输入
+    for (let j = 0; j < inputCount; j++) {
+      circuitStore.getComponent(projectData.inputPins[j]).changeInput(0, oldInputs[j]);
+    }
+    // 换回项目
+    projectStore.loadProject(oldProjectId);
+    circuitStore.changeProject(oldProjectId);
+    
 
   }
 
@@ -82,31 +111,25 @@ export class SubCircuitComponent extends BaseComponent {
         value = ~value & mask;
       }
     }
-    this.simulator.enqueue(this.inputPins[idx], 0, v);
-    this.simulator.processQueue();
-    this.updateInputs();
-    this.updateOutputs();
+    this.inputs.splice(idx, 1, value); 
+    // 计算真值表的索引
+    let index = 0;
+    for (let i = 0; i < this.inputs.length; i++) {
+      if (this.inputs[i] >= 0) {
+        index |= (this.inputs[i] & 1) << i; 
+      }else if(this.inputs[i] === -1) {
+        index |= 0 << i;
+      }else if(this.inputs[i] === -2) {
+        this.outputs.splice(0, this.outputs.length, ...Array(this.outputs.length).fill(-2));
+        return this.outputs; 
+      }
+    }
+    // 更新输出
+    this.outputs.splice(0, this.outputs.length, ...this.truthTable[index]);
     return this.outputs;
   }
 
-  updateInputs(){
-    this.inputPins.forEach((id, idx) => {
-      const comp = this.componentIdMap.get(id);
-      if (comp) {
-        this.inputs[idx] = comp.getOutputs()[0];
-      } 
-    });
-  }
-  updateOutputs() {
-    this.outputPins.forEach((id, idx) => {
-      const comp = this.componentIdMap.get(id);
-      if (comp) this.outputs[idx] = comp.getOutputs()[0];
-    });
-  }
-
   compute(): number[] {
-    this.simulator.processQueue();
-    this.updateOutputs();
     return this.outputs;
   }
 

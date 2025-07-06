@@ -23,8 +23,9 @@ export class EventDrivenSimulator {
   public connectionManager: ConnectionManager;
   private connManagerMap: Map<number, ConnectionManager> = new Map(); // 用于存储每个项目的连接管理器
   private circuitStore = useCircuitStore();
+  private workMap = new Map<string, WorkItem>();
   private workQueue: WorkItem[] = [];
-  private inQueue: Set<string> = new Set();
+  // private inQueue: Set<string> = new Set();
   private enableSimulator: Boolean = true; // 是否启用模拟器
   private pause: Boolean = false; // 是否暂停模拟器
 
@@ -45,7 +46,7 @@ export class EventDrivenSimulator {
     return EventDrivenSimulator.instance;
   }
 
-  // 启用模拟器
+  // 启用模拟器 todo 不要这么做
   enable() {
     this.enableSimulator = true;
   }
@@ -53,7 +54,7 @@ export class EventDrivenSimulator {
   disable() {
     this.enableSimulator = false;
     this.workQueue = [];
-    this.inQueue.clear();
+    this.workMap.clear();
   }
   // 暂停模拟器
   pauseSimulator() {
@@ -423,17 +424,13 @@ export class EventDrivenSimulator {
   //     value:  引脚将变为何值
   enqueue(id: number, idx: number, value: number): void {
     const key = `${id}_${idx}`;
-    // if (this.inQueue.has(key)) return;
-    if (this.inQueue.has(key)) {
-      // 更新队列中的任务而不是直接返回 todo 这种方法待测试
-      idx = this.workQueue.findIndex(task => task.id === id && task.idx === idx);
-      if (idx !== -1) {
-        this.workQueue[idx].value = value; // 更新任务的值
-      }
-      return;
+    const existing = this.workMap.get(key);
+    if (existing) {
+      existing.value = value;
+    } else {
+      const item = { id, idx, value };
+      this.workMap.set(key, item);
     }
-    this.workQueue.push({ id, idx, value });
-    this.inQueue.add(key);
   }
 
   processQueue(): void {
@@ -454,61 +451,61 @@ export class EventDrivenSimulator {
     // };
 
     if(!this.enableSimulator || this.pause) return; // 如果模拟器未启用或暂停，则不处理队列
-    while (this.workQueue.length > 0) {
+    while (this.workMap.size > 0) {
       // 组件的id为id，它更改其索引为idx的引脚的输入为value
-      const { id, idx, value } = this.workQueue.shift()!;
-      this.inQueue.delete(`${id}_${idx}`);
+      const tasks = Array.from(this.workMap.values());
+      this.workMap.clear();  // 本轮已全部取出
+      for (const { id, idx, value } of tasks) {
+        const component = this.circuitStore.getComponent(id);
+        if (!component) continue;
 
-      const component = this.circuitStore.getComponent(id);
-      if (!component) continue;
+        let oldOutputs: number[]=[];
+        let newOutputs: number[];
 
-      let oldOutputs: number[]=[];
-      let newOutputs: number[];
+        if(this.circuitStore.getComponent(id).type !== 'INPUT' && this.circuitStore.getComponent(id).type !== 'CONSTANT') {
+          // 获取当前组件的新旧输出
+          oldOutputs = [...component.getOutputs()];
+          newOutputs = component.changeInput(idx, value); 
+        }else{
+          newOutputs = component.getOutputs();
+        }
 
-      if(this.circuitStore.getComponent(id).type !== 'INPUT' && this.circuitStore.getComponent(id).type !== 'CONSTANT') {
-        // 获取当前组件的新旧输出
-        oldOutputs = [...component.getOutputs()];
-        newOutputs = component.changeInput(idx, value); 
-      }else{
-        newOutputs = component.getOutputs();
-      }
-
-      if(!this.isEqualOutputs(oldOutputs, newOutputs)){
-        const pinMap = this.connectionManager.getOutputPinMap(id);
-        if (pinMap) {
-          for (const pinIdx of pinMap.keys()) {
-            for( const conn of pinMap.get(pinIdx) || []) {
-              //if (conn.legal) {
-                const targetComponent = this.circuitStore.getComponent(conn.id);
-                if (!targetComponent) continue;
-                if(conn.id === id && conn.idx === idx) continue; // 防止自己通知自己
-                this.enqueue(conn.id, conn.idx, conn.legal?newOutputs[pinIdx]:-2);
-              }
-            //}
+        if(!this.isEqualOutputs(oldOutputs, newOutputs)){
+          const pinMap = this.connectionManager.getOutputPinMap(id);
+          if (pinMap) {
+            for (const pinIdx of pinMap.keys()) {
+              for( const conn of pinMap.get(pinIdx) || []) {
+                //if (conn.legal) {
+                  const targetComponent = this.circuitStore.getComponent(conn.id);
+                  if (!targetComponent) continue;
+                  if(conn.id === id && conn.idx === idx) continue; // 防止自己通知自己
+                  this.enqueue(conn.id, conn.idx, conn.legal?newOutputs[pinIdx]:-2);
+                }
+              //}
+            }
           }
         }
-      }
 
-      // 处理tunnel同步（只有原输入隧道需要将自己的状态广播）
-      if (component?.type === 'TUNNEL') {
-        const name = component.name;
-        const tunnelIds = this.tunnelNameMap.get(name);
-        const inputTunnels = this.InputTunnelMap.get(name);
-        if (tunnelIds && (inputTunnels!.includes(id) || !tunnelIds.includes(id))) {
-          for (const tunnelId of tunnelIds) {
-            if (tunnelId !== id) {
-              if (inputTunnels && inputTunnels.length > 1) {
-                this.enqueue(tunnelId, 0, -2); // 强制传播给其他 非输入tunnel
-              }else if(inputTunnels && inputTunnels.length === 1){
-                this.enqueue(tunnelId, 0, this.circuitStore.getComponent(inputTunnels[0]).outputs[0]);
-              }else{
-                this.enqueue(tunnelId, 0, -1); 
+        // 处理tunnel同步（只有原输入隧道需要将自己的状态广播）
+        if (component?.type === 'TUNNEL') {
+          const name = component.name;
+          const tunnelIds = this.tunnelNameMap.get(name);
+          const inputTunnels = this.InputTunnelMap.get(name);
+          if (tunnelIds && (inputTunnels!.includes(id) || !tunnelIds.includes(id))) {
+            for (const tunnelId of tunnelIds) {
+              if (tunnelId !== id) {
+                if (inputTunnels && inputTunnels.length > 1) {
+                  this.enqueue(tunnelId, 0, -2); // 强制传播给其他 非输入tunnel
+                }else if(inputTunnels && inputTunnels.length === 1){
+                  this.enqueue(tunnelId, 0, this.circuitStore.getComponent(inputTunnels[0]).outputs[0]);
+                }else{
+                  this.enqueue(tunnelId, 0, -1); 
+                }
               }
             }
           }
         }
       }
-      
     }
   }
 
