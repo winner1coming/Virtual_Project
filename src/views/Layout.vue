@@ -142,8 +142,11 @@
         </n-button-group>
       </div>
     </div>
-    <TeachingGuide v-if="props.mode === 'tutorial'" />
-    <div class="main-content">
+  <template v-if="props.mode === 'tutorial'">
+    <TeachingSelector v-if="!experiment" />
+    <TeachingGuide v-else/>
+  </template>
+    <div v-if="props.mode !== 'tutorial' || experiment" class="main-content">
       <!-- 左侧工具栏按钮区 -->
       <div class="toolbox">
         <div class="drawer-buttons">
@@ -258,7 +261,8 @@ import CanvasEditor from '@/components/CanvasEditor.vue'
 import PDFViewer from './Freedom/PDFViewer.vue'
 import { computed, ref, defineAsyncComponent, provide, nextTick} from 'vue'
 import TeachingGuide from './Teaching/TeachingGuide.vue'
-import { useRouter } from 'vue-router'
+import TeachingSelector from './Teaching/TeachingSelector.vue'
+import { useRouter,useRoute } from 'vue-router'
 import { 
   NBreadcrumb, 
   NBreadcrumbItem, 
@@ -293,6 +297,7 @@ const props = defineProps(['mode'])
 // 添加新状态
 const showToolbar = ref(false)
 const router = useRouter()
+const route = useRoute()
 // 异步加载抽屉内容组件
 const MaterialPanel = defineAsyncComponent(() => import('./Freedom/MaterialPanel.vue'))
 const ComponentPanel = defineAsyncComponent(() => import('./Freedom/ComponentPanel.vue'))
@@ -302,6 +307,7 @@ const drawerSize = ref(0.1);
 const CanvasSize = ref(1);
 const showRightPDF = ref(false)
 const currentPdfFile = ref(null)
+const experiment = computed(() => route.query?.experiment)
 provide('pdfState', {showRightPDF,currentPdfFile})
 
 const modeLabels = {
