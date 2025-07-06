@@ -36,7 +36,7 @@
         162.25,
         359.76000213623047
       ],
-      "name": "c",
+      "name": "cin",
       "bitWidth": 1,
       "inputCount": 0,
       "outputCount": 1,
@@ -49,7 +49,7 @@
         633.3874969482422,
         188.5999984741211
       ],
-      "name": "",
+      "name": "S",
       "bitWidth": 1,
       "inputCount": 1,
       "outputCount": 0,
@@ -64,7 +64,7 @@
         789.3874969482422,
         284.5999984741211
       ],
-      "name": "",
+      "name": "cout",
       "bitWidth": 1,
       "inputCount": 1,
       "outputCount": 0,
