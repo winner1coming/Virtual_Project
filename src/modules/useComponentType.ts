@@ -19,6 +19,7 @@ import {Splitter} from '@/logic/components/Splitter'
 import { NxorGate } from '@/logic/components/Nxor';
 import { SubSimulator } from '@/logic/SubSimulator';
 import { EventDrivenSimulator } from '@/logic/Simulator';
+import { HexDisplay } from '@/logic/components/HexDisplay';
 
 
 export function createComponentByType(id: number, type: String, position:[number, number] = [0,0], name:String="", projectId: number=0, simulator:null|SubSimulator|EventDrivenSimulator=null): BaseComponent {
@@ -51,6 +52,8 @@ export function createComponentByType(id: number, type: String, position:[number
       return new Ground(id, type, position);
     case 'SEGMENT_DISPLAY':
       return new SegmentDisplay(id, type, position);
+    case 'HEX_DISPLAY':
+      return new HexDisplay(id, type, position); 
     case 'SUB_CIRCUIT':
       return new SubCircuitComponent(id, type, position, name, projectId);
     case 'SPLITTER':

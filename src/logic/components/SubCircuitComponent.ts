@@ -9,23 +9,24 @@ import { calcInputYs } from "@/logic/utils/useGateLayout";
 import { Clock } from './Clock';
 
 export class SubCircuitComponent extends BaseComponent {
-  private inputPins: number[];   // 输入引脚的id
-  private outputPins: number[];
-  private componentIdMap: Map<number, BaseComponent> = new Map(); // 用于映射元件的id
+  public inputPins: number[]=[];   // 输入引脚的id
+  public outputPins: number[]=[];
+  public componentIdMap: Map<number, BaseComponent> = new Map(); // 用于映射元件的id
   public inputNames: string[] = []; // 输入引脚的名称
   public outputNames: string[] = []; // 输出引脚的名称
-  public copyProjectId: number;
+  public copyProjectId: number = 0;
 
   constructor(
     id: number,
     type: String,
     position:[number, number] = [0, 0],
     name: String,
-    projectId: number,
+    projectId: number = -1,
   ) {
     super(id, type, position);
     this.name = name;
     this.offset = [-280, -280];
+    if(projectId === -1) return;  // 延后创建
     this.copyProjectId = projectId;
 
     const store = useCircuitStore();

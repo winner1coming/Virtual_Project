@@ -3,6 +3,8 @@ import { useProjectStore } from "@/store/ProjectStore";
 import { useCircuitStore } from "@/store/CircuitStore";
 import { createComponentByType } from "./useComponentType";
 import { nextTick } from "vue";
+import { SubCircuitComponent } from "@/logic/components/SubCircuitComponent";
+import { SubSimulator } from "@/logic/SubSimulator";
 const circuitStore = useCircuitStore();
 const projectStore = useProjectStore();
 
@@ -11,6 +13,46 @@ export function exportProject(projectDate: ProjectData): void {
   const components: any[] = [];
   projectDate.componentsId.forEach(id => {
     const comp = circuitStore.getComponent(id);
+    if(comp.type === "SUB_CIRCUIT") {
+      const sub = comp as SubCircuitComponent;
+      // 导出连接
+      const connections = [];
+      for(const id of sub.componentIdMap.keys()) {
+        const pinMap = sub.simulator.connectionManager.getOutputPinMap(id);
+        if (!pinMap) continue; 
+        for (const pinIdx of pinMap.keys()) {
+          for (const conn of pinMap.get(pinIdx) || []) {
+            connections.push({
+              fromId:id,
+              fromPin: pinIdx,
+              toId: conn.id,
+              toPin: conn.idx, 
+            });
+          }
+        }
+      }
+      components.push({
+        id: sub.id,
+        type: sub.type,
+        position: sub.position,
+        name: sub.name,
+        bitWidth: sub.bitWidth,
+        inputCount: sub.inputCount,
+        outputCount: sub.outputs.length,
+        inputInverted: sub.inputInverted ? [...sub.inputInverted] : [],
+
+        inputPins: sub.inputPins ? [...sub.inputPins] : [],
+        outputPins: sub.outputPins ? [...sub.outputPins] : [],
+        inputNames: sub.inputNames ? [...sub.inputNames] : [],
+        outputNames: sub.outputNames ? [...sub.outputNames] : [],
+        copyProjectId: sub.copyProjectId, // 复制的项目id
+        componentsIdMap: sub.componentIdMap.entries(),
+
+        tunnelNameMap: sub.simulator.tunnelNameMap,
+        inputTunnelMap: sub.simulator.InputTunnelMap,
+        innerConnections: connections,
+      });
+    }
     components.push({
       id: comp.id,
       type: comp.type,
@@ -65,7 +107,6 @@ export function exportProject(projectDate: ProjectData): void {
   URL.revokeObjectURL(url);
 }
 
-
 export async function loadProject(importData: any, canvasRef: any){
   const simulator = circuitStore.simulator;
   if (!importData || !importData.name || !Array.isArray(importData.components)) {
@@ -91,12 +132,25 @@ export async function loadProject(importData: any, canvasRef: any){
       if (comp.type === "INPUT") {
         addedComponent.changeInput(0, 0);
       }
-      // if(comp.type === "SUB_CIRCUIT") {
-      //   addedComponent.inputPins = comp.inputPins || [];
-      //   addedComponent.outputPins = comp.outputPins || [];
-      //   addedComponent.inputNames = comp.inputNames || [];
-      //   addedComponent.outputNames = comp.outputNames || [];
-      // }
+      if(comp.type === "SUB_CIRCUIT") {
+        const subComp = addedComponent as SubCircuitComponent;
+        subComp.inputPins = comp.inputPins || [];
+        subComp.outputPins = comp.outputPins || [];
+        subComp.inputNames = comp.inputNames || [];
+        subComp.outputNames = comp.outputNames || [];
+        subComp.copyProjectId = comp.copyProjectId || 0; 
+        subComp.componentIdMap = comp.componentsIdMap ? new Map(comp.componentsIdMap) : new Map();
+        subComp.initInputPin(subComp.inputPins.length);
+        subComp.initOutputPin(subComp.outputPins.length);
+
+        subComp.simulator = new SubSimulator(-1, subComp.componentIdMap);
+        subComp.simulator.tunnelNameMap = new Map(comp.tunnelNameMap);
+        subComp.simulator.InputTunnelMap = new Map(comp.inputTunnelMap);
+        // 导入连接
+        for (const conn of comp.innerConnections || []) {
+          subComp.simulator.connectionManager.addConnection(conn.fromId, conn.fromPin, conn.toId, conn.toPin, true);
+        }
+      }
       componentsIdMap.set(comp.id, addedComponent.id);
     
     }
