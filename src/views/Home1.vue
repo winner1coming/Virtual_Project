@@ -19,14 +19,14 @@
       <InputPin :id="inputPinId"/>
     </svg> -->
 
-    <svg
+    <!-- <svg
       viewBox="-300 -300 600 600"
       width="300"
       height="300"
       style="overflow: visible;"
     >
       <CustomizeComoponent :id="CustomizeComponentId"/>
-    </svg>
+    </svg> -->
 
     <!-- <svg
       viewBox="0 0 600 600"
@@ -83,6 +83,7 @@
     </svg> -->
 
     <!-- <Splitter /> -->
+    <myButton />
     <button @click="toggleInputPin"> 改InputPin的位宽 </button>
   </div>
 </template>
@@ -100,6 +101,7 @@ import Clock from '@/components/Wiring/Clock.vue'
 import Splitter from '@/components/Wiring/Splitter.vue'
 import CustomizeComoponent from '@/components/CustomizeComponent.vue'
 import andGate from '@/components/preview/andGate.vue'
+import myButton from '@/components/Input_OutPut/Button.vue'
 
 import { useCircuitStore } from '@/store/CircuitStore.js'
 const circuitStore = useCircuitStore();
