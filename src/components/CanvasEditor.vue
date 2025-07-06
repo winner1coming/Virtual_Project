@@ -228,6 +228,9 @@ const tempWire = ref(null) // 临时连线
 const wireEndPort = ref(null) // 记录终点端口信息
 let wireStartId = null // 记录起始点port的元件ID
 const { saveHistory, saveSnapshot } = useHistory(components) // 使用自定义的历史记录管理
+/** @type {Ref<Array<{x: number, y: number}>>} */
+const intermediatePoints = ref([]);// 存储电线中继点
+
 
 // 当前拖动起点信息
 let startPin = null
@@ -414,10 +417,30 @@ IMAGE_MAP.TUNNEL.src = '/assets/Tunnel.svg'
 // IMAGE_MAP.SUB_CIRCUIT.src = '/assets/INPUT.png'
 
 function updateComponentDirection() {
+
+  // if (!selectedComponent.value) return;
+  // const ID = selectedComponent.value.ID;
+  // const newDirection = selectedComponent.value.direction;
+
+  // // 获取组件类型对应的逻辑类，实时更新方向
+  // const logic = useCircuitStore().getComponent(ID);
+  // if (logic) {
+  //   logic.setDirection(newDirection);
+  // }
+
+  // 验证是否将旋转信息传给逻辑
+  // console.log("更新元件方向，ID：", ID, "方向：", newDirection)
   // 更新完方向后重新绘制画布
-  drawCanvas();
+  // drawCanvas();
   saveHistory();
-  drawConnections(ctx);// 绘制所有连线
+  // 临时连线
+  if (tempWire.value) {
+    ctx.strokeStyle = tempWire.value.color;
+    ctx.lineWidth = tempWire.value.strokeWidth;
+    const path = new Path2D(tempWire.value.path);
+    ctx.stroke(path);
+  }
+  // drawConnections(ctx);// 绘制所有连线
 }
 
 // 这里只是点击了组件的按钮，开始渲染，但是还没下放
@@ -432,7 +455,7 @@ function startPlacingVueComponent(type) {
       size:{...COMPONENT_SIZES[type]},// 组件尺寸
       inputs: type === 'NOT' ? [{ id: 1, value: false }] : [{ id: 1, value: false }, { id: 2, value: false }],
       output: false,
-      //direction: 'east' // 默认方向
+      direction: 'east' // 默认方向
     }
   }
   
@@ -753,21 +776,14 @@ function handleMouseMove(event) {
 
     // 更新所有相关连线的路径
     updateConnectionPaths(ID);
-  } else if (startPin && tempWire.value) {
-    // 更新临时连线路径
-    // tempWire.value.path = `M${startPin.x},${startPin.y} L${x},${y}`;
-    // 更新临时连线路径（鼠标拖动中）
-    tempWire.value.to.x = x;
-    tempWire.value.to.y = y;
-    
-    const start = startPin;
-    const end = { x, y };
-    const midX = (start.x + end.x) / 2;
+  } else if (tempWire.value) {
+    const rect = canvasContainer.value.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    tempWire.value.to = { x, y };
 
-    tempWire.value.path = `M ${start.x} ${start.y} 
-                          L ${midX} ${start.y} 
-                          L ${midX} ${end.y} 
-                          L ${end.x} ${end.y}`;
+    const from = tempWire.value.from;
+    tempWire.value.path = `M ${from.x} ${from.y} L ${(from.x + x) / 2} ${from.y} L ${(from.x + x) / 2} ${y} L ${x} ${y}`;
   }
 }
 
@@ -816,7 +832,7 @@ function deleteComponent() {
     const componentId = component.ID; // ✅ 取真实ID
 
     // 删除逻辑连接
-    useCircuitStore().removeComponent(componentId); // 你需要在 store 里定义这个方法
+    useCircuitStore().removeComponent(componentId);  
 
     // 删除与该元件相关的连线
     for (let i = connections.length - 1; i >= 0; i--) {
@@ -877,39 +893,33 @@ function handleWireConnection(x, y) {
   // console.log("电线起点：",wireStart.value)
   // 电线画线逻辑：分起始点和终点两种情况
   if (!wireStart.value) {
-    // console.log("没有起点")
-    // 起点为空，记录起点，先不画线
-    // 找到距离点击点最近的port信息
-    let closestPort = findNearestPort(x, y, 5);
-    // console.log("找到了最近的port！")
-    // console.log("调用findNearestPort，返回结果：", closestPort)
+  const closestPort = findNearestPort(x, y, 10);
+  if (closestPort) {
+    wireStart.value = {
+      x: closestPort.x,
+      y: closestPort.y,
+      componentId: closestPort.componentId,
+      portId: closestPort.id,
+      portType: closestPort.type,
+    };
+    wireStartId = closestPort.componentId;
 
-    if (closestPort && closestPort.componentId != null && closestPort.id != null) {
-      // 这里是第一次点击：查找最近的端口作为电线终点
-      // 记录端口的位置和编号
-      wireStart.value = {
-        x: closestPort.x,
-        y: closestPort.y,
-        componentId: closestPort.componentId,// 端口的元件ID
-        portId: closestPort.id,             // 端口的ID
-        portType:closestPort.type,          // 端口的类型 
-      };
-      startPin = wireStart.value; // 记录起点信息
-      // 创建临时连线
-      tempWire.value = {
-        from: wireStart.value,
-        to: { x: 0, y: 0 }, // 临时终点坐标
-        path: '', 
-        color: '#999',  // 灰色
-        strokeWidth: 3,// 线宽
-        isTemp: true, // 标记为临时连线
-      };
+    // 记录第一个点
+    intermediatePoints.value = [wireStart.value];
 
-      wireStartId = closestPort.componentId;// 记录起点port对应的元件ID
-      // console.log("距离最近的元件ID:", wireStartId)
-      return; // 点击端口后不画线
-    }
+    // 初始化 tempWire 为预览线
+    tempWire.value = {
+      from: wireStart.value,
+      to: { x: x, y: y },
+      path: '',
+      color: '#999',
+      strokeWidth: 3,
+      isTemp: true,
+    };
+    return;
   }
+}
+
 
   // console.log("电线起点：", wireStart.value, "现在开始找终点！")
 
@@ -918,38 +928,61 @@ function handleWireConnection(x, y) {
     return; // 没有起点，直接返回
   }
 
-  // 找到距离点击点最近的port信息
   let endPort = findNearestPort(x, y, 50);
+
   if (!endPort) {
-    console.log("未找到终点端口");
-    // 不需要重置
-    // wireStart.value = null; // 重置起点
-    return;
+    // 没找到终点端口 → 添加中继点
+    const lastPoint = intermediatePoints.value[intermediatePoints.value.length - 1];
+    const newPoint = { x, y };
+
+    const newWire = createWirePath(lastPoint, newPoint);
+    newWire.color = "#000"; // 中继线为黑色
+    newWire.strokeWidth = 8;
+    connections.push(newWire);
+
+    intermediatePoints.value.push(newPoint); // 添加中继点
+
+    // 更新临时线，从新中继点连到鼠标
+    tempWire.value = {
+      from: newPoint,
+      to: { x, y },
+      path: '',
+      color: '#999',
+      strokeWidth: 3,
+      isTemp: true,
+    };
+
+    return; // 等待用户继续点击
   }
+
 
   // 创建新连线
   // console.log("设置终点：", endPort)
   if (endPort) {
-    // 这里是第二次点击：查找最近的端口作为电线终点
-    wireEndPort.value = {
+    const lastPoint = intermediatePoints.value[intermediatePoints.value.length - 1];
+    const finalWire = createWirePath(lastPoint, {
       x: endPort.x,
-      y: endPort.y,
-      componentId: endPort.componentId,// 端口的元件ID
-      portId: endPort.id,             // 端口的ID
-      portType:endPort.type,          // 端口的类型 
-    };
-    // 根据起始点画线
-    const newWire = createWirePath(wireStart.value, wireEndPort.value);
-    connections.push(newWire);
-    // 填写逻辑类，调用函数连接两个元件
-    // console.log("电线起点元件ID:", wireStartId, "起点引脚ID:", wireStart.value.portId)
-    // console.log("电线终点元件ID:", wireEndPort.value.componentId, "终点引脚ID:", wireEndPort.value.portId)
-    useCircuitStore().connect(wireStartId, wireStart.value.portId, wireEndPort.value.componentId, wireEndPort.value.portId);
-    // console.log("创建新连线成功！")
-    wireStart.value = null;// 重置起点
+      y: endPort.y
+    });
+    finalWire.color = "#000";
+    finalWire.strokeWidth = 8;
+    connections.push(finalWire);
+
+    // 加入逻辑连接
+    useCircuitStore().connect(
+      wireStartId,
+      wireStart.value.portId,
+      endPort.componentId,
+      endPort.id
+    );
+
+    // 清空状态
+    wireStart.value = null;
     wireStartId = null;
-    tempWire.value = null; // 清除临时连线
+    intermediatePoints.value = [];
+    tempWire.value = null;
   }
+
 }
 
 import { computeMidX } from '@/modules/useMaths'
@@ -1384,6 +1417,7 @@ onMounted(() => {
   });
   // 确保画布元素可聚焦
   canvasContainer.value.focus();
+  canvasContainer.value.addEventListener('mousemove', handleMouseMove);
 });
 
 onUnmounted(() => {

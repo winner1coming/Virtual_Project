@@ -165,6 +165,14 @@ export abstract class BaseComponent{
     return this.outputs;
   }
 
+  setDirection(direction: string){
+    this.direction = direction;
+  }
+
+  getDirection() {
+    return this.direction;
+  }
+
 
   getAllPorts(){
     let result = {
