@@ -44,7 +44,8 @@ const components = [
   {type: 'HEX_DISPLAY', name: '十六进制数码管'},
   {type: 'REGISTER', name: '寄存器'},
   {type: 'D_FLIP_FLOP', name: 'D触发器'},
-  
+  {type: 'BUTTON', name: '按钮'},
+  {type: 'LIGHT', name: '发光二极管'},
 ];
 
 
