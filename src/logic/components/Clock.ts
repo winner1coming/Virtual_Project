@@ -1,14 +1,18 @@
 import { BaseComponent } from "../BaseComponent";
 import { EventDrivenSimulator } from "../Simulator";
+import { SubCircuitComponent } from "./SubCircuitComponent";
 
 export class Clock extends BaseComponent {
     private intervalId: any = null;
+    public period: number; // 时钟周期，单位毫秒
+    private parent: SubCircuitComponent | null = null; 
+    public isStopped: boolean = false; // 是否停止时钟
 
     constructor(id: number, 
             type: String, 
             position: [number, number] = [0, 0], 
-            period: number = 1000,
-            simulator: any = null) {
+            simulator: any = null,
+            ) {
         super(id, type, position);
         if(!simulator) {
 			this.simulator = EventDrivenSimulator.getInstance(); 
@@ -16,22 +20,33 @@ export class Clock extends BaseComponent {
 			this.simulator = simulator; 
 		}
         this.initInputPin(0); // 时钟没有输入引脚
-        this.period = period;
+        this.period = 1000;
         this.updatePinPosition();
         this.start(); // 启动时钟
     }
 
+
+    setParent(parent: SubCircuitComponent) {
+        this.parent = parent;
+    }
+
     // 启动时钟
     start() {
+        this.isStopped = false;
         if (this.intervalId !== null) return;
         this.intervalId = setInterval(() => {
             this.outputs[0] = this.outputs[0] === 0 ? 1 : 0;
             this.simulator.processOutputChange(this.id, 0,this.outputs[0]);
+            if(this.parent) {
+                this.parent.updateOutputs();
+            }
+            
         }, this.period);
     }
 
     // 停止时钟
     stop() {
+        this.isStopped = true;
         if (this.intervalId !== null) {
             clearInterval(this.intervalId);
             this.intervalId = null;

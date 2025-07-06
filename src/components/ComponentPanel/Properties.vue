@@ -96,14 +96,36 @@
         </div>
       </div>
 
+      <!-- 时钟-->
       <!-- 修改时钟周期-->
       <div class="property-item" v-if="circuitStore.getComponent(circuitStore.selectedId).type === 'CLOCK'">
         <label for="period">时钟周期(s)：</label>
         <n-input
           id="period"
-          v-model="circuitStore.getComponent(circuitStore.selectedId).period"
-          placeholder="请输入时钟周期（毫秒）"
+          v-model:value="period"
+          placeholder="请输入时钟周期（秒）"
+          @blur="changePeriod(period)"
         />
+      </div>
+      <!-- 停止时钟-->
+      <div class="property-item" v-if="circuitStore.getComponent(circuitStore.selectedId).type === 'CLOCK'">
+        <label for="stopClock">停止时钟：</label>
+        <n-select
+          id="stopClock"
+          :options="[
+            { label: '是', value: 1 },
+            { label: '否', value: 0 }
+          ]"
+          :value="(circuitStore.getComponent(circuitStore.selectedId) as Clock).isStopped ? 1 : 0"
+          @update:value="(value, option) => {
+            if(value === 1) {
+              (circuitStore.getComponent(circuitStore.selectedId) as Clock).stop();
+            } else {
+              (circuitStore.getComponent(circuitStore.selectedId) as Clock).start();
+            }
+          }"
+        >
+        </n-select>
       </div>
       
       <!-- 修改数值-->
@@ -130,6 +152,7 @@ import eventBus from '@/modules/useEventBus';
 import { NSelect, NInput } from 'naive-ui';
 import type { SelectOption } from 'naive-ui'
 import { ConstantInput } from '@/logic/components/ConstantInput';
+import { Clock } from '@/logic/components/Clock';
 
 const circuitStore = useCircuitStore();
 
@@ -175,9 +198,8 @@ function updateInputCount(value: number) {
   }
   circuitStore.getComponent(circuitStore.selectedId).changeInputPinCount(value);
 }
-
+// 常量输入
 const constantValue = ref('0');
-
 watch(constantValue, (newValue, oldValue) => {
   if(newValue === oldValue) {
     return; // 如果值没有变化，则不处理
@@ -202,6 +224,28 @@ watch(constantValue, (newValue, oldValue) => {
     constantValue.value = component.outputs[0].toString();
   }
 });
+
+// 时钟
+const period = ref('1');
+function changePeriod(period: string) {
+  const component = circuitStore.getComponent(circuitStore.selectedId) as Clock;
+  if (!component || component.type !== 'CLOCK') {
+    return;
+  }
+  
+
+  const v = parseFloat(period);
+  if (!isNaN(v) && v > 0) {
+    if(v===component.period) return;
+    component.stop(); 
+    component.period = v;
+    component.start();
+  } else {
+    // 回退到当前实际输出值
+    period = (component.period).toString();
+  }
+}
+
 </script>
 
 <style scoped>

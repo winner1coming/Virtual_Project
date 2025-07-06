@@ -6,6 +6,7 @@ import { SubSimulator } from '../SubSimulator';
 import { useProjectStore } from '@/store/ProjectStore';
 import { createComponentByType } from '@/modules/useComponentType';
 import { calcInputYs } from "@/logic/utils/useGateLayout";
+import { Clock } from './Clock';
 
 export class SubCircuitComponent extends BaseComponent {
   private inputPins: number[];   // 输入引脚的id
@@ -35,17 +36,23 @@ export class SubCircuitComponent extends BaseComponent {
     this.initInputPin(this.inputPins.length);
     this.initOutputPin(this.outputPins.length);
 
+    this.simulator = new SubSimulator(projectId, this.componentIdMap);
+
     // 根据id创建组件
     projectStore.getProjectById(projectId).componentsId.forEach(id => {
       const comp = store.getComponent(id);
       if (comp) {
-        this.componentIdMap.set(id, createComponentByType(id, comp.type, comp.position, comp.name));
+        this.componentIdMap.set(id, createComponentByType(id, comp.type, comp.position, comp.name, 0, this.simulator));
         if(comp.type === "INPUT") {
           this.componentIdMap.get(id)!.changeInput(0, -1);
           this.inputNames.push(comp.name.toString());
         }else if(comp.type === "OUTPUT") {
           this.componentIdMap.get(id)!.changeInput(0, -1);
           this.outputNames.push(comp.name.toString());
+        }else if(comp.type === "CLOCK") {
+          // 时钟组件需要设置父组件
+          (this.componentIdMap.get(id)! as Clock).setParent(this);
+          (this.componentIdMap.get(id)! as Clock).period = (comp as Clock).period;
         }
         // 复制关键属性
         this.componentIdMap.get(id)!.setPosition(comp.position);
@@ -57,7 +64,6 @@ export class SubCircuitComponent extends BaseComponent {
       }
     });
 
-    this.simulator = new SubSimulator(projectId, this.componentIdMap);
   }
 
   changeInput(idx: number, v: number): number[] {
