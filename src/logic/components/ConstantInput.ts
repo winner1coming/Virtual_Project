@@ -32,7 +32,8 @@ export class ConstantInput extends BaseComponent {
     // 实现基类抽象方法
     compute(): number[] {
         // 对于常量输入，直接返回当前值
-        return [this.currentValue];
+        this.currentValue = this.outputs[0];
+        return this.outputs;
     }
 
     // 实现基类抽象方法（常量输入没有输入引脚，所以空实现）
