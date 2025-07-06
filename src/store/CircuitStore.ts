@@ -152,6 +152,9 @@ export const useCircuitStore = defineStore('circuit', {
     getCurrentProjectId(): number {
       return this.projectStore.selectedProjectId;
     },
+    changeProject(projectId: number) {
+      this.simulator.changeProject(projectId);
+    }
     // // 创建新项目
     // createProject(name: string) {
     //   return this.projectManager.createProject(name);

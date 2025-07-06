@@ -25,7 +25,7 @@ import { DFlipFlop } from '@/logic/components/DFlipFlop';
 import { Button } from '@/logic/components/Button';
 
 
-export function createComponentByType(id: number, type: String, position:[number, number] = [0,0], name:String="", projectId: number=0, simulator:null|SubSimulator|EventDrivenSimulator=null): BaseComponent {
+export function createComponentByType(id: number, type: String, position:[number, number] = [0,0], name:String="", projectId: number=-1, simulator:null|SubSimulator|EventDrivenSimulator=null): BaseComponent {
   switch (type) {
     case 'AND':
       return new AndGate(id, type, position, simulator);

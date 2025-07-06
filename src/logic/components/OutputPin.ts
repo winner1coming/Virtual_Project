@@ -54,7 +54,7 @@ export class OutputPin extends BaseComponent {
         return this.inputs; 
     }
     getOutputs(): number[] {
-        // 直接返回输入引脚的值
+        // 直接返回引脚的值
         return this.inputs;
     }
 

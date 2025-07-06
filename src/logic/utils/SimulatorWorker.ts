@@ -1,32 +1,45 @@
-// 算法改过了，如果还要用这个，要更新里面的算法
+// import { EventDrivenSimulator } from '../Simulator';
 
-self.onmessage = (event) => {
-  const { workQueue, connectionManager, circuitStore } = event.data;
+// const simulator = EventDrivenSimulator.getInstance();
 
-  while (workQueue.length > 0) {
-    const { id, idx, value } = workQueue.shift();
-    const component = circuitStore.getComponent(id);
-    if (!component) continue;
+// self.onmessage = (event) => {
+//   const { type, payload } = event.data;
 
-    const oldOutputs = [...component.getOutputs()];
-    const newOutputs = component.changeInput(idx, value);
+//   switch (type) {
+//     case 'init': {
+//       simulator.changeProject(payload.projectId);
+//       break;
+//     }
 
-    if (oldOutputs.toString() !== newOutputs.toString()) {
-      const pinMap = connectionManager.getOutputPinMap(id);
-      if (!pinMap) continue;
+//     case 'enqueue': {
+//       simulator.workerEnqueue(payload.id, payload.idx, payload.value);
+//       break;
+//     }
 
-      for (const pinIdx of pinMap.keys()) {
-        for (const conn of pinMap.get(pinIdx) || []) {
-          if (conn.legal) {
-            const targetComponent = circuitStore.getComponent(conn.id);
-            if (!targetComponent) continue;
+//     case 'process': {
+//       simulator.workerProcess();
+//       break;
+//     }
 
-            workQueue.push({ id: conn.id, idx: conn.idx, value: newOutputs[pinIdx] });
-          }
-        }
-      }
-    }
-  }
+//     case 'connect': {
+//       simulator.connect(payload.id1, payload.pinIdx1, payload.id2, payload.pinIdx2);
+//       break;
+//     }
 
-  // self.postMessage({ success: true });
-};
+//     case 'disconnect': {
+//       simulator.disconnect(payload.id1, payload.pinIdx1, payload.id2, payload.pinIdx2);
+//       break;
+//     }
+
+//     default:
+//       console.warn('Unknown message type:', type);
+//   }
+
+//   // 计算完成后，返回最新状态
+//   self.postMessage({
+//     type: 'done',
+//     payload: {
+      
+//     },
+//   });
+// };
