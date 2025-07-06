@@ -41,11 +41,11 @@
       </path>
 
       <!--接口1-->
-      <InputPort :cx="234" :cy="426" :active="segmentDisplay.inputs[0]" :bitWidth="segmentDisplay.bitWidth" />
-      <path stroke="black" stroke-width="12" d="M208 396L234 426"></path>
+      <InputPort :cx="208" :cy="426" :active="segmentDisplay.inputs[0]" :bitWidth="segmentDisplay.bitWidth" />
+      <path stroke="black" stroke-width="12" d="M208 396L208 426"></path>
       <!--接口7-->
-      <InputPort :cx="340" :cy="426" :active="segmentDisplay.inputs[1]" :bitWidth="1" />
-      <path stroke="black" stroke-width="12" d="M313 396L340 426"></path>
+      <InputPort :cx="313" :cy="426" :active="segmentDisplay.inputs[1]" :bitWidth="1" />
+      <path stroke="black" stroke-width="12" d="M313 396L313 426"></path>
 
       <!-- <InputPort :cx="92" :cy="inputYs[index]" :active="input" :bitWidth="segmentDisplay.width" @toggle="() => handleToggleInput(index)"/> -->
     </g>

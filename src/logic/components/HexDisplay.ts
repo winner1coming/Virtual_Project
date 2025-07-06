@@ -11,6 +11,7 @@ export class HexDisplay extends BaseComponent{
     }
     this.outputs.splice(0, this.outputs.length); 
     this.bitWidth = 4;
+    this.updatePinPosition();
     this.initInputPin(2); 
   }
 
@@ -26,6 +27,6 @@ export class HexDisplay extends BaseComponent{
     return this.outputs;
   }
   updatePinPosition(): void{
-
+    this.inputPinPosition.splice(0, this.inputPinPosition.length, [208, 426], [313,426]);
   }
 }

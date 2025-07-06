@@ -14,7 +14,7 @@ export class Register extends BaseComponent {
     }
     this.initInputPin(4);    // Data, Clock, Enable, Reset
     this.initOutputPin(1);  
-
+    this.updatePinPosition();
     this.lastClockState = -1; // 初始时钟状态
     this.q = 0; 
   }
@@ -52,5 +52,10 @@ export class Register extends BaseComponent {
       return this.compute();
     }
     return this.outputs;
+  }
+
+  updatePinPosition(): void{
+    this.inputPinPosition.splice(0, this.inputPinPosition.length, [92, 235], [92,300],[203,426], [329,426]);
+    this.outputPinPosition.splice(0, this.outputPinPosition.length, [422, 235]);
   }
 }
