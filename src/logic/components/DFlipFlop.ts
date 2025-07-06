@@ -8,6 +8,7 @@ export class DFlipFlop extends BaseComponent {
 
   constructor(id: number, type: String, position: [number, number] = [0, 0], simulator: any = null) {
     super(id, type, position);
+    this.offset = [-250,-250];
     if (!simulator) {
       this.simulator = EventDrivenSimulator.getInstance();
     } else {
@@ -19,6 +20,7 @@ export class DFlipFlop extends BaseComponent {
     this.lastClockState = -1; // 初始时钟状态
     this.q = 0; 
     this.qNot = 1; 
+    this.updatePinPosition();
   }
 
   compute(): number[] {
@@ -65,5 +67,9 @@ export class DFlipFlop extends BaseComponent {
       return this.compute();
     }
     return this.outputs;
+  }
+  updatePinPosition(): void{
+    this.inputPinPosition.splice(0, this.inputPinPosition.length, [92, 235], [92,300],[203,426], [329,426]);
+    this.outputPinPosition.splice(0, this.outputPinPosition.length, [422, 235],[422,300]);
   }
 }

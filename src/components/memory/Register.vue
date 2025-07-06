@@ -4,6 +4,9 @@
         <rect x="143" y="174" width="227" height="227" stroke="rgba(0, 0, 0, 1)" stroke-width="12"      fill="#FFFFFF" >
         </rect>
 
+        <!--选中方框-->
+        <SelectedBox :x="86" :y="168" :width="346" :height="264" :visible="circuitStore.selectedId===props.id"/>
+  
         <!--左边两个输入-->
         <path    stroke="black" stroke-width="12"    d="M92 235L149 235">
         </path>

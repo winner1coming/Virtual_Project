@@ -170,7 +170,7 @@ import OutputPin from './Wiring/OutputPin.vue'
 import Power from './Wiring/Power.vue'
 import Splitter from './Wiring/Splitter.vue'
 import Tunnel from './Wiring/Tunnel.vue'
-import Register from './Register.vue'
+import Register from './memory/Register.vue'
 import CustomizeComponent from './CustomizeComponent.vue'
 
 // 逻辑类建模

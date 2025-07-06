@@ -1,14 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="600" viewBox="0 0 600 600" fill="none">
-<rect x="140" y="170" width="235" height="236" stroke="rgba(0, 0, 0, 1)" stroke-width="12"      fill="#FFFFFF" >
-</rect>
-<path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M173 329L264 329">
-</path>
-<path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M178 267.744L178 335">
-</path>
-<path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M336.992 241L336.992 308.256">
-</path>
-<path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M258 246L258 334">
-</path>
-<path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M252 245.76L343 245.76">
-</path>
+    <rect x="0" y="0" width="235" height="236" stroke="rgba(0, 0, 0, 1)" stroke-width="12" fill="#FFFFFF" />
+
+    <!-- 低电平 -->
+    <path stroke="black" stroke-width="12" d="M33 159L124 159" />
+    <path stroke="black" stroke-width="12" d="M38 97.744L38 165" />
+    <path stroke="black" stroke-width="12" d="M196.992 71L196.992 138.256" />
+    <path stroke="black" stroke-width="12" d="M118 76L118 164" />
+    <path stroke="black" stroke-width="12" d="M112 75.76L203 75.76" />
 </svg>
