@@ -146,6 +146,7 @@
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
+import { useProjectStore } from '@/store/ProjectStore'
 // 元件建模
 // 逻辑门
 import AndGate from './Gates/AndGate.vue'
@@ -170,7 +171,9 @@ import OutputPin from './Wiring/OutputPin.vue'
 import Power from './Wiring/Power.vue'
 import Splitter from './Wiring/Splitter.vue'
 import Tunnel from './Wiring/Tunnel.vue'
+// 寄存器
 import Register from './memory/Register.vue'
+import DFlipFlop from './memory/DFlipFlop.vue'
 import CustomizeComponent from './CustomizeComponent.vue'
 
 // 逻辑类建模
@@ -183,13 +186,13 @@ import { DFlipFlop as LogicDFlipFlop} from '@/logic/components/DFlipFlop.ts'
 import { Ground as LogicGround} from '@/logic/components/Ground.ts'
 import { HexDisplay as LogicHexDisplay } from '@/logic/components/HexDisplay.ts'
 import { InputPin as LogicInputPin} from '@/logic/components/InputPin.ts'
-import { Light as LogicLED } from '@/logic/components/Light.ts'
+import { Light as LogicLight } from '@/logic/components/Light.ts'
 import { NandGate as LogicNandGate } from '@/logic/components/NandGate.ts'
 import { NorGate as LogicNorGate } from '@/logic/components/NorGate.ts'
 import { NotGate as LogicNotGate } from '@/logic/components/NotGate.ts'
 import { NxorGate as LogicXnorGate } from '@/logic/components/Nxor.ts'
 import { OrGate as LogicOrGate } from '@/logic/components/OrGate.ts'
-import {  Power as LogicPower} from '@/logic/components/Power.ts'
+import { Power as LogicPower} from '@/logic/components/Power.ts'
 import { Register as LogicRegister } from '@/logic/components/Register.ts'
 import { SegmentDisplay as LogicSegmentDisplay} from '@/logic/components/SegmentDisplay.ts'
 import { Splitter as LogicSplitter} from '@/logic/components/Splitter.ts'
@@ -284,7 +287,7 @@ const componentMap = {
   NAND: NandGate,
   SUB_CIRCUIT: CustomizeComponent,
   XOR: XorGate,
-  XNOR: XnorGate,
+  NXOR: XnorGate,
   NOR: NorGate,
   CLOCK: Clock,
   CONSTANT: Constant,
@@ -297,32 +300,33 @@ const componentMap = {
   LIGHT: LED,
   BUTTON: Button,
   REGISTER: Register,
+  D_FLIP_FLOP: DFlipFlop,
 }
 
 // 逻辑类映射表
 const COMPONENT_LOGIC = {
   AND: LogicAndGate, 
-  NAND: LogicNandGate,
-  OR: LogicOrGate,
-  NOR: LogicNorGate,
-  NOT: LogicNotGate,
+  BUTTON: LogicButton,
   CLOCK: LogicClock,
   COMBINER: LogicCombiner,
-  GROUND: LogicGround,
-  POWER: LogicPower,
-  TUNNEL: LogicTunnel,
-  INPUT: LogicInputPin,
-  // OUTPUT: LogicInputPin, 
-  SUB_CIRCUIT: LogicSubCircuit,
   CONSTANT: LogicConstantInput,
+  D_FLIP_FLOP: LogicDFlipFlop,
+  GROUND: LogicGround,
+  HEX_DISPLAY: LogicHexDisplay,
+  INPUT: LogicInputPin,
+  LIGHT: LogicLight,
+  NAND: LogicNandGate,
+  NOR: LogicNorGate,
+  NOT: LogicNotGate,
+  NXOR: LogicXorGate, // XNOR 逻辑门
+  OR: LogicOrGate,
+  POWER: LogicPower,
+  REGISTER: LogicRegister,
   SEGMENT_DISPLAY: LogicSegmentDisplay,
   SPLITTER: LogicSplitter,
+  SUB_CIRCUIT: LogicSubCircuit,
+  TUNNEL: LogicTunnel,
   XOR: LogicXorGate,
-  XNOR: LogicXorGate, // XNOR 逻辑门
-  HEX_DISPLAY: LogicHexDisplay,
-  LIGHT: LogicLED,
-  BUTTON: LogicButton,
-  REGISTER: LogicRegister,
 }
 
 // 初始化各元件尺寸配置
@@ -339,88 +343,105 @@ const COMPONENT_SIZES = {
 
 // SVG映射offset
 const tempSegmentDisplay = new LogicSegmentDisplay(-1, "SEGMENT_DISPLAY");
+const tempButton = new LogicButton(-1, "BUTTON");
 const tempPower = new LogicPower(-1, "POWER");
 const tempNot = new LogicNotGate(-1, "NOT");
 const tempNor = new LogicNorGate(-1, "NOR");
 const tempOr = new LogicOrGate(-1, "OR");
+const tempRegister = new LogicRegister(-1, "REGISTER");
 const tempGround = new LogicGround(-1, "GROUND");
 const tempClock = new LogicClock(-1, "CLOCK");
+const tempNxor = new LogicXnorGate(-1, "NXOR");
 const tempXor = new LogicXorGate(-1, "XOR");
+const tempNand = new LogicNandGate(-1, "NAND");
+const tempSubCircuit = new LogicSubCircuit(-1, "SUB_CIRCUIT");
 const tempAnd = new LogicAndGate(-1, "AND");
+const tempCombiner = new LogicCombiner(-1, "COMBINER");
 const tempConstant = new LogicConstantInput(-1, "CONSTANT");
+const tempHexDisplay = new LogicHexDisplay(-1, "HEX_DISPLAY");
 const tempInput = new LogicInputPin(-1, "INPUT");
+const tempLight = new LogicLight(-1, "LIGHT");
 const tempOutput = new LogicInputPin(-1, "OUTPUT");
 const tempSplitter = new LogicSplitter(-1, "SPLITTER");
 const tempTunnel = new LogicTunnel(-1, "TUNNEL");
-const tempHexDisplay = new LogicHexDisplay(-1, "HEX_DISPLAY");
-const tempLight = new LogicLED(-1, "LIGHT");
-const tempButton = new LogicButton(-1, "BUTTON");
-const tempRegister = new LogicRegister(-1, "REGISTER");
+
 
 const SVG_OFFSET = {
   SEGMENT_DISPLAY: {x: tempSegmentDisplay.offset[0], y: tempSegmentDisplay.offset[1]},
+  BUTTON: {x: tempButton.offset[0], y: tempButton.offset[1]},
   POWER: {x: tempPower.offset[0], y: tempPower.offset[1]},
   NOT: {x: tempNot.offset[0], y: tempNot.offset[1]},
   NOR: {x: tempNor.offset[0], y: tempNor.offset[1]},
   OR: {x: tempOr.offset[0], y: tempOr.offset[1]},
+  REGISTER: {x: tempRegister.offset[0], y: tempRegister.offset[1]},
   GROUND: {x: tempGround.offset[0], y: tempGround.offset[1]},
   CLOCK: {x: tempClock.offset[0], y: tempClock.offset[1]},
+  NXOR: {x: tempNxor.offset[0], y: tempNxor.offset[1]},
   XOR: {x: tempXor.offset[0], y: tempXor.offset[1]},
+  NAND: {x: tempNand.offset[0], y: tempNand.offset[1]},
+  SUB_CIRCUIT: {x: tempSubCircuit.offset[0], y: tempSubCircuit.offset[1]},
   AND: {x: tempAnd.offset[0], y: tempAnd.offset[1]},
+  COMBINER: {x: tempCombiner.offset[0], y: tempCombiner.offset[1]},
   CONSTANT: {x: tempConstant.offset[0], y: tempConstant.offset[1]},
+  HEX_DISPLAY: {x: tempHexDisplay.offset[0], y: tempHexDisplay.offset[1]},
   INPUT: {x: tempInput.offset[0], y: tempInput.offset[1]},
+  LIGHT: {x: tempLight.offset[0], y: tempLight.offset[1]},
   OUTPUT: {x: tempOutput.offset[0], y: tempOutput.offset[1]},
   SPLITTER: {x: tempSplitter.offset[0], y: tempSplitter.offset[1]},
   TUNNEL: {x: tempTunnel.offset[0], y: tempTunnel.offset[1]},
-  HEX_DISPLAY: {x: tempHexDisplay.offset[0], y: tempHexDisplay.offset[1]},
-  LIGHT: {x: tempLight.offset[0], y: tempLight.offset[1]},
-  BUTTON: {x: tempButton.offset[0], y: tempButton.offset[1]},
-  REGISTER: {x: tempRegister.offset[0], y: tempRegister.offset[1]},
-  SUB_CIRCUIT: {x: tempRegister.offset[0], y: tempRegister.offset[1]},
 }
 
  
 // 按钮图片资源映射表
 const IMAGE_MAP = {
   SEGMENT_DISPLAY: new Image(),
+  BUTTON: new Image(),
   POWER: new Image(),
   NOT: new Image(),
   NOR: new Image(),
   OR: new Image(),
+  REGISTER: new Image(),
   GROUND: new Image(),
   CLOCK: new Image(),
+  NXOR: new Image(),
   XOR: new Image(),
+  NAND: new Image(),
+  SUB_CIRCUIT: new Image(),
   AND: new Image(),
+  COMBINER: new Image(),
   CONSTANT: new Image(),
+  HEX_DISPLAY: new Image(),
   INPUT: new Image(),
+  LIGHT: new Image(),
   OUTPUT: new Image(),
   SPLITTER: new Image(),
   TUNNEL: new Image(),
-  SUB_CIRCUIT: new Image(),
-  REGISTER: new Image(),
 }
 
 // 初始化图片资源
 IMAGE_MAP.SEGMENT_DISPLAY.src = '/assets/7段数码管.svg'
+IMAGE_MAP.BUTTON.src = '/assets/按钮.svg'
 IMAGE_MAP.POWER.src = '/assets/电源.svg'
 IMAGE_MAP.NOT.src = '/assets/非门.svg'
 IMAGE_MAP.NOR.src = '/assets/或非门.svg'
 IMAGE_MAP.OR.src = '/assets/或门.svg'
+IMAGE_MAP.REGISTER.src = '/assets/寄存器.svg'
 IMAGE_MAP.GROUND.src = '/assets/接地.svg'
 IMAGE_MAP.CLOCK.src = '/assets/时钟.svg'
+IMAGE_MAP.NXOR.src = '/assets/异或非门.svg'
 IMAGE_MAP.XOR.src = '/assets/异或门.svg'
+IMAGE_MAP.NAND.src = '/assets/与非门.svg'
+IMAGE_MAP.SUB_CIRCUIT.src = '/assets/子组件.svg'
 IMAGE_MAP.AND.src = '/assets/AND.svg'
+IMAGE_MAP.COMBINER.src = '/assets/combiner.svg'
 IMAGE_MAP.CONSTANT.src = '/assets/constant.svg'
+IMAGE_MAP.HEX_DISPLAY.src = '/assets/Hex数码管.svg'
 IMAGE_MAP.INPUT.src = '/assets/inputPin.svg'
+IMAGE_MAP.LIGHT.src = '/assets/LED.svg'
 IMAGE_MAP.OUTPUT.src = '/assets/outputpin.svg'
 IMAGE_MAP.SPLITTER.src = '/assets/splitter.svg'
 IMAGE_MAP.TUNNEL.src = '/assets/Tunnel.svg'
-IMAGE_MAP.SUB_CIRCUIT.src = '/assets/子组件.svg'
-IMAGE_MAP.REGISTER.src = '/assets/寄存器.svg'
 
-
-// IMAGE_MAP.NAND.src = '/assets/'
-// IMAGE_MAP.SUB_CIRCUIT.src = '/assets/INPUT.png'
 
 function updateComponentDirection() {
 
@@ -795,32 +816,43 @@ function handleMouseMove(event) {
 
 // 更新所有跟该元件相关的连线路径
 function updateConnectionPaths(componentId = null) {
+  console.log("元件拖拽/引脚变化/位宽变化 → 同步更新电线路径");
 
-  console.log("元件拖拽/更新引脚/更新位宽时需要同步更新电线")
   connections.forEach((connection) => {
-    const fromId = connection.from.componentId;
-    const toId = connection.to.componentId;
+    let from = connection.from;
+    let to = connection.to;
 
-    if (componentId === null || fromId === componentId || toId === componentId) {
-      // 获取最新端口位置
-      const updatedFromPort = findPortById(fromId, connection.from.portId);
-      const updatedToPort = findPortById(toId, connection.to.portId);
-
-      if (updatedFromPort && updatedToPort) {
-        connection.from.x = updatedFromPort.x;
-        connection.from.y = updatedFromPort.y;
-        connection.to.x = updatedToPort.x;
-        connection.to.y = updatedToPort.y;
-
-        const midX = (connection.from.x + connection.to.x) / 2;
-        connection.path = `M ${connection.from.x} ${connection.from.y} 
-                           L ${midX} ${connection.from.y} 
-                           L ${midX} ${connection.to.y} 
-                           L ${connection.to.x} ${connection.to.y}`;
+    // === 更新 from 端口位置 ===
+    if (from.componentId && from.portId) {
+      if (componentId === null || from.componentId === componentId) {
+        const updatedFrom = findPortById(from.componentId, from.portId);
+        if (updatedFrom) {
+          from.x = updatedFrom.x;
+          from.y = updatedFrom.y;
+        }
       }
     }
+
+    // === 更新 to 端口位置 ===
+    if (to.componentId && to.portId) {
+      if (componentId === null || to.componentId === componentId) {
+        const updatedTo = findPortById(to.componentId, to.portId);
+        if (updatedTo) {
+          to.x = updatedTo.x;
+          to.y = updatedTo.y;
+        }
+      }
+    }
+
+    // === 重新计算路径 ===
+    const midX = (from.x + to.x) / 2;
+    connection.path = `M ${from.x} ${from.y}
+                       L ${midX} ${from.y}
+                       L ${midX} ${to.y}
+                       L ${to.x} ${to.y}`;
   });
 }
+
 
 // 根据元件ID和引脚ID获取引脚位置信息
 function findPortById(componentId, portId) {
@@ -899,33 +931,33 @@ function handleWireConnection(x, y) {
   // console.log("电线起点：",wireStart.value)
   // 电线画线逻辑：分起始点和终点两种情况
   if (!wireStart.value) {
-  const closestPort = findNearestPort(x, y, 10);
-  if (closestPort) {
-    wireStart.value = {
-      x: closestPort.x,
-      y: closestPort.y,
-      componentId: closestPort.componentId,
-      portId: closestPort.id,
-      portType: closestPort.type,
-    };
-    wireStartId = closestPort.componentId;
+    const closestPort = findNearestPort(x, y, 10);
+    if (closestPort) {
+      wireStart.value = {
+        x: closestPort.x,
+        y: closestPort.y,
+        componentId: closestPort.componentId,
+        portId: closestPort.id,
+        portType: closestPort.type,
+      };
+      console.log("当前电线点的信息：", wireStart.value)
+      wireStartId = closestPort.componentId;
 
-    // 记录第一个点
-    intermediatePoints.value = [wireStart.value];
+      // 记录第一个点
+      intermediatePoints.value = [wireStart.value];
 
-    // 初始化 tempWire 为预览线
-    tempWire.value = {
-      from: wireStart.value,
-      to: { x: x, y: y },
-      path: '',
-      color: '#999',
-      strokeWidth: 3,
-      isTemp: true,
-    };
-    return;
+      // 初始化 tempWire 为预览线
+      tempWire.value = {
+        from: wireStart.value,
+        to: { x: x, y: y },
+        path: '',
+        color: '#999',
+        strokeWidth: 3,
+        isTemp: true,
+      };
+      return;
+    }
   }
-}
-
 
   // console.log("电线起点：", wireStart.value, "现在开始找终点！")
 
@@ -939,12 +971,29 @@ function handleWireConnection(x, y) {
   if (!endPort) {
     // 没找到终点端口 → 添加中继点
     const lastPoint = intermediatePoints.value[intermediatePoints.value.length - 1];
-    const newPoint = { x, y };
+    const newPoint = {
+      x,
+      y,
+      componentId: lastPoint.componentId,
+      portId: lastPoint.portId,
+      portType: lastPoint.portType,
+    };
+    console.log("新的中继点：", newPoint.value)
 
     const newWire = createWirePath(lastPoint, newPoint);
     newWire.color = "#000"; // 中继线为黑色
     newWire.strokeWidth = 8;
     connections.push(newWire);
+    console.log("中继电线信息：", newWire)
+
+    // 中继点会不断传到起点所指向的元件引脚信息
+    newWire.to = {
+      x: x,
+      y: y, 
+      componentId: lastPoint.componentId,
+      portId: lastPoint.portId,
+      portType: lastPoint.portType,
+    }
 
     intermediatePoints.value.push(newPoint); // 添加中继点
 
@@ -962,36 +1011,55 @@ function handleWireConnection(x, y) {
   }
 
 
-  // 创建新连线
-  // console.log("设置终点：", endPort)
   if (endPort) {
-    const lastPoint = intermediatePoints.value[intermediatePoints.value.length - 1];
-    const finalWire = createWirePath(lastPoint, {
-      x: endPort.x,
-      y: endPort.y
-    });
-    finalWire.color = "#000";
-    finalWire.strokeWidth = 8;
-    connections.push(finalWire);
+  const lastPoint = intermediatePoints.value[intermediatePoints.value.length - 1];
+  const finalWire = createWirePath(lastPoint, {
+    x: endPort.x,
+    y: endPort.y
+  });
 
-    // 加入逻辑连接
-    useCircuitStore().connect(
-      wireStartId,
-      wireStart.value.portId,
-      endPort.componentId,
-      endPort.id
-    );
+  finalWire.color = "#000";
+  finalWire.strokeWidth = 8;
 
-    // 清空状态
-    wireStart.value = null;
-    wireStartId = null;
-    intermediatePoints.value = [];
-    tempWire.value = null;
+  // ✅【补全元件连接信息！】
+  finalWire.from = {
+    x: lastPoint.x,
+    y: lastPoint.y,
+    componentId: wireStart.value.componentId,
+    portId: wireStart.value.portId,
+    portType: wireStart.value.portType,
+  };
+
+  finalWire.to = {
+    x: endPort.x,
+    y: endPort.y,
+    componentId: endPort.componentId,
+    portId: endPort.id,
+    portType: endPort.type,
+  };
+
+  console.log("最终电线信息：", finalWire)
+
+  connections.push(finalWire);
+
+  // 加入逻辑连接
+  useCircuitStore().connect(
+    wireStartId,
+    wireStart.value.portId,
+    endPort.componentId,
+    endPort.id
+  );
+
+  // 清空状态
+  wireStart.value = null;
+  wireStartId = null;
+  intermediatePoints.value = [];
+  tempWire.value = null;
+
   }
-
 }
 
-import { computeMidX } from '@/modules/useMaths'
+// import { computeMidX } from '@/modules/useMaths'
 // 创建电线路径
 function createWirePath(start, end) {
   const midX = (start.x + end.x) / 2;
@@ -999,8 +1067,8 @@ function createWirePath(start, end) {
   console.log("计算中点X坐标：", midX)
   const d = `M ${start.x} ${start.y} L ${midX} ${start.y} L ${midX} ${end.y} L ${end.x} ${end.y}`;
   return { 
-    from: start, 
-    to: end, 
+    from: { ...start },
+    to: { ...end },
     path: d,
     color: "#999",       // 明确指定灰色
     strokeWidth: 12,      // 线宽
@@ -1249,17 +1317,31 @@ function handleRightClick(event) {
   });
 
   if (wireIndex !== -1) {
-    // console.log("点击中电线，删除该电线，index=", wireIndex);
-    // console.log("该电线信息：", connections[wireIndex]);
-    useCircuitStore().disconnect(
-      connections[wireIndex].from.componentId, 
-      connections[wireIndex].from.portId, 
-      connections[wireIndex].to.componentId, 
-      connections[wireIndex].to.portId
-    ); // 调用store断开连接
-    connections.splice(wireIndex, 1); // 删除电线
-    saveHistory(); // 记录历史
-    return; 
+    const wire = connections[wireIndex];
+    
+    // 先找到这条 wire 属于哪一段完整的连线
+    const head = findWireEndpoint(wireIndex, 'head'); // 找起点段
+    const tail = findWireEndpoint(wireIndex, 'tail'); // 找终点段
+
+    console.log("实际删除电线 from:", head.from.componentId, head.from.portId, 
+                "to:", tail.to.componentId, tail.to.portId);
+
+    // 有些中继段可能没有正确补全 componentId，要判断合法性
+    if (head.from?.componentId && tail.to?.componentId) {
+      useCircuitStore().disconnect(
+        head.from.componentId,
+        head.from.portId,
+        tail.to.componentId,
+        tail.to.portId
+      );
+    } else {
+      console.warn("断连失败：componentId 缺失", head.from, tail.to);
+    }
+
+    // 删除这条被右键点中的线段
+    connections.splice(wireIndex, 1);
+    saveHistory();
+    return;
   }
 
   // 右键时选中的元件
@@ -1276,14 +1358,10 @@ function handleRightClick(event) {
   }
 
   if (ID !== null) {
-    // console.log("删除元件逻辑触发")
     
     const component = useCircuitStore().getComponent(ID);
-    // console.log("获取到的元件：", component)
 
-    // console.log("删除元件前，Ports：", Ports)
     removeComponentPorts(ID); // 删除引脚信息
-    // console.log("删除元件后，Ports：", Ports)
 
     // 删除与该元件相关的连线
     for (let i = connections.length - 1; i >= 0; i--) {
@@ -1294,13 +1372,16 @@ function handleRightClick(event) {
       if (from.componentId === ID || to.componentId === ID) {
         // console.log("删除连线：", connections[i])
         connections.splice(i, 1);
+        useCircuitStore().disconnect(
+          from.componentId,
+          from.portId,
+          to.componentId,
+          to.portId
+        );
       }
     }
 
     useCircuitStore().removeComponent(ID); // 删除元件
-    // console.log("删除元件成功，ID:", ID)
-    
-    // console.log("删除元件前，电线连接：", connections)
 
     saveHistory(); // 撤销历史记录
   } else if (contextMenu.targetWireIndex !== null) {
@@ -1313,6 +1394,33 @@ function handleRightClick(event) {
     saveHistory();
   }
 }
+
+// 寻找中继点的from和to信息
+function findWireEndpoint(index, direction = 'head') {
+  let current = connections[index];
+
+  while (true) {
+    const nextIndex = connections.findIndex(wire => {
+      if (direction === 'head') {
+        return wire.to.x === current.from.x &&
+               wire.to.y === current.from.y &&
+               wire.to.componentId === current.from.componentId &&
+               wire.to.portId === current.from.portId;
+      } else {
+        return wire.from.x === current.to.x &&
+               wire.from.y === current.to.y &&
+               wire.from.componentId === current.to.componentId &&
+               wire.from.portId === current.to.portId;
+      }
+    });
+
+    if (nextIndex === -1) break;
+    current = connections[nextIndex];
+  }
+
+  return current;
+}
+
 
 function deleteSelectedItem() {
   if (contextMenu.targetIndex != null) {
@@ -1338,7 +1446,7 @@ function toggleInput(component, index) {
 }
 
 // #region 项目
-import { useProjectStore } from '@/store/ProjectStore'
+
 const projectStore = useProjectStore();
 watch(() => projectStore.selectedProjectId, (newValue) => {
   if (newValue) {
