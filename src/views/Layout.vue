@@ -523,6 +523,7 @@ const oneBitFullAdder = [
 const answer ={
   "unnamed":[], 
   "1.一位全加器":oneBitFullAdder,
+  "一位全加器_答案": oneBitFullAdder,
 };
 import { calculateTruthTable } from '@/modules/useTruthTable'
 const testTruthTable = () => {
@@ -532,6 +533,7 @@ const testTruthTable = () => {
   }
   const truthTable = calculateTruthTable(projectId);
   console.log('测试真值表:', truthTable);
+  console.log('答案:', answer[projectStore.getCurrentProject().name]);
   if (JSON.stringify(truthTable) === JSON.stringify(answer[projectStore.getCurrentProject().name])) {
     alert('测试通过！');
   } else {
