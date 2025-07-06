@@ -70,6 +70,8 @@ export function exportProject(projectDate: ProjectData): void {
 
   const exportData = {
     name: projectDate.name,
+    uuid: projectDate.projectUUID,
+    mode: projectDate.mode,
     components,
     connections,
   };
@@ -93,6 +95,8 @@ export async function loadProject(importData: any, canvasRef: any){
     return;
   }
   projectStore.getCurrentProject().name = importData.name;
+  projectStore.getCurrentProject().projectUUID = importData.uuid;
+  projectStore.getCurrentProject().mode = importData.mode;
 
   const componentsIdMap = new Map<number, number>();  // 旧到新
   // 加载元件

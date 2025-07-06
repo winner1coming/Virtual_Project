@@ -46,6 +46,7 @@ import { useCircuitStore } from '@/store/CircuitStore';
 import eventBus from '@/modules/useEventBus';
 
 const projectStore = useProjectStore();
+const circuitStore = useCircuitStore();
 
 // 项目列表
 const projects: ProjectData[] = reactive(projectStore.getAllProjects());
@@ -126,6 +127,9 @@ const createSubComponent = (projectId: number) => {
 
 // 显示右键菜单
 const showContextMenu = (event: MouseEvent, project: ProjectData) => {
+  if(circuitStore.currentMode === 'challenge') {
+    return; // 如果是挑战模式，则不显示右键菜单
+  }
   contextMenuVisible.value = true;
   contextMenuPosition.x = event.clientX;
   contextMenuPosition.y = event.clientY;

@@ -10,23 +10,11 @@ export const useProjectStore = defineStore('project', () => {
   const currentProjectId = ref<number>(0);
   const selectedProjectId = ref<number>(-1);
 
-  // 初始化一个默认项目
-  const defaultProject: ProjectData = {
-    projectId: currentProjectId.value++,
-    projectUUID: crypto.randomUUID(), 
-    name: "新项目",
-    componentsId: [],
-    inputPins: [],
-    outputPins: [],
-    clockIds: [],
-  };
-  allProjects.set(defaultProject.projectId, defaultProject);
-  selectedProjectId.value = defaultProject.projectId;
-
-  function createProject(name: string): ProjectData {
+  function createProject(name: string, mode='normal'): ProjectData {
     const project: ProjectData = {
       projectId: currentProjectId.value++,
       projectUUID: crypto.randomUUID(), // 生成一个新的UUID
+      mode: mode,
       name,
       componentsId: [],
       inputPins: [],
@@ -37,6 +25,10 @@ export const useProjectStore = defineStore('project', () => {
     loadProject(project.projectId);
     return project;
   }
+  selectedProjectId.value = 0; 
+  createProject('新项目'); 
+
+  
 
   // 切换项目
   function loadProject(projectId: number) {

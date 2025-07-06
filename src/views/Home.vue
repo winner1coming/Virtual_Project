@@ -24,8 +24,11 @@ const modes = [
   { id: 'tutorial', title: '教学模式', description: '循序渐进学习数字电路知识' }
 ]
 
+import { useCircuitStore } from '@/store/CircuitStore'
+const circuitStore = useCircuitStore()
 const router = useRouter()
 const navigateToWorkspace = (mode) => {
+  circuitStore.currentMode = mode 
   router.push({ path: '/workspace', query: { mode } })
 }
 </script>
