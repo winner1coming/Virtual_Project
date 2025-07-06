@@ -20,6 +20,17 @@
       :height="svgHeight"
       fill=transparent
     />
+    
+    <!--显示名字-->
+    <text
+      :x="svgWidth/2" 
+      :y="svgHeight+40" 
+      text-anchor="middle"
+      font-size="36"
+      fill="#333"
+    >
+    {{outputPin.name}}
+    </text>
 
     <!--选中方框-->
     <SelectedBox :x="-6" :y="-6" :width="svgWidth+12" :height="svgHeight+12" :visible="circuitStore.selectedId===props.id"/>

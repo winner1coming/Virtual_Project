@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${andGate.offset[0]*andGate.scale}, ${andGate.offset[1]*andGate.scale}) scale(${andGate.scale}) rotate(${directionToAngle[andGate.direction]},310,${(minY+maxY)/2})`" cursor="move">
+    <g :transform="`translate(${andGate.offset[0]*andGate.scale}, ${andGate.offset[1]*andGate.scale}) scale(${andGate.scale}) rotate(${directionToAngle[andGate.direction]},298,${(minY+maxY)/2})`" cursor="move">
       <!-- AND 门图形 -->
        <!--左侧竖线-->
       <path
