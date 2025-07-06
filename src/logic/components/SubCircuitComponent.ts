@@ -14,6 +14,7 @@ export class SubCircuitComponent extends BaseComponent {
   private componentIdMap: Map<number, BaseComponent> = new Map(); // 用于映射元件的id
   public inputNames: string[] = []; // 输入引脚的名称
   public outputNames: string[] = []; // 输出引脚的名称
+  public copyProjectId: number;
 
   constructor(
     id: number,
@@ -25,6 +26,7 @@ export class SubCircuitComponent extends BaseComponent {
     super(id, type, position);
     this.name = name;
     this.offset = [-280, -280];
+    this.copyProjectId = projectId;
 
     const store = useCircuitStore();
     const projectStore = useProjectStore();
@@ -42,7 +44,11 @@ export class SubCircuitComponent extends BaseComponent {
     projectStore.getProjectById(projectId).componentsId.forEach(id => {
       const comp = store.getComponent(id);
       if (comp) {
-        this.componentIdMap.set(id, createComponentByType(id, comp.type, comp.position, comp.name, 0, this.simulator));
+        if(comp.type === "SUB_CIRCUIT") {
+          this.componentIdMap.set(id, createComponentByType(id, comp.type, comp.position, comp.name, (comp as SubCircuitComponent).copyProjectId, this.simulator));
+        }else{
+          this.componentIdMap.set(id, createComponentByType(id, comp.type, comp.position, comp.name, 0, this.simulator));
+        }
         if(comp.type === "INPUT") {
           this.componentIdMap.get(id)!.changeInput(0, -1);
           this.inputNames.push(comp.name.toString());
@@ -55,7 +61,7 @@ export class SubCircuitComponent extends BaseComponent {
           (this.componentIdMap.get(id)! as Clock).period = (comp as Clock).period;
         }
         // 复制关键属性
-        this.componentIdMap.get(id)!.setPosition(comp.position);
+        //this.componentIdMap.get(id)!.setPosition(comp.position);
         this.componentIdMap.get(id)!.setBitWidth(comp.bitWidth);
         this.componentIdMap.get(id)!.initInputPin(comp.inputCount);
         this.componentIdMap.get(id)!.initOutputPin(comp.outputs.length);
