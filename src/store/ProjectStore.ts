@@ -13,6 +13,7 @@ export const useProjectStore = defineStore('project', () => {
   // 初始化一个默认项目
   const defaultProject: ProjectData = {
     projectId: currentProjectId.value++,
+    projectUUID: crypto.randomUUID(), 
     name: "新项目",
     componentsId: [],
     inputPins: [],
@@ -25,6 +26,7 @@ export const useProjectStore = defineStore('project', () => {
   function createProject(name: string): ProjectData {
     const project: ProjectData = {
       projectId: currentProjectId.value++,
+      projectUUID: crypto.randomUUID(), // 生成一个新的UUID
       name,
       componentsId: [],
       inputPins: [],
