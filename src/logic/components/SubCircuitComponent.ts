@@ -27,7 +27,7 @@ export class SubCircuitComponent extends BaseComponent {
     super(id, type, position);
     this.name = name;
     this.offset = [-280, -280];
-    // if(projectId === -1) return;  // 延后创建
+    if(projectId === -1) return;  // 延后创建
     this.copyProjectId = projectId;
 
     const circuitStore = useCircuitStore();
@@ -37,6 +37,7 @@ export class SubCircuitComponent extends BaseComponent {
     this.initInputPin(projectData.inputPins.length);
     this.initOutputPin(projectData.outputPins.length);
 
+   
     // 计算真值表
     // 切换项目
     const oldProjectId = projectStore.selectedProjectId;
@@ -112,7 +113,17 @@ export class SubCircuitComponent extends BaseComponent {
     }
     this.inputs.splice(idx, 1, value); 
     // 计算真值表的索引
-    const index = this.inputs.reduce((acc, val, i) => acc + (val << i), 0);
+    let index = 0;
+    for (let i = 0; i < this.inputs.length; i++) {
+      if (this.inputs[i] >= 0) {
+        index |= (this.inputs[i] & 1) << i; 
+      }else if(this.inputs[i] === -1) {
+        index |= 0 << i;
+      }else if(this.inputs[i] === -2) {
+        this.outputs.splice(0, this.outputs.length, ...Array(this.outputs.length).fill(-2));
+        return this.outputs; 
+      }
+    }
     // 更新输出
     this.outputs.splice(0, this.outputs.length, ...this.truthTable[index]);
     return this.outputs;

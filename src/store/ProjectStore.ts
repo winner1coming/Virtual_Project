@@ -44,7 +44,7 @@ export const useProjectStore = defineStore('project', () => {
       throw new Error(`Project ${projectId} not found`);
     }
     // 清除当前选中的项目
-    if(getCurrentProject().clockIds.length > 0) {
+    if(getCurrentProject().clockIds) {
       // 停止所有时钟
       getCurrentProject().clockIds.forEach(clockId => {
         const clock = useCircuitStore().getComponent(clockId) as Clock;

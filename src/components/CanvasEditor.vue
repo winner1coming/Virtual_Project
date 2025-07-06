@@ -1104,7 +1104,7 @@ function selectComponent(item, event) {
   console.log("全局Ports：", Ports)
 }
 
-let projectTypeId = 0;
+let projectTypeId = -1;
 // 鼠标左键且currentComponent不为null（处于元件下方状态）：触发元件放置
 function handleLeftClick(event) {
 
@@ -1389,7 +1389,7 @@ defineExpose({
 // #endregion 项目
 
 onMounted(() => {
-  eventBus.on('start-place-component', ({type:type, projectId: projectId=0}) => {
+  eventBus.on('start-place-component', ({type:type, projectId: projectId=-1}) => {
     projectTypeId = projectId; 
     startPlacingVueComponent(type);
   });  
