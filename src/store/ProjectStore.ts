@@ -10,7 +10,7 @@ export const useProjectStore = defineStore('project', () => {
   const currentProjectId = ref<number>(0);
   const selectedProjectId = ref<number>(-1);
 
-  function createProject(name: string, mode='normal'): ProjectData {
+  function createProject(name: string, mode='practice'): ProjectData {
     const project: ProjectData = {
       projectId: currentProjectId.value++,
       projectUUID: crypto.randomUUID(), // 生成一个新的UUID

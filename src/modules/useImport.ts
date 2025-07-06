@@ -89,7 +89,6 @@ export function exportProject(projectDate: ProjectData): void {
 }
 
 export async function loadProject(importData: any, canvasRef: any){
-  const simulator = circuitStore.simulator;
   if (!importData || !importData.name || !Array.isArray(importData.components)) {
     console.error("导入的关卡数据格式不正确！");
     return;
@@ -130,12 +129,6 @@ export async function loadProject(importData: any, canvasRef: any){
     
     }
   }
-
-  // // 加载隧道
-  // if (importData.tunnels) {
-  //   simulator.tunnelNameMap = new Map(importData.tunnels.tunnelNameMap);
-  //   simulator.InputTunnelMap = new Map(importData.tunnels.InputTunnelMap);
-  // }
 
   await nextTick();
   // 加载连接关系
