@@ -41,6 +41,7 @@ const components = [
   { type: 'POWER', name: '电源' },
   { type: 'GROUND', name: '接地' },
   { type: 'SEGMENT_DISPLAY', name: '七段数码器' },
+  {type: 'HEX_DISPLAY', name: '十六进制数码管'},
   
 ];
 

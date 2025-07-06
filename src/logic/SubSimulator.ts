@@ -19,7 +19,7 @@ interface WorkItem {
 }
 
 export class SubSimulator {
-  private connectionManager: ConnectionManager;
+  public connectionManager: ConnectionManager;
   private componentIdMap: Map<number, BaseComponent> = new Map(); // 用于映射元件的id
   private workQueue: WorkItem[] = [];
   private inQueue: Set<string> = new Set();
@@ -30,12 +30,15 @@ export class SubSimulator {
   public tunnelNameMap: Map<String, number[]> = new Map(); // 存储隧道名字与id
   public InputTunnelMap: Map<String, number[]> = new Map(); // 记录接受输入的隧道
   
+
   constructor(projectId: number, componentIdMap: Map<number, BaseComponent> = new Map()) {
+    this.componentIdMap = componentIdMap;
+    this.connectionManager = new ConnectionManager();
+    if(projectId === -1) return; // 延后创建
     this.connectionManager = EventDrivenSimulator.getInstance().getConnectionManager(projectId);
     if( EventDrivenSimulator.getInstance().getProjectTunnel(projectId)){
       [this.tunnelNameMap, this.InputTunnelMap] = EventDrivenSimulator.getInstance().getProjectTunnel(projectId);
     }
-    this.componentIdMap = componentIdMap;
   }
 
   // 启用模拟器
