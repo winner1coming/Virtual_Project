@@ -33,7 +33,7 @@
       </div>
 
       <!-- 修改数据位宽 -->
-      <div class="property-item">
+      <div class="property-item" v-show="showBitWidthOptions">
         <label for="bitWidth">数据位宽：</label>
         <n-select
           id="bitWidth"
@@ -156,8 +156,7 @@ import { Clock } from '@/logic/components/Clock';
 
 const circuitStore = useCircuitStore();
 
-// 数据位宽选项
-const bitWidthOptions = ref([1, 2, 4, 8, 16, 32, 64]);
+
 // 引脚数量选项
 const pinCountOptions = ref([2,3,4,5,6,7,8]);
 // 判断是否显示修改引脚数量的选项
@@ -167,7 +166,9 @@ const showPinCountOptions = computed(() => {
         selectedComponent.type !== 'INPUT' && selectedComponent.type !== 'OUTPUT' &&
         selectedComponent.type !== 'SegmentDisplay' && selectedComponent.type !== 'TUNNEL' &&
          selectedComponent.type !== 'POWER' && selectedComponent.type !== 'GROUND'
-         && selectedComponent.type !== 'SPLITTER' && selectedComponent.type !== 'COMBINER';
+         && selectedComponent.type !== 'SPLITTER' && selectedComponent.type !== 'COMBINER' &&
+          selectedComponent.type !== 'CONSTANT' && selectedComponent.type !== 'HEX_DISPLAY' &&
+        selectedComponent.type !== 'REGISTER' && selectedComponent.type !== 'D_FLIP_FLOP';
 });
 // 判断是否显示输入反转的选项
 const showInvertInputOption = computed(() => {
@@ -183,6 +184,14 @@ function updateDirection(value: string, option: SelectOption) {
   eventBus.emit('updateComponentDirection');
 }
 
+// 数据位宽选项
+const bitWidthOptions = ref([1, 2, 4, 8, 16, 32, 64]);
+// 位宽
+const showBitWidthOptions = computed(() => {
+  const selectedComponent = circuitStore.getComponent(circuitStore.selectedId);
+  return selectedComponent.type !== 'CLOCK' && selectedComponent.type !== 'SegmentDisplay'  &&
+         selectedComponent.type !== 'REGISTER' && selectedComponent.type !== 'D_FLIP_FLOP';;
+});
 function updateBitWidth(value: number, option: SelectOption) {
   // 更新元件的数据位宽
   // eventBus.emit('updateComponentBitWidth');
