@@ -17,14 +17,16 @@ import { SegmentDisplay } from '@/logic/components/SegmentDisplay';
 import {Combiner } from '@/logic/components/Combiner'
 import {Splitter} from '@/logic/components/Splitter'
 import { NxorGate } from '@/logic/components/Nxor';
+import { SubSimulator } from '@/logic/SubSimulator';
+import { EventDrivenSimulator } from '@/logic/Simulator';
 
 
-export function createComponentByType(id: number, type: String, position:[number, number] = [0,0], name:String="", projectId: number=0): BaseComponent {
+export function createComponentByType(id: number, type: String, position:[number, number] = [0,0], name:String="", projectId: number=0, simulator:null|SubSimulator|EventDrivenSimulator=null): BaseComponent {
   switch (type) {
     case 'AND':
-      return new AndGate(id, type, position);
+      return new AndGate(id, type, position, simulator);
     case 'OR':
-      return new OrGate(id, type, position);
+      return new OrGate(id, type, position, simulator);
     case 'NOT':
       return new NotGate(id, type, position);
     case 'NAND':
@@ -34,15 +36,15 @@ export function createComponentByType(id: number, type: String, position:[number
     case 'XOR':
       return new XorGate(id, type, position);
     case 'CLOCK':
-      return new Clock(id, type, position);
+      return new Clock(id, type, position, simulator);
     case 'TUNNEL':
-      return new Tunnel(id, type, position, name); // 名字
+      return new Tunnel(id, type, position, name, simulator); // 名字
     case 'CONSTANT':
-      return new ConstantInput(id, type, position);
+      return new ConstantInput(id, type, position, simulator);
     case 'INPUT':
-      return new InputPin(id, type, position);
+      return new InputPin(id, type, position, simulator);
     case 'OUTPUT':
-      return new OutputPin(id, type, position);
+      return new OutputPin(id, type, position, simulator);
     case 'POWER':
       return new Power(id, type, position); 
     case 'GROUND':

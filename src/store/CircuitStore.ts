@@ -46,8 +46,9 @@ export const useCircuitStore = defineStore('circuit', {
         this.projectStore.getCurrentProject().inputPins.push(id);
       }else if(type === "OUTPUT"){
         this.projectStore.getCurrentProject().outputPins.push(id);
+      } else if(type === "CLOCK"){
+        this.projectStore.getCurrentProject().clockIds.push(id);
       }
-      // 组件
       return id;
     },
     // 移除一个组件
@@ -80,6 +81,11 @@ export const useCircuitStore = defineStore('circuit', {
         const outputIndex = project.outputPins.indexOf(id);
         if (outputIndex !== -1) {
           project.outputPins.splice(outputIndex, 1);
+        }
+      }else if (project.clockIds.includes(id)) {
+        const clockIndex = project.clockIds.indexOf(id);
+        if (clockIndex !== -1) {
+          project.clockIds.splice(clockIndex, 1);
         }
       }
     },

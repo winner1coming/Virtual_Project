@@ -2,6 +2,8 @@
 import { defineStore } from 'pinia';
 import { reactive, ref } from 'vue';
 import type { ProjectData } from '@/logic/ProjectData';
+import { useCircuitStore } from './CircuitStore';
+import { Clock } from '@/logic/components/Clock';
 
 export const useProjectStore = defineStore('project', () => {
   const allProjects = reactive(new Map<number, ProjectData>());
@@ -14,7 +16,8 @@ export const useProjectStore = defineStore('project', () => {
     name: "新项目",
     componentsId: [],
     inputPins: [],
-    outputPins: []
+    outputPins: [],
+    clockIds: [],
   };
   allProjects.set(defaultProject.projectId, defaultProject);
   selectedProjectId.value = defaultProject.projectId;
@@ -25,18 +28,37 @@ export const useProjectStore = defineStore('project', () => {
       name,
       componentsId: [],
       inputPins: [],
-      outputPins: []
+      outputPins: [],
+      clockIds: [],
     };
     allProjects.set(project.projectId, project);
-    selectedProjectId.value = project.projectId;
+    loadProject(project.projectId);
     return project;
   }
 
+  // 切换项目
   function loadProject(projectId: number) {
     if (!allProjects.has(projectId)) {
       throw new Error(`Project ${projectId} not found`);
     }
+    // 清除当前选中的项目
+    if(getCurrentProject().clockIds.length > 0) {
+      // 停止所有时钟
+      getCurrentProject().clockIds.forEach(clockId => {
+        const clock = useCircuitStore().getComponent(clockId) as Clock;
+        if (clock) {
+          clock.stop();
+        }
+      });
+    }
     selectedProjectId.value = projectId;
+    // 开始所有时钟
+    getCurrentProject().clockIds.forEach(clockId => {
+      const clock = useCircuitStore().getComponent(clockId) as Clock;
+      if (clock) {
+        clock.start();
+      }
+    });
     
   }
 
