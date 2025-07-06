@@ -4,6 +4,7 @@ export class Light extends BaseComponent{
     super(id, type, position);
     this.initInputPin(1); 
     this.initOutputPin(0); 
+    this.updatePinPosition();
   }
 
   compute(){   
@@ -16,5 +17,6 @@ export class Light extends BaseComponent{
   }
 
   updatePinPosition(): void{
+    this.inputPinPosition.splice(0, this.inputPinPosition.length, [-40, 0]);
   }
 }

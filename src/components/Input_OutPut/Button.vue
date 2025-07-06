@@ -1,6 +1,6 @@
 <template>
-    <g :transform="`translate(${myButton.offset[0]*myButton.scale}, ${myButton.offset[1]*myButton.scale}) scale(${3})`" cursor="move">
-        <svg width="250" height="250" @mouseup="handleMouseUp" @mouseleave="handleMouseUp">
+    <g :transform="`translate(${myButton.offset[0]*myButton.scale}, ${myButton.offset[1]*myButton.scale}) scale(${myButton.scale})`" cursor="move">
+        <g @mouseup="handleMouseUp" @mouseleave="handleMouseUp">
             <rect x="103" y="87" width="70" height="70" stroke="rgba(0, 0, 0, 1)" stroke-width="5" 
                 :fill="isPressed ? '#FFFFFF' : '#B3B3B3'" 
             >
@@ -19,7 +19,7 @@
                 <path d="M172 157.5 L160.5 147" stroke="black" stroke-width="5"></path>
                 <path d="M173 86.5 L160.5 75" stroke="black" stroke-width="5"></path>
             </g>
-        </svg>
+        </g>
       
       <!--填充透明区域以便选中-->
       <!-- <rect
@@ -59,12 +59,13 @@
   const isPressed = ref(false)
 
   const handleMouseDown = () => {
-    isPressed.value = true
-    myButton.value.changeInput()
+    isPressed.value = true;
+    myButton.value.changeInput(1);
   }
 
   const handleMouseUp = () => {
     isPressed.value = false
+    myButton.value.changeInput(0);
   }
   </script>
     

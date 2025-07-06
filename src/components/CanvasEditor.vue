@@ -855,7 +855,7 @@ function handleWireConnection(x, y) {
     console.log("没有起点")
     // 起点为空，记录起点，先不画线
     // 找到距离点击点最近的port信息
-    let closestPort = findNearestPort(x, y, 10);
+    let closestPort = findNearestPort(x, y, 5);
     // console.log("找到了最近的port！")
     console.log("调用findNearestPort，返回结果：", closestPort)
 

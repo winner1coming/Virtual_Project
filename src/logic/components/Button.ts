@@ -3,6 +3,7 @@ import { EventDrivenSimulator } from "../Simulator";
 export class Button extends BaseComponent{
   constructor(id: number, type: String, position:[number, number] = [0,0], simulator: any = null){
     super(id, type, position);
+    this.offset = [-250, -250];
     if(!simulator) {
       this.simulator = EventDrivenSimulator.getInstance();
     } else {
@@ -11,6 +12,7 @@ export class Button extends BaseComponent{
     this.initInputPin(0); 
     this.initOutputPin(1); 
     this.outputs.splice(0, this.outputs.length, 0); // Button组件的输出初始为0
+    this.updatePinPosition();
   }
 
   compute(){   
@@ -24,5 +26,6 @@ export class Button extends BaseComponent{
   }
 
   updatePinPosition(): void{
+    this.outputPinPosition.splice(0, this.outputPinPosition.length, [173, 121]);
   }
 }
