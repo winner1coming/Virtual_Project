@@ -15,7 +15,7 @@
       <!--显示名字-->
       <text
         x="260.5" 
-        :y="minY<181? maxY+18 : 175+226+52" 
+        :y="minY<181? maxY+52+6 : 175+226+52" 
         text-anchor="middle"
         font-size="48"
         fill="#333"
@@ -49,7 +49,7 @@
       </template>
        
       <!--选中方框-->
-      <SelectedBox :x="142" :y="minY<181? minY-12 : 175" :width="235" :height="minY<181? (maxY-minY+20): 232" :visible="circuitStore.selectedId===props.id" @mousedown="handleMouseDown()"/>
+      <SelectedBox :x="142" :y="minY<181? minY-12 : 175" :width="235" :height="minY<181? (maxY-minY+20): 232" fill="transparent" :visible="circuitStore.selectedId===props.id" @mousedown="handleMouseDown()"/>
       
     </g>
 </template>
