@@ -13,8 +13,7 @@ export class Splitter extends BaseComponent {
             this.simulator = simulator;
         }
         this.bitWidth = bitWidth;
-        this.inputCount = bitWidth;
-        //this.initInputPin(1)
+        this.initInputPin(1)
         this.outputs.splice(0, this.outputs.length, ...Array(bitWidth).fill(-1)); // 初始化输出引脚
         this.updatePinPosition();
     }
