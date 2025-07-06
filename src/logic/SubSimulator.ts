@@ -128,9 +128,16 @@ export class SubSimulator {
       const component = this.componentIdMap.get(id)!;
       if (!component) continue;
 
-      // 获取当前组件的新旧输出
-      const oldOutputs = [...component.getOutputs()];
-      const newOutputs = component.changeInput(idx, value);      
+      let oldOutputs: number[]=[];
+      let newOutputs: number[];
+
+      if(this.componentIdMap.get(id)!.type !== 'CONSTANT') {
+        // 获取当前组件的新旧输出
+        oldOutputs = [...component.getOutputs()];
+        newOutputs = component.changeInput(idx, value); 
+      }else{
+        newOutputs = component.getOutputs();
+      }   
 
       if (!this.isEqualOutputs(oldOutputs, newOutputs)) {
         const pinMap = this.connectionManager.getOutputPinMap(id);

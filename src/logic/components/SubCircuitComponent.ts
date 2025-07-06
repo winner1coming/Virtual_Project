@@ -62,6 +62,13 @@ export class SubCircuitComponent extends BaseComponent {
 
   changeInput(idx: number, v: number): number[] {
     // this.componentIdMap.get(this.inputPins[idx])!.changeInput(0, v);
+    let value = v;
+    if(v>=0){
+      const mask = (1 << this.bitWidth) - 1;
+      if(this.inputInverted[idx]){
+        value = ~value & mask;
+      }
+    }
     this.simulator.enqueue(this.inputPins[idx], 0, v);
     this.simulator.processQueue();
     this.updateInputs();
