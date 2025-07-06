@@ -180,8 +180,9 @@ const showInvertInputOption = computed(() => {
 });
 
 function updateDirection(value: string, option: SelectOption) {
-  // 更新元件的方向
-  eventBus.emit('updateComponentDirection');
+  circuitStore.getComponent(circuitStore.selectedId).updatePinPosition();
+  // // 更新元件的方向
+  // eventBus.emit('updateComponentDirection');
 }
 
 // 数据位宽选项
