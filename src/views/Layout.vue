@@ -131,6 +131,19 @@
             </template>
             上传项目
           </n-tooltip>
+
+          <!-- 测试按钮-->
+          <n-tooltip trigger="hover" v-show="props.mode === 'challenge'">
+            <template #trigger>
+              <n-button quaternary @click="testTruthTable">
+                <template #icon>
+                  <n-icon><UploadIcon /></n-icon>
+                </template>
+              </n-button>
+            </template>
+            测试
+          </n-tooltip>
+
           <!-- 隐藏的文件输入框 -->
           <input 
             type="file" 
@@ -210,7 +223,7 @@
           >
           <template #1>
             <div class="local-drawer">
-              <component :is="activeDrawerComponent" />
+              <component :is="activeDrawerComponent"/>
             </div>
           </template>
 
@@ -380,6 +393,7 @@ const clearWorkspace = () => {
   clearAll();
 }
 
+// #region 模拟器
 // 模拟器控制相关
 const isSimulatorStarted = ref(true);
 const isSimulatorPaused = ref(false);
@@ -424,7 +438,7 @@ const resumeSimulator = () => {
   isSimulatorPaused.value = false;
 }
 // 单步运行模拟器 todo
-
+// #endregion 模拟器
 // #endregion 导航栏相关方法
 
 // #region 项目
@@ -463,6 +477,39 @@ function setCanvasEditorRef(projectId, el) {
 }
 
 // #endregion 项目
+// #region 测试真值表
+// 答案
+// 一位全加器（sum, cout)
+const oneBitFullAdder = [
+  [0, 0], // 输入组合 000 的输出
+  [1, 0], // 输入组合 001 的输出
+  [1, 0], // 输入组合 010 的输出
+  [0, 1],  // 输入组合 011 的输出
+  [1, 0], // 输入组合 100 的输出
+  [0, 1], // 输入组合 101 的输出
+  [0, 1], // 输入组合 110 的输出
+  [1, 1]  // 输入组合 111 的输出
+]
+
+const answer ={
+  "unnamed":[], 
+  "一位全加器":oneBitFullAdder,
+};
+import { calculateTruthTable } from '@/modules/useTruthTable'
+const testTruthTable = () => {
+  const projectId = projectStore.selectedProjectId; // 获取当前选中的项目ID
+  if (!projectId) {
+    return;
+  }
+  const truthTable = calculateTruthTable(projectId);
+  console.log('测试真值表:', truthTable);
+  if (JSON.stringify(truthTable) === JSON.stringify(answer[projectStore.getCurrentProject().name])) {
+    alert('测试通过！');
+  } else {
+    alert('测试未通过，请检查您的电路设计。');
+  }
+}
+// #endregion 测试真值表
 </script>
 
 <style scoped>
