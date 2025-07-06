@@ -101,9 +101,7 @@
         v-if="currentComponent"
         :src="IMAGE_MAP[currentComponent.componentType].src"
         class="preview-image"
-        :style="{
-          // width: currentComponent.size.width * 0.6 + 'px',
-          // height: currentComponent.size.height * 0.3 + 'px',    
+        :style="{   
           left: previewPos.x  + SVG_OFFSET[currentComponent.componentType].x * 0.25 + 'px',// 新增了offset偏移
           top: previewPos.y + SVG_OFFSET[currentComponent.componentType].y * 0.25 + 'px',
         }"
@@ -149,6 +147,7 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 // 元件建模
+// 逻辑门
 import AndGate from './Gates/AndGate.vue'
 import NandGate from './Gates/NandGate.vue'
 import OrGate from './Gates/OrGate.vue'
@@ -156,36 +155,48 @@ import NorGate from './Gates/NorGate.vue'
 import NotGate from './Gates/NotGate.vue'
 import XorGate from './Gates/XorGate.vue'
 import XnorGate from './Gates/XnorGate.vue'
+// 输入输出
+import Button from './Input_OutPut/Button.vue'
+import HEX_DISPLAY from './Input_OutPut/HexDigitalDisplay.vue'
+import LED from './Input_OutPut/LED.vue'
 import SegmentDisplay from './Input_OutPut/SegmentDisplay.vue'
-import Tunnel from './Wiring/Tunnel.vue'
-import InputPin from './Wiring/InputPin.vue'
-import CustomizeComponent from './CustomizeComponent.vue'
+// 线路？
 import Clock from './Wiring/Clock.vue'
+import Combiner from './Wiring/Combiner.vue'
 import Constant from './Wiring/Constant.vue'
+import Ground from './Wiring/Ground.vue'
+import InputPin from './Wiring/InputPin.vue'
+import OutputPin from './Wiring/OutputPin.vue'
 import Power from './Wiring/Power.vue'
 import Splitter from './Wiring/Splitter.vue'
-import Ground from './Wiring/Ground.vue'
-import Combiner from './Wiring/Combiner.vue'
-
+import Tunnel from './Wiring/Tunnel.vue'
+import Register from './Register.vue'
+import CustomizeComponent from './CustomizeComponent.vue'
 
 // 逻辑类建模
 import { AndGate as LogicAndGate } from '@/logic/components/AndGate.ts'
+import { Button as LogicButton} from '@/logic/components/Button.ts'
+import { Clock as LogicClock} from '@/logic/components/Clock.ts'
+import { Combiner as LogicCombiner} from '@/logic/components/Combiner.ts'
+import { ConstantInput as LogicConstantInput} from '@/logic/components/ConstantInput.ts'
+import { DFlipFlop as LogicDFlipFlop} from '@/logic/components/DFlipFlop.ts'
+import { Ground as LogicGround} from '@/logic/components/Ground.ts'
+import { HexDisplay as LogicHexDisplay } from '@/logic/components/HexDisplay.ts'
+import { InputPin as LogicInputPin} from '@/logic/components/InputPin.ts'
+import { Light as LogicLED } from '@/logic/components/Light.ts'
 import { NandGate as LogicNandGate } from '@/logic/components/NandGate.ts'
-import { OrGate as LogicOrGate } from '@/logic/components/OrGate.ts'
 import { NorGate as LogicNorGate } from '@/logic/components/NorGate.ts'
 import { NotGate as LogicNotGate } from '@/logic/components/NotGate.ts'
-import {Clock as LogicClock} from '@/logic/components/Clock.ts'
-import {Combiner as LogicCombiner} from '@/logic/components/Combiner.ts'
-import {ConstantInput as LogicConstantInput} from '@/logic/components/ConstantInput.ts'
-import {Ground as LogicGround} from '@/logic/components/Ground.ts'
-import {Power as LogicPower} from '@/logic/components/Power.ts'
-import {SegmentDisplay as LogicSegmentDisplay} from '@/logic/components/SegmentDisplay.ts'
-import {Splitter as LogicSplitter} from '@/logic/components/Splitter.ts'
-import { Tunnel as LogicTunnel} from '@/logic/components/Tunnel.ts'
-import { InputPin as LogicInputPin} from '@/logic/components/InputPin.ts'
+import { NxorGate as LogicXnorGate } from '@/logic/components/Nxor.ts'
+import { OrGate as LogicOrGate } from '@/logic/components/OrGate.ts'
+import {  Power as LogicPower} from '@/logic/components/Power.ts'
+import { Register as LogicRegister } from '@/logic/components/Register.ts'
+import { SegmentDisplay as LogicSegmentDisplay} from '@/logic/components/SegmentDisplay.ts'
+import { Splitter as LogicSplitter} from '@/logic/components/Splitter.ts'
 import { SubCircuitComponent as LogicSubCircuit } from '@/logic/components/SubCircuitComponent.ts'
-import {XorGate as LogicXorGate} from '@/logic/components/XorGate.ts'
-import { BaseComponent } from '@/logic/BaseComponent.ts'
+import { Tunnel as LogicTunnel} from '@/logic/components/Tunnel.ts'
+import { XorGate as LogicXorGate} from '@/logic/components/XorGate.ts'
+import { BaseComponent } from '@/logic/BaseComponent.ts'// 父类
 
 // 其他
 import { useHistory } from '@/modules/useHistory';
@@ -193,15 +204,11 @@ import eventBus from '@/modules/useEventBus';
 import { useCircuitStore } from '@/store/CircuitStore';
 import { nextTick } from 'vue'
 import { convertCompilerOptionsFromJson } from 'typescript'
-import OutputPin from './Wiring/OutputPin.vue'
-
-// 预览的svg文件
-import AndGateSvg from './preview/andGate.vue' 
 
 const canvasContainer = ref(null)
 const components = reactive([])
 const currentComponent = ref(null)
-const selectedComponent = ref(null)
+const selectedComponent = ref(null)// 鼠标选中的元件
 const isDragging = ref(false)
 const dragOffset = reactive({ x: 0, y: 0 })// 拖动偏移量
 const previewPos = reactive({ x: 0, y: 0 })// 预览的位置
@@ -214,8 +221,6 @@ const ports = [];// 存储单个元件的端口信息
 /** @type {Map<number, Array<{id: number, x:number, y:number, componentId:number, type: string}>>} */
 const Ports = new Map();
 const showDeleteConfirm = ref(false); // 是否显示确认框
-
-
 
 // 定义电线的两端
 const wireStart = ref(null) // 记录起始点
@@ -284,7 +289,11 @@ const componentMap = {
   SPLITTER: Splitter,
   COMBINER: Combiner,
   SEGMENT_DISPLAY: SegmentDisplay,
-  GROUND: Ground
+  GROUND: Ground,
+  HEX_DISPLAY: HEX_DISPLAY,
+  LIGHT: LED,
+  BUTTON: Button,
+  REGISTER: Register,
 }
 
 // 逻辑类映射表
@@ -307,6 +316,10 @@ const COMPONENT_LOGIC = {
   SPLITTER: LogicSplitter,
   XOR: LogicXorGate,
   XNOR: LogicXorGate, // XNOR 逻辑门
+  HEX_DISPLAY: LogicHexDisplay,
+  LIGHT: LogicLED,
+  BUTTON: LogicButton,
+  REGISTER: LogicRegister,
 }
 
 // 初始化各元件尺寸配置
@@ -336,6 +349,10 @@ const tempInput = new LogicInputPin(-1, "INPUT");
 const tempOutput = new LogicInputPin(-1, "OUTPUT");
 const tempSplitter = new LogicSplitter(-1, "SPLITTER");
 const tempTunnel = new LogicTunnel(-1, "TUNNEL");
+const tempHexDisplay = new LogicHexDisplay(-1, "HEX_DISPLAY");
+const tempLight = new LogicLED(-1, "LIGHT");
+const tempButton = new LogicButton(-1, "BUTTON");
+const tempRegister = new LogicRegister(-1, "REGISTER");
 
 const SVG_OFFSET = {
   SEGMENT_DISPLAY: {x: tempSegmentDisplay.offset[0], y: tempSegmentDisplay.offset[1]},
@@ -352,6 +369,10 @@ const SVG_OFFSET = {
   OUTPUT: {x: tempOutput.offset[0], y: tempOutput.offset[1]},
   SPLITTER: {x: tempSplitter.offset[0], y: tempSplitter.offset[1]},
   TUNNEL: {x: tempTunnel.offset[0], y: tempTunnel.offset[1]},
+  HEX_DISPLAY: {x: tempHexDisplay.offset[0], y: tempHexDisplay.offset[1]},
+  LIGHT: {x: tempLight.offset[0], y: tempLight.offset[1]},
+  BUTTON: {x: tempButton.offset[0], y: tempButton.offset[1]},
+  REGISTER: {x: tempRegister.offset[0], y: tempRegister.offset[1]},
 }
 
  
@@ -605,7 +626,7 @@ function generateConnectionPath(start, end) {
 
 // 触发引脚变化
 function updatePinPosition(ID) {
-  console.log("更新元件引脚位置，ID：", ID)
+  // console.log("更新元件引脚位置，ID：", ID)
 
   console.log("所有端口：", Ports)
   // 获取组件类型对应的逻辑类
@@ -680,6 +701,8 @@ function handleMouseMove(event) {
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
 
+  // console.log("选中的元件selectedComponent.value：", selectedComponent.value)
+
   if (currentComponent.value) {
     // 预览位置更新
     previewPos.x = x;
@@ -720,10 +743,10 @@ function handleMouseMove(event) {
         return
       }
       const portsInfo = logic.getAllPorts()
-      console.log("端口信息1：", portsInfo)
-      console.log("selectedComponent.value.x:", selectedComponent.value.x, "selectedComponent.value.y:", selectedComponent.value.y)
+      // console.log("端口信息1：", portsInfo)
+      // console.log("selectedComponent.value.x:", selectedComponent.value.x, "selectedComponent.value.y:", selectedComponent.value.y)
       updateComponentPorts(ID, portsInfo, selectedComponent.value.x, selectedComponent.value.y);
-      console.log("所有端口：", Ports)
+      // console.log("所有端口：", Ports)
     })
 
     useCircuitStore().moveComponent(ID, [x, y])// 调用函数移动元件
@@ -786,7 +809,7 @@ function findPortById(componentId, portId) {
 
 // 修改 deleteComponent 以删除相关连线
 function deleteComponent() {
-  console.log("删除元件逻辑触发")
+  // console.log("删除元件逻辑触发")
 
   if (contextMenu.targetIndex !== null) {
     const component = components[contextMenu.targetIndex]; // 获取删除的元件对象
@@ -830,17 +853,19 @@ function handleMouseDown(event) {
   event.stopPropagation(); // 阻止事件冒泡
   event.preventDefault();  // 防止默认行为
 
-  console.log("画布鼠标按下事件触发")
+  // console.log("画布鼠标按下事件触发")
 
   const rect = canvasContainer.value.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
 
-  console.log("点击点x:", x, "点击点Y:", y)
+  // console.log("点击点x:", x, "点击点Y:", y)
 
   handleWireConnection(x, y)// 处理连线逻辑
 
-  console.log("处理完连线逻辑了！")
+  deselectComponent(x, y);
+
+  // console.log("处理完连线逻辑了！")
 
   saveSnapshot();
 }
@@ -848,16 +873,16 @@ function handleMouseDown(event) {
 // 连线逻辑
 function handleWireConnection(x, y) {
 
-  console.log("开始创建电路了！")
-  console.log("电线起点：",wireStart.value)
+  // console.log("开始创建电路了！")
+  // console.log("电线起点：",wireStart.value)
   // 电线画线逻辑：分起始点和终点两种情况
   if (!wireStart.value) {
-    console.log("没有起点")
+    // console.log("没有起点")
     // 起点为空，记录起点，先不画线
     // 找到距离点击点最近的port信息
     let closestPort = findNearestPort(x, y, 5);
     // console.log("找到了最近的port！")
-    console.log("调用findNearestPort，返回结果：", closestPort)
+    // console.log("调用findNearestPort，返回结果：", closestPort)
 
     if (closestPort && closestPort.componentId != null && closestPort.id != null) {
       // 这里是第一次点击：查找最近的端口作为电线终点
@@ -881,12 +906,17 @@ function handleWireConnection(x, y) {
       };
 
       wireStartId = closestPort.componentId;// 记录起点port对应的元件ID
-      console.log("距离最近的元件ID:", wireStartId)
+      // console.log("距离最近的元件ID:", wireStartId)
       return; // 点击端口后不画线
     }
   }
 
-  console.log("电线起点：", wireStart.value, "现在开始找终点！")
+  // console.log("电线起点：", wireStart.value, "现在开始找终点！")
+
+  if (!wireStart.value) {
+    console.log("未找到起点端口");
+    return; // 没有起点，直接返回
+  }
 
   // 找到距离点击点最近的port信息
   let endPort = findNearestPort(x, y, 50);
@@ -898,7 +928,7 @@ function handleWireConnection(x, y) {
   }
 
   // 创建新连线
-  console.log("设置终点：", endPort)
+  // console.log("设置终点：", endPort)
   if (endPort) {
     // 这里是第二次点击：查找最近的端口作为电线终点
     wireEndPort.value = {
@@ -912,10 +942,10 @@ function handleWireConnection(x, y) {
     const newWire = createWirePath(wireStart.value, wireEndPort.value);
     connections.push(newWire);
     // 填写逻辑类，调用函数连接两个元件
-    console.log("电线起点元件ID:", wireStartId, "起点引脚ID:", wireStart.value.portId)
-    console.log("电线终点元件ID:", wireEndPort.value.componentId, "终点引脚ID:", wireEndPort.value.portId)
+    // console.log("电线起点元件ID:", wireStartId, "起点引脚ID:", wireStart.value.portId)
+    // console.log("电线终点元件ID:", wireEndPort.value.componentId, "终点引脚ID:", wireEndPort.value.portId)
     useCircuitStore().connect(wireStartId, wireStart.value.portId, wireEndPort.value.componentId, wireEndPort.value.portId);
-    console.log("创建新连线成功！")
+    // console.log("创建新连线成功！")
     wireStart.value = null;// 重置起点
     wireStartId = null;
     tempWire.value = null; // 清除临时连线
@@ -973,8 +1003,8 @@ function findNearestPort(clickX, clickY, maxDistance = 500) {
   let closestPort = null;
   let minDistance = 10000000;
 
-  console.log("开始查找最近引脚信息，全局Ports：", Ports)
-  console.log("点击位置：x:", clickX, "y:", clickY)
+  // console.log("开始查找最近引脚信息，全局Ports：", Ports)
+  // console.log("点击位置：x:", clickX, "y:", clickY)
   
   // 遍历所有元件的所有端口
   Ports.forEach((ports, componentId) => {
@@ -983,7 +1013,7 @@ function findNearestPort(clickX, clickY, maxDistance = 500) {
       const dx = clickX - port.x;
       const dy = clickY - port.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
-      console.log("元件ID:", componentId, "引脚ID:", port.id,"距离：", distance)
+      // console.log("元件ID:", componentId, "引脚ID:", port.id,"距离：", distance)
       
       // 检查是否在有效范围内且比当前最近端口更近
       if (distance < minDistance && distance < maxDistance) {
@@ -1000,14 +1030,36 @@ function findNearestPort(clickX, clickY, maxDistance = 500) {
           // 元件关联信息
           componentId: componentId,    // 所属元件ID
         };
-        console.log("更新最近端口信息：x：", closestPort.x, "y:", closestPort.y, "ID:", closestPort.id, "type:", 
-        closestPort.type, "componentId:", closestPort.componentId)
+        // console.log("更新最近端口信息：x：", closestPort.x, "y:", closestPort.y, "ID:", closestPort.id, "type:", 
+        // closestPort.type, "componentId:", closestPort.componentId)
       }
     });
   });
   console.log("最近端口信息：", closestPort)
   
   return closestPort;
+}
+
+ // 取消选中
+function deselectComponent(clickX, clickY) {
+  let clickedOnComponent = false;
+  const threshold = 20; // 判定“点击到元件”的最大距离，和你选中时的范围一致即可
+
+  components.forEach(component => {
+    const dx = clickX - component.x;
+    const dy = clickY - component.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < threshold) {
+      clickedOnComponent = true;
+    }
+  });
+
+  if (!clickedOnComponent) {
+    console.log("点击空白区域，取消选中");
+    selectedComponent.value = null;
+    useCircuitStore().unselectComponent(); // 通知逻辑层取消选中
+  }
 }
 
 // 拖动过程
@@ -1031,7 +1083,7 @@ function selectComponent(item, event) {
   
   useCircuitStore().selectComponent(item.ID);
 
-  console.log("全局Ports：", Ports)
+  console.log("选中的元件：", selectedComponent.value)
 }
 
 let projectTypeId = -1;
@@ -1057,12 +1109,12 @@ function handleLeftClick(event) {
 
   // 若有当前元件，则放置元件
   if (currentComponent.value) {
-    console.log("放置元件，鼠标左键：x:", x, "y:", y)
+    // console.log("放置元件，鼠标左键：x:", x, "y:", y)
     // TODO：(已完成)
     // 1：单独记录这个元件的ID
     // 调用useCircuitStore()获取元件的ID
     const id = useCircuitStore().addComponent(currentComponent.value.componentType, [x, y], "", projectTypeId);
-    console.log("元件ID：", id)
+    // console.log("元件ID：", id)
     // 2：创建元件配置对象，将元件的相关信息存放到components列表里
     components.push({ 
       ...currentComponent.value, 
@@ -1098,14 +1150,14 @@ function handleLeftClick(event) {
         return
       }
       const portsInfo = logic.getAllPorts()
-      console.log("端口信息1：", portsInfo)
+      // console.log("端口信息1：", portsInfo)
       addComponentPorts(id, portsInfo, x, y);
-      console.log("所有端口：", Ports)
+      // console.log("所有端口：", Ports)
     })
 
     saveHistory();
     currentComponent.value = null;
-    console.log("放置元件后，当前组件已清空:", currentComponent.value)
+    // console.log("放置元件后，当前组件已清空:", currentComponent.value)
     return; // 放置元件后不画线
   }
 }
@@ -1116,7 +1168,7 @@ function handleLeftClick(event) {
 function handleRightClick(event) {
   event.preventDefault();
 
-  console.log("电线起点元件ID:", wireStartId)
+  // console.log("电线起点元件ID:", wireStartId)
   // 鼠标右键时清空起点记录
   if (wireStartId != null) {
     wireStart.value = null; // 如果有起点，重置起点
@@ -1128,7 +1180,7 @@ function handleRightClick(event) {
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
 
-  console.log("鼠标右键：x:", x, "y:", y)
+  // console.log("鼠标右键：x:", x, "y:", y)
 
   // 删除电线应该放在第一优先级，因为它比较细
   const wireIndex = connections.findIndex(wire => {
@@ -1158,8 +1210,8 @@ function handleRightClick(event) {
   });
 
   if (wireIndex !== -1) {
-    console.log("点击中电线，删除该电线，index=", wireIndex);
-    console.log("该电线信息：", connections[wireIndex]);
+    // console.log("点击中电线，删除该电线，index=", wireIndex);
+    // console.log("该电线信息：", connections[wireIndex]);
     useCircuitStore().disconnect(
       connections[wireIndex].from.componentId, 
       connections[wireIndex].from.portId, 
@@ -1173,10 +1225,10 @@ function handleRightClick(event) {
 
   // 右键时选中的元件
   const ID = selectedComponent.value.ID;
-  console.log("当前组件：", ID)
+  // console.log("当前组件：", ID)
 
   // 删除元件本体
-  console.log("预计想要删除的元件ID：", ID)
+  // console.log("预计想要删除的元件ID：", ID)
   selectedComponent.visible = false; // 隐藏选中元件
   // 删除元件本体（不要用 ID 当索引）
   const deleteIndex = components.findIndex(c => c.ID === ID);
@@ -1185,31 +1237,31 @@ function handleRightClick(event) {
   }
 
   if (ID !== null) {
-    console.log("删除元件逻辑触发")
+    // console.log("删除元件逻辑触发")
     
     const component = useCircuitStore().getComponent(ID);
-    console.log("获取到的元件：", component)
+    // console.log("获取到的元件：", component)
 
-    console.log("删除元件前，Ports：", Ports)
+    // console.log("删除元件前，Ports：", Ports)
     removeComponentPorts(ID); // 删除引脚信息
-    console.log("删除元件后，Ports：", Ports)
+    // console.log("删除元件后，Ports：", Ports)
 
     // 删除与该元件相关的连线
     for (let i = connections.length - 1; i >= 0; i--) {
-      console.log("进行到这， from:", connections[i].from, "to:", connections[i].to)
+      // console.log("进行到这， from:", connections[i].from, "to:", connections[i].to)
       const from = connections[i].from;
       const to = connections[i].to;
-      console.log("检查连线，from:", from.componentId, "to:", to.componentId)
+      // console.log("检查连线，from:", from.componentId, "to:", to.componentId)
       if (from.componentId === ID || to.componentId === ID) {
-        console.log("删除连线：", connections[i])
+        // console.log("删除连线：", connections[i])
         connections.splice(i, 1);
       }
     }
 
     useCircuitStore().removeComponent(ID); // 删除元件
-    console.log("删除元件成功，ID:", ID)
+    // console.log("删除元件成功，ID:", ID)
     
-    console.log("删除元件前，电线连接：", connections)
+    // console.log("删除元件前，电线连接：", connections)
 
     saveHistory(); // 撤销历史记录
   } else if (contextMenu.targetWireIndex !== null) {

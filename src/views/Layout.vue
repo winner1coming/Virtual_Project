@@ -99,7 +99,7 @@
             暂停模拟器
           </n-tooltip>
 
-          <n-tooltip trigger="hover">
+          <!-- <n-tooltip trigger="hover">
             <template #trigger>
               <n-button quaternary @click="stopSimulator">
                 <template #icon>
@@ -108,7 +108,7 @@
               </n-button>
             </template>
             停止模拟器
-          </n-tooltip>
+          </n-tooltip> -->
 
           <n-tooltip trigger="hover">
             <template #trigger>
