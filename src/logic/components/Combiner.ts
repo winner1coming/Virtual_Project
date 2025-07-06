@@ -1,4 +1,5 @@
 // Combiner.ts - 合并器
+import eventBus from "@/modules/useEventBus";
 import { BaseComponent } from "../BaseComponent";
 import { EventDrivenSimulator } from "../Simulator";
 import { calcInputYs } from "@/logic/utils/useGateLayout";
@@ -22,7 +23,9 @@ export class Combiner extends BaseComponent {
     setBitWidth(bitWidth: number) {
         this.bitWidth = bitWidth;
         this.inputCount = bitWidth;
-        this.inputs.splice(0, this.inputs.length, ...Array(this.bitWidth).fill(-1));
+         this.inputs.splice(0, this.inputs.length, ...Array(this.bitWidth).fill(-1));
+         this.updatePinPosition();
+         eventBus.emit('updatePinPosition', {id: this.id}); 
     }
 
     compute(): number[] {
