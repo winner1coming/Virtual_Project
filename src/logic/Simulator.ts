@@ -46,7 +46,7 @@ export class EventDrivenSimulator {
     return EventDrivenSimulator.instance;
   }
 
-  // 启用模拟器 todo 不要这么做
+  // 启用模拟器  // todo 不要这么做 
   enable() {
     this.enableSimulator = true;
   }
