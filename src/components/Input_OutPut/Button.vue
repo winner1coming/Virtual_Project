@@ -60,12 +60,12 @@
 
   const handleMouseDown = () => {
     isPressed.value = true;
-    myButton.value.changeInput(1);
+    myButton.value.changeInput(0,1);
   }
 
   const handleMouseUp = () => {
     isPressed.value = false
-    myButton.value.changeInput(0);
+    myButton.value.changeInput(0,0);
   }
   </script>
     

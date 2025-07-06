@@ -385,7 +385,7 @@ const SVG_OFFSET = {
   CONSTANT: {x: tempConstant.offset[0], y: tempConstant.offset[1]},
   HEX_DISPLAY: {x: tempHexDisplay.offset[0], y: tempHexDisplay.offset[1]},
   INPUT: {x: tempInput.offset[0], y: tempInput.offset[1]},
-  LIGHT: {x: tempLight.offset[0], y: tempLight.offset[1]},
+  LIGHT: {x: -145, y: -145},
   OUTPUT: {x: tempOutput.offset[0], y: tempOutput.offset[1]},
   SPLITTER: {x: tempSplitter.offset[0], y: tempSplitter.offset[1]},
   TUNNEL: {x: tempTunnel.offset[0], y: tempTunnel.offset[1]},
