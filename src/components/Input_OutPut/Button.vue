@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${myButton.offset[0]*myButton.scale}, ${myButton.offset[1]*myButton.scale}) scale(${myButton.scale})`" cursor="move">
+    <g :transform="`translate(${myButton.offset[0]*myButton.scale}, ${myButton.offset[1]*myButton.scale}) scale(${myButton.scale})`" cursor="pointer">
         <g @mouseup="handleMouseUp" @mouseleave="handleMouseUp">
             <rect x="103" y="87" width="70" height="70" stroke="rgba(0, 0, 0, 1)" stroke-width="5" 
                 :fill="isPressed ? '#FFFFFF' : '#B3B3B3'" 
@@ -12,7 +12,7 @@
                     stroke="none"
                 />
                 <rect x="91" y="76" width="70" height="70" stroke="rgba(0, 0, 0, 1)" stroke-width="5" fill="#FFFFFF" 
-                    @mousedown.stop.prevent="handleMouseDown"
+                    @mousedown="handleMouseDown"
                 >
                 </rect> <!--上面的-->
                 <path d="M102 157.5 L90.5 147" stroke="black" stroke-width="5"></path>

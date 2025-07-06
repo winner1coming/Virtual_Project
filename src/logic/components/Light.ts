@@ -5,6 +5,7 @@ export class Light extends BaseComponent{
     this.initInputPin(1); 
     this.initOutputPin(0); 
     this.updatePinPosition();
+    this.changeInput(0,0);
   }
 
   compute(){   

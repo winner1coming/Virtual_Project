@@ -2,7 +2,7 @@
 <circle
     cx="160"
     cy="160"
-    r="80"
+    r="40"
     fill="rgba(206.55, 206.55, 206.55, 1)"
     stroke="black"
     stroke-width="6"
