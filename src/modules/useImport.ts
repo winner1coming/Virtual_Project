@@ -65,11 +65,11 @@ export function exportProject(projectDate: ProjectData): void {
     });
   });
 
-  // 导出隧道
-  const tunnels = {
-    tunnelNameMap: Array.from(simulator.tunnelNameMap.entries()),
-    InputTunnelMap: Array.from(simulator.InputTunnelMap.entries())
-  };
+  // // 导出隧道
+  // const tunnels = {
+  //   tunnelNameMap: Array.from(simulator.tunnelNameMap.entries()),
+  //   InputTunnelMap: Array.from(simulator.InputTunnelMap.entries())
+  // };
 
   // 导出连接关系
   const connections = [];
@@ -91,7 +91,6 @@ export function exportProject(projectDate: ProjectData): void {
   const exportData = {
     name: projectDate.name,
     components,
-    tunnels,
     connections,
   };
 
@@ -125,6 +124,7 @@ export async function loadProject(importData: any, canvasRef: any){
     if (addedComponent) {
       addedComponent.setPosition(comp.position);
       addedComponent.setBitWidth(comp.bitWidth);
+      addedComponent.setName(comp.name);
       addedComponent.initInputPin(comp.inputCount);
       addedComponent.initOutputPin(comp.outputCount);
       addedComponent.inputInverted.splice(0, addedComponent.inputInverted.length,
@@ -156,11 +156,11 @@ export async function loadProject(importData: any, canvasRef: any){
     }
   }
 
-  // 加载隧道
-  if (importData.tunnels) {
-    simulator.tunnelNameMap = new Map(importData.tunnels.tunnelNameMap);
-    simulator.InputTunnelMap = new Map(importData.tunnels.InputTunnelMap);
-  }
+  // // 加载隧道
+  // if (importData.tunnels) {
+  //   simulator.tunnelNameMap = new Map(importData.tunnels.tunnelNameMap);
+  //   simulator.InputTunnelMap = new Map(importData.tunnels.InputTunnelMap);
+  // }
 
   await nextTick();
   // 加载连接关系
