@@ -22,6 +22,7 @@ export const useCircuitStore = defineStore('circuit', {
     //selectedComponent: null as BaseComponent | null,
     simulator: EventDrivenSimulator.getInstance(),
     projectStore: useProjectStore(), // 获取项目管理器实例
+    currentMode: 'practice',
   }),
   actions: {
     // #region 组件相关操作

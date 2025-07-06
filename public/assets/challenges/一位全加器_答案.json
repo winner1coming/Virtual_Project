@@ -1,0 +1,230 @@
+{
+  "name": "一位全加器_答案",
+  "uuid": "2e32ef03-2546-495e-ad0b-7b8d6a918201",
+  "mode": "challenge",
+  "components": [
+    {
+      "id": 0,
+      "type": "INPUT",
+      "position": [
+        155.25,
+        109.76000213623047
+      ],
+      "name": "x",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 1,
+      "type": "INPUT",
+      "position": [
+        161.25,
+        231.76000213623047
+      ],
+      "name": "y",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 2,
+      "type": "INPUT",
+      "position": [
+        162.25,
+        359.76000213623047
+      ],
+      "name": "cin",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 3,
+      "type": "OUTPUT",
+      "position": [
+        633.3874969482422,
+        188.5999984741211
+      ],
+      "name": "S",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 4,
+      "type": "OUTPUT",
+      "position": [
+        789.3874969482422,
+        284.5999984741211
+      ],
+      "name": "cout",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 5,
+      "type": "XOR",
+      "position": [
+        333.25,
+        119.76000213623047
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 6,
+      "type": "XOR",
+      "position": [
+        526.3874969482422,
+        194.5999984741211
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 7,
+      "type": "AND",
+      "position": [
+        468.3874969482422,
+        304.5999984741211
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 8,
+      "type": "OR",
+      "position": [
+        662.3874969482422,
+        326.5999984741211
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 9,
+      "type": "AND",
+      "position": [
+        454.3874969482422,
+        407.5999984741211
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "fromId": 0,
+      "fromPin": 0,
+      "toId": 5,
+      "toPin": 0
+    },
+    {
+      "fromId": 0,
+      "fromPin": 0,
+      "toId": 7,
+      "toPin": 0
+    },
+    {
+      "fromId": 1,
+      "fromPin": 0,
+      "toId": 5,
+      "toPin": 1
+    },
+    {
+      "fromId": 1,
+      "fromPin": 0,
+      "toId": 7,
+      "toPin": 1
+    },
+    {
+      "fromId": 2,
+      "fromPin": 0,
+      "toId": 6,
+      "toPin": 1
+    },
+    {
+      "fromId": 2,
+      "fromPin": 0,
+      "toId": 9,
+      "toPin": 1
+    },
+    {
+      "fromId": 5,
+      "fromPin": 2,
+      "toId": 6,
+      "toPin": 0
+    },
+    {
+      "fromId": 5,
+      "fromPin": 2,
+      "toId": 9,
+      "toPin": 0
+    },
+    {
+      "fromId": 6,
+      "fromPin": 2,
+      "toId": 3,
+      "toPin": 0
+    },
+    {
+      "fromId": 7,
+      "fromPin": 2,
+      "toId": 8,
+      "toPin": 0
+    },
+    {
+      "fromId": 8,
+      "fromPin": 2,
+      "toId": 4,
+      "toPin": 0
+    },
+    {
+      "fromId": 9,
+      "fromPin": 2,
+      "toId": 8,
+      "toPin": 1
+    }
+  ]
+}

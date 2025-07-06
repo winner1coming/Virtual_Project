@@ -1,0 +1,79 @@
+{
+  "name": "1.一位全加器",
+  "uuid": "2e32ef26-2546-495e-ad0b-7b8d6a918201",
+  "mode": "challenge",
+  "components": [
+    {
+      "id": 0,
+      "type": "INPUT",
+      "position": [
+        155.25,
+        109.76000213623047
+      ],
+      "name": "x",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 1,
+      "type": "INPUT",
+      "position": [
+        161.25,
+        231.76000213623047
+      ],
+      "name": "y",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 2,
+      "type": "INPUT",
+      "position": [
+        162.25,
+        359.76000213623047
+      ],
+      "name": "cin",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 3,
+      "type": "OUTPUT",
+      "position": [
+        789.3874969482422,
+        163.5999984741211
+      ],
+      "name": "S",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 4,
+      "type": "OUTPUT",
+      "position": [
+        789.3874969482422,
+        284.5999984741211
+      ],
+      "name": "Cout",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    }
+  ],
+  "connections": [
+    
+  ]
+}
