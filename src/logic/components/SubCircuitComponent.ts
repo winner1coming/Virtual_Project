@@ -15,6 +15,7 @@ export class SubCircuitComponent extends BaseComponent {
   public inputNames: string[] = []; // 输入引脚的名称
   public outputNames: string[] = []; // 输出引脚的名称
   public copyProjectId: number = 0;
+  public projectUUID: string = "";
   public truthTable: number[][] = []; // 真值表
 
   constructor(
@@ -34,6 +35,7 @@ export class SubCircuitComponent extends BaseComponent {
     const projectStore = useProjectStore();
 
     const projectData = projectStore.getProjectById(projectId);
+    this.projectUUID = projectData.projectUUID;
     this.initInputPin(projectData.inputPins.length);
     this.initOutputPin(projectData.outputPins.length);
 

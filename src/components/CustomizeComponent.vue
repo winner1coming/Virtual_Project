@@ -6,6 +6,7 @@
         :y="minY<181? minY-6 : 175"
         :width="223"
         :height="minY<181? maxY-minY+12: 226"
+        
         fill=transparent
         stroke="black"
         stroke-width="8">
@@ -39,7 +40,7 @@
       </template>
        
       <!--选中方框-->
-      <SelectedBox :x="142" :y="minY<181? minY-12 : 175" :width="235" :height="minY<181? (maxY-minY+20): 232" :visible="circuitStore.selectedId===props.id"/>
+      <SelectedBox :x="142" :y="minY<181? minY-12 : 175" :width="235" :height="minY<181? (maxY-minY+20): 232" :visible="circuitStore.selectedId===props.id" @mousedown="handleMouseDown()"/>
       
     </g>
 </template>
@@ -76,7 +77,43 @@ let maxY = computed(()=>Math.max(maxY_in.value, maxY_out.value)); // todo
 let minY_out = computed(()=>Math.min(...customizeComponent.value.outputPinPosition.map(pin => pin[1]))); //todo
 let maxY_out = computed(()=>Math.max(...customizeComponent.value.outputPinPosition.map(pin => pin[1]))); //todo
 
-
+// 点击的逻辑
+let clickTimer;
+let clickCount = 0;
+import { useProjectStore } from '@/store/ProjectStore'
+function handleMouseDown() {
+  clickCount++;
+  if(clickCount === 1){
+    clickTimer = setTimeout(() => {
+      
+    }, 200); 
+  } else if (clickCount === 2) {
+    if (clickTimer) {
+      clearTimeout(clickTimer);
+      clickTimer = null; // 清除定时器
+    }
+    clickCount = 0; // 重置点击计数
+    // 查找项目
+    const uuid = customizeComponent.value.projectUUID;
+    const projectId = customizeComponent.value.copyProjectId;
+    const projectStore = useProjectStore();
+    let project = projectStore.getProjectById(projectId);
+    if(project && project.projectUUID === uuid) {
+      // 双击加载项目
+      projectStore.loadProject(projectId);
+      circuitStore.changeProject(projectId);
+    } else {
+      for(let p of projectStore.getAllProjects()) {
+        if(p.projectUUID === uuid) {
+          // 双击加载项目
+          projectStore.loadProject(p.id);
+          circuitStore.changeProject(p.id);
+          break;
+        }
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>

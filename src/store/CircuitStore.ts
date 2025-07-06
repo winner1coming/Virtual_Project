@@ -153,6 +153,7 @@ export const useCircuitStore = defineStore('circuit', {
       return this.projectStore.selectedProjectId;
     },
     changeProject(projectId: number) {
+      this.selectComponent(-1); // 取消选中任何组件
       this.simulator.changeProject(projectId);
     }
     // // 创建新项目
