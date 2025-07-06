@@ -40,6 +40,7 @@ export class ConstantInput extends BaseComponent {
     changeInput(idx: number, v: number): number[] {
         // 输入引脚的改变会导致电路的改变
         this.outputs.splice(0, this.outputs.length, v); // 更新输出
+        this.currentValue = v; 
         this.simulator.enqueue(this.id, 0, this.outputs[0]);
         this.simulator.processQueue();
         this.currentValue = v;

@@ -178,7 +178,11 @@ function updateInputCount(value: number) {
 
 const constantValue = ref('0');
 
-watch(constantValue, (newValue) => {
+watch(constantValue, (newValue, oldValue) => {
+  if(newValue === oldValue) {
+    return; // 如果值没有变化，则不处理
+  }
+  console.log("ConstantInput value changed:", newValue);
   const component = circuitStore.getComponent(circuitStore.selectedId) as ConstantInput;
   if (!component || component.type !== 'CONSTANT') {
     return;
@@ -191,7 +195,8 @@ watch(constantValue, (newValue) => {
 
   const v = parseInt(newValue);
   if (!isNaN(v) && v >= 0 && v < Math.pow(2, component.bitWidth)) {
-    component.setValue(v);
+    //component.setValue(v);
+    component.changeInput(0,v)
   } else {
     // 回退到当前实际输出值
     constantValue.value = component.outputs[0].toString();

@@ -992,9 +992,12 @@ function handleWireConnection(x, y) {
   }
 }
 
+import { computeMidX } from '@/modules/useMaths'
 // 创建电线路径
 function createWirePath(start, end) {
   const midX = (start.x + end.x) / 2;
+  // const midX = computeMidX(start.x, start.y, end.x, end.y); 
+  console.log("计算中点X坐标：", midX)
   const d = `M ${start.x} ${start.y} L ${midX} ${start.y} L ${midX} ${end.y} L ${end.x} ${end.y}`;
   return { 
     from: start, 
@@ -1313,11 +1316,12 @@ function toggleInput(component, index) {
   }
 }
 
-// #region 项目导入模拟
+// #region 项目
 import { useProjectStore } from '@/store/ProjectStore'
 const projectStore = useProjectStore();
-watch(projectStore.selectedProjectId, (newValue) => {
+watch(() => projectStore.selectedProjectId, (newValue) => {
   if (newValue) {
+    console.log("项目切换，清空当前组件和电线起点")
     currentComponent.value = null; // 清空当前组件
     wireStart.value = null; // 清空电线起点
     wireStartId = null; // 清空电线起点ID
@@ -1382,7 +1386,7 @@ defineExpose({
   addComponentByScript,
   connectByScript,
 });
-// #endregion 项目导入模拟
+// #endregion 项目
 
 onMounted(() => {
   eventBus.on('start-place-component', ({type:type, projectId: projectId=0}) => {

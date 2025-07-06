@@ -465,7 +465,7 @@ export class EventDrivenSimulator {
       let oldOutputs: number[]=[];
       let newOutputs: number[];
 
-      if(this.circuitStore.getComponent(id).type !== 'INPUT') {
+      if(this.circuitStore.getComponent(id).type !== 'INPUT' && this.circuitStore.getComponent(id).type !== 'CONSTANT') {
         // 获取当前组件的新旧输出
         oldOutputs = [...component.getOutputs()];
         newOutputs = component.changeInput(idx, value); 
