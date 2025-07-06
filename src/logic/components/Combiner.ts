@@ -24,6 +24,7 @@ export class Combiner extends BaseComponent {
         this.bitWidth = bitWidth;
         this.inputCount = bitWidth;
          this.inputs.splice(0, this.inputs.length, ...Array(this.bitWidth).fill(-1));
+         this.updatePinPosition();
          eventBus.emit('updatePinPosition', {id: this.id}); 
     }
 
