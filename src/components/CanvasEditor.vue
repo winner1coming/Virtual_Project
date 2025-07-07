@@ -77,7 +77,6 @@
         >
           <component
             :is="item.type"
-           
             :inputs="item.inputs"
             :output="item.output"
             :id="item.ID"
@@ -778,7 +777,6 @@ function handleMouseMove(event) {
     const componentInstance = {
       component: componentMap[selectedComponent.value.componentType],
       props: {ID},
-      logic: componentLogic,
     }
 
     // 存储Vue实例引用
@@ -1242,16 +1240,14 @@ function handleLeftClick(event) {
     const componentInstance = {
       component: componentMap[currentComponent.value.componentType],
       props: {id},
-      logic: componentLogic,
     }
 
     // 存储Vue实例引用
     vueComponentMap.set(id, componentInstance);
-
     // 4：记录当前ID的端口信息
     // 延迟4后获取端口信息，确保见组件挂载完成
     nextTick(() => {
-      const logic = vueComponentMap.get(id)?.logic;
+      const logic = useCircuitStore().getComponent(id);
       if(!logic) {
         console.warn("逻辑类未找到，ID：", id)
         return
@@ -1448,14 +1444,66 @@ function toggleInput(component, index) {
 // #region 项目
 
 const projectStore = useProjectStore();
-watch(() => projectStore.selectedProjectId, (newValue) => {
-  if (newValue) {
-    console.log("项目切换，清空当前组件和电线起点")
+watch(() => projectStore.selectedProjectId, (newValue, oldValue) => {
+
+    console.log(newValue, oldValue)
     currentComponent.value = null; // 清空当前组件
     wireStart.value = null; // 清空电线起点
     wireStartId = null; // 清空电线起点ID
     tempWire.value = null; // 清除临时连线
-  }
+
+    // 缓存当前信息
+    localStorage.setItem('circuit'+oldValue+'Components', JSON.stringify(serializeComponents(components)));
+    localStorage.setItem('circuit'+oldValue+'Connections', JSON.stringify(connections));
+    localStorage.setItem('circuit'+oldValue+'Ports', JSON.stringify(Array.from(Ports.entries())));
+    localStorage.setItem('circuit'+oldValue+'vueComponentMap', JSON.stringify(Array.from(vueComponentMap.entries())));
+    localStorage.setItem('circuit'+oldValue+'ComponentID', JSON.stringify(componentID));
+    localStorage.setItem('circuit'+oldValue+'IntermediatePoints', JSON.stringify(intermediatePoints));
+
+    // 加载新项目
+    const cachedComponents = localStorage.getItem('circuit'+newValue+'Components');
+    const cachedConnections = localStorage.getItem('circuit'+newValue+'Connections');
+    const cachedVueComponentMap = localStorage.getItem('circuit'+newValue+'vueComponentMap');
+    const cachedPortsMap = localStorage.getItem('circuit'+newValue+'Ports');
+    components.splice(0, components.length); // 清空之前的组件
+    connections.splice(0, connections.length); // 清空之前的连线
+    vueComponentMap.clear(); // 清空之前的映射
+    Ports.clear(); // 清空之前的端口映射
+    componentID.splice(0, componentID.length); // 清空之前的元件ID
+    intermediatePoints.value = []; // 清空中继点
+    if (cachedComponents) {
+      const loadedComponents = deserializeComponents(JSON.parse(cachedComponents));
+      components.push(...loadedComponents);
+      console.log("从 localStorage 加载组件：", components);
+    }  
+    if( cachedConnections) {
+      connections.splice(0, connections.length, ...JSON.parse(cachedConnections));
+      console.log("从 localStorage 加载连线：", connections);
+    }
+    if (cachedVueComponentMap) {
+      const vueComponents = JSON.parse(cachedVueComponentMap);
+      vueComponents.forEach(item => {
+        vueComponentMap.set(item[0], item[1]);
+      });
+      console.log("从 localStorage 加载 Vue 组件映射：", vueComponentMap);
+    }
+    if (cachedPortsMap) {
+      const portsMap = JSON.parse(cachedPortsMap);
+      portsMap.forEach(item => {
+        Ports.set(item[0], item[1]);
+      });
+      console.log("从 localStorage 加载端口映射：", Ports);
+    }
+    const cachedComponentID = localStorage.getItem(newValue+'ComponentID');
+    if (cachedComponentID) {
+      componentID.splice(0, componentID.length, ...JSON.parse(cachedComponentID));
+      console.log("从 localStorage 加载元件ID：", componentID);
+    }
+    const cachedIntermediatePoints = localStorage.getItem(newValue+'IntermediatePoints');
+    if (cachedIntermediatePoints) {
+      intermediatePoints.value = JSON.parse(cachedIntermediatePoints);
+      console.log("从 localStorage 加载中继点：", intermediatePoints.value);
+    }
 });
 
 function addComponentByScript(type, position) {
@@ -1517,6 +1565,19 @@ defineExpose({
 });
 // #endregion 项目
 
+function serializeComponents(components) {
+  return components.map(component => ({
+    ...component,
+    type: component.componentType, 
+  }));
+}
+function deserializeComponents(serializedComponents) {
+  return serializedComponents.map(component => ({
+    ...component,
+    type: componentMap[component.type],
+  }));
+}
+
 onMounted(() => {
   eventBus.on('start-place-component', ({type:type, projectId: projectId=-1}) => {
     projectTypeId = projectId; 
@@ -1532,11 +1593,59 @@ onMounted(() => {
   // 确保画布元素可聚焦
   canvasContainer.value.focus();
   canvasContainer.value.addEventListener('mousemove', handleMouseMove);
+
+  // // 初始化时从 localStorage 加载组件
+  const cachedComponents = localStorage.getItem('circuit'+projectStore.selectedProjectId+'Components');
+  const cachedConnections = localStorage.getItem('circuit'+projectStore.selectedProjectId+'Connections');
+  const cachedVueComponentMap = localStorage.getItem('circuit'+projectStore.selectedProjectId+'vueComponentMap');
+  const cachedPortsMap = localStorage.getItem('circuit'+projectStore.selectedProjectId+'Ports');
+  if (cachedComponents) {
+    const loadedComponents = deserializeComponents(JSON.parse(cachedComponents));
+    components.push(...loadedComponents);
+    console.log("从 localStorage 加载组件：", components);
+  }  
+  if( cachedConnections) {
+    connections.push(...JSON.parse(cachedConnections));
+    console.log("从 localStorage 加载连线：", connections);
+  }
+  if (cachedVueComponentMap) {
+    const vueComponents = JSON.parse(cachedVueComponentMap);
+    vueComponents.forEach(item => {
+      vueComponentMap.set(item[0], item[1]);
+    });
+    console.log("从 localStorage 加载 Vue 组件映射：", vueComponentMap);
+  }
+  if (cachedPortsMap) {
+    const portsMap = JSON.parse(cachedPortsMap);
+    portsMap.forEach(item => {
+      Ports.set(item[0], item[1]);
+    });
+    console.log("从 localStorage 加载端口映射：", Ports);
+  }
+  const cachedComponentID = localStorage.getItem(projectStore.selectedProjectId+'ComponentID');
+  if (cachedComponentID) {
+    componentID.push(...JSON.parse(cachedComponentID));
+    console.log("从 localStorage 加载元件ID：", componentID);
+  }
+  const cachedIntermediatePoints = localStorage.getItem(projectStore.selectedProjectId+'IntermediatePoints');
+  if (cachedIntermediatePoints) {
+    intermediatePoints.value = JSON.parse(cachedIntermediatePoints);
+    console.log("从 localStorage 加载中继点：", intermediatePoints.value);
+  }
+
+
 });
 
 onUnmounted(() => {
   eventBus.off('start-place-component');
   eventBus.off('updateComponentDirection');
+  console.log("缓存组件到 localStorage")
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'Components', JSON.stringify(serializeComponents(components)));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'Connections', JSON.stringify(connections));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'Ports', JSON.stringify(Array.from(Ports.entries())));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'vueComponentMap', JSON.stringify(Array.from(vueComponentMap.entries())));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'ComponentID', JSON.stringify(componentID));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'IntermediatePoints', JSON.stringify(intermediatePoints));
 });
 
 </script>

@@ -525,9 +525,7 @@ export class EventDrivenSimulator {
       this.connManagerMap.set(id, new ConnectionManager());
       this.projectTunnel.set(id, [new Map(), new Map()]); // 初始化该项目的隧道信息
     }
-    console.log("切换到项目", id);
     this.connectionManager = this.connManagerMap.get(id)!;
-    console.log(this.connManagerMap)
     const [tunnelNameMap, inputTunnelMap] = this.projectTunnel.get(id)!;
     this.tunnelNameMap = tunnelNameMap;
     this.InputTunnelMap = inputTunnelMap;

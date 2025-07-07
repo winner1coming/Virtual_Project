@@ -110,13 +110,11 @@ function handleMouseDown() {
     if(project && project.projectUUID === uuid) {
       // 双击加载项目
       projectStore.loadProject(projectId);
-      circuitStore.changeProject(projectId);
     } else {
       for(let p of projectStore.getAllProjects()) {
         if(p.projectUUID === uuid) {
           // 双击加载项目
           projectStore.loadProject(p.id);
-          circuitStore.changeProject(p.id);
           break;
         }
       }

@@ -17,7 +17,6 @@ import { SegmentDisplay } from '@/logic/components/SegmentDisplay';
 import {Combiner } from '@/logic/components/Combiner'
 import {Splitter} from '@/logic/components/Splitter'
 import { NxorGate } from '@/logic/components/Nxor';
-import { SubSimulator } from '@/logic/SubSimulator';
 import { EventDrivenSimulator } from '@/logic/Simulator';
 import { HexDisplay } from '@/logic/components/HexDisplay';
 import { Register } from '@/logic/components/Register';
@@ -26,7 +25,7 @@ import { Button } from '@/logic/components/Button';
 import { Light } from '@/logic/components/Light';
 
 
-export function createComponentByType(id: number, type: string, position:[number, number] = [0,0], name:string="", projectId: number=-1, simulator:null|SubSimulator|EventDrivenSimulator=null): BaseComponent {
+export function createComponentByType(id: number, type: string, position:[number, number] = [0,0], name:string="", projectId: number=-1, simulator:null|EventDrivenSimulator=null): BaseComponent {
   switch (type) {
     case 'AND':
       return new AndGate(id, type, position, simulator);

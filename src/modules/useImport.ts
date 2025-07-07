@@ -4,7 +4,6 @@ import { useCircuitStore } from "@/store/CircuitStore";
 import { createComponentByType } from "./useComponentType";
 import { nextTick } from "vue";
 import { SubCircuitComponent } from "@/logic/components/SubCircuitComponent";
-import { SubSimulator } from "@/logic/SubSimulator";
 const circuitStore = useCircuitStore();
 const projectStore = useProjectStore();
 
