@@ -9,7 +9,6 @@ export async function loadChallengesOnStartup(canvasEditorRefs: any) {
     const projectStore = useProjectStore();
     const circuitStore = useCircuitStore();
     projectStore.createProject('new project');
-    circuitStore.simulator.changeProject(projectStore.selectedProjectId);
     nextTick(async() => {
     const canvasRef = canvasEditorRefs.get(projectStore.selectedProjectId);
     
@@ -26,7 +25,6 @@ export async function loadChallengesOnStartup(canvasEditorRefs: any) {
         console.log(`加载关卡文件: ${fileName}`);
         await loadProject(module, canvasRef); 
         projectStore.createProject('new project');
-        circuitStore.simulator.changeProject(projectStore.selectedProjectId);
         await nextTick();
       }
     });

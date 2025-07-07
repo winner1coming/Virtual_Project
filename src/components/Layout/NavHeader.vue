@@ -26,7 +26,7 @@ import { ref, computed, onMounted, watch, useTemplateRef, nextTick } from 'vue'
 import { useRouter,useRoute } from 'vue-router'
 const props = defineProps<{
   mode: 'practice' | 'challenge' | 'tutorial',
-  editorRefs: Map<number, any>
+  editorRef: number
 }>()
 import { useCircuitStore } from '@/store/CircuitStore'
 const circuitStore = useCircuitStore();
@@ -135,7 +135,7 @@ const handleFileUpload = (event: Event) => {
   projectStore.createProject('new project');
   circuitStore.simulator.changeProject(projectStore.selectedProjectId);
   nextTick(() => {
-    const canvasRef = props.editorRefs.get(projectStore.selectedProjectId);
+    const canvasRef = props.editorRef;
     importProjectFromFile(event, canvasRef);
   });
 }
@@ -147,13 +147,13 @@ const handleFileUpload = (event: Event) => {
 // 加载闯关模式关卡
 import { loadChallengesOnStartup} from '@/config/init'
 nextTick(() => {
-  if(projectStore.currentProjectId === -3){
+  if(projectStore.nextProjectId === 1){
     // 确保在组件挂载后加载关卡
     projectStore.createProject('new project');
     circuitStore.simulator.changeProject(projectStore.selectedProjectId);
     nextTick(async() => {
     
-    // 获取文件列表（需要手动维护文件名列表）
+    // 获取文件列表
     const fileNames = ['1.一位全加器.json', '一位全加器_答案.json'];
 
     for (const fileName of fileNames) {
@@ -163,7 +163,7 @@ nextTick(() => {
         }
         const module = await response.json();
         console.log(`加载关卡文件: ${fileName}`);
-        const canvasRef = props.editorRefs.get(projectStore.selectedProjectId);
+        const canvasRef = props.editorRef;
         await loadProject(module, canvasRef); 
         projectStore.createProject('new project');
         circuitStore.simulator.changeProject(projectStore.selectedProjectId);
@@ -171,6 +171,9 @@ nextTick(() => {
       }
     });
     console.log('所有关卡加载完成！');
+    if(props.mode === 'practice'){
+      projectStore.loadProject(0); 
+    }
   }
 });
 // 答案
@@ -349,16 +352,18 @@ const message = useMessage();
 		  </n-tooltip>
 
 		  <!-- 测试按钮-->
-		  <n-tooltip trigger="hover" v-show="props.mode === 'challenge'">
-			<template #trigger>
-			  <n-button quaternary @click="testTruthTable">
-				<template #icon>
-				  <n-icon><Book /></n-icon>
-				</template>
-			  </n-button>
-			</template>
-			测试
+      <div v-show="props.mode === 'challenge'">
+		  <n-tooltip trigger="hover" >
+        <template #trigger>
+          <n-button quaternary @click="testTruthTable">
+          <template #icon>
+            <n-icon><Book /></n-icon>
+          </template>
+          </n-button>
+        </template>
+        测试
 		  </n-tooltip>
+      </div>
 
 		  <!-- 隐藏的文件输入框 -->
 		  <input 

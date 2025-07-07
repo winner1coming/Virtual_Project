@@ -1,7 +1,7 @@
 <template>
   <div class="workspace-container">
   <!--导航栏-->
-  <NavHeader :mode="props.mode" :editorRefs="canvasEditorRefs"/>
+  <NavHeader :mode="props.mode" :editorRef="canvasEditorRef"/>
   <template v-if="props.mode === 'tutorial'">
     <TeachingSelector v-if="!experiment" />
     <TeachingGuide v-else/>
@@ -87,7 +87,7 @@
                 <div 
                   :key="idx" 
                   class="canvas">
-                  <CanvasEditor/>
+                  <CanvasEditor ref="canvasEditorRef"/>
                 </div>
               </template>
               <template #2 v-if="showRightPDF">
@@ -198,15 +198,15 @@ const handleSplitDrag = () => {
 import { useProjectStore } from '@/store/ProjectStore'
 const projectStore = useProjectStore()
 const projectIds = computed(() => projectStore.getProjectIds())
-const canvasEditorRefs = new Map();
+const canvasEditorRef = ref(null)
 
-function setCanvasEditorRef(projectId, el) {
-  if (el) {
-    canvasEditorRefs.set(projectId, el);
-  } else {
-    canvasEditorRefs.delete(projectId);
-  }
-}
+// function setCanvasEditorRef(projectId, el) {
+//   if (el) {
+//     canvasEditorRefs.set(projectId, el);
+//   } else {
+//     canvasEditorRefs.delete(projectId);
+//   }
+// }
 
 </script>
 
