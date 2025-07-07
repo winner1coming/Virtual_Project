@@ -77,7 +77,6 @@
         >
           <component
             :is="item.type"
-           
             :inputs="item.inputs"
             :output="item.output"
             :id="item.ID"
@@ -778,7 +777,6 @@ function handleMouseMove(event) {
     const componentInstance = {
       component: componentMap[selectedComponent.value.componentType],
       props: {ID},
-      logic: componentLogic,
     }
 
     // 存储Vue实例引用
@@ -1242,16 +1240,14 @@ function handleLeftClick(event) {
     const componentInstance = {
       component: componentMap[currentComponent.value.componentType],
       props: {id},
-      logic: componentLogic,
     }
 
     // 存储Vue实例引用
     vueComponentMap.set(id, componentInstance);
-
     // 4：记录当前ID的端口信息
     // 延迟4后获取端口信息，确保见组件挂载完成
     nextTick(() => {
-      const logic = vueComponentMap.get(id)?.logic;
+      const logic = useCircuitStore().getComponent(id);
       if(!logic) {
         console.warn("逻辑类未找到，ID：", id)
         return
@@ -1517,6 +1513,19 @@ defineExpose({
 });
 // #endregion 项目
 
+function serializeComponents(components) {
+  return components.map(component => ({
+    ...component,
+    type: component.componentType, 
+  }));
+}
+function deserializeComponents(serializedComponents) {
+  return serializedComponents.map(component => ({
+    ...component,
+    type: componentMap[component.type],
+  }));
+}
+
 onMounted(() => {
   eventBus.on('start-place-component', ({type:type, projectId: projectId=-1}) => {
     projectTypeId = projectId; 
@@ -1532,11 +1541,59 @@ onMounted(() => {
   // 确保画布元素可聚焦
   canvasContainer.value.focus();
   canvasContainer.value.addEventListener('mousemove', handleMouseMove);
+
+  // // 初始化时从 localStorage 加载组件
+  const cachedComponents = localStorage.getItem('circuit'+projectStore.selectedProjectId+'Components');
+  const cachedConnections = localStorage.getItem('circuit'+projectStore.selectedProjectId+'Connections');
+  const cachedVueComponentMap = localStorage.getItem('circuit'+projectStore.selectedProjectId+'vueComponentMap');
+  const cachedPortsMap = localStorage.getItem('circuit'+projectStore.selectedProjectId+'Ports');
+  if (cachedComponents) {
+    const loadedComponents = deserializeComponents(JSON.parse(cachedComponents));
+    components.push(...loadedComponents);
+    console.log("从 localStorage 加载组件：", components);
+  }  
+  if( cachedConnections) {
+    connections.push(...JSON.parse(cachedConnections));
+    console.log("从 localStorage 加载连线：", connections);
+  }
+  if (cachedVueComponentMap) {
+    const vueComponents = JSON.parse(cachedVueComponentMap);
+    vueComponents.forEach(item => {
+      vueComponentMap.set(item[0], item[1]);
+    });
+    console.log("从 localStorage 加载 Vue 组件映射：", vueComponentMap);
+  }
+  if (cachedPortsMap) {
+    const portsMap = JSON.parse(cachedPortsMap);
+    portsMap.forEach(item => {
+      Ports.set(item[0], item[1]);
+    });
+    console.log("从 localStorage 加载端口映射：", Ports);
+  }
+  const cachedComponentID = localStorage.getItem(projectStore.selectedProjectId+'ComponentID');
+  if (cachedComponentID) {
+    componentID.push(...JSON.parse(cachedComponentID));
+    console.log("从 localStorage 加载元件ID：", componentID);
+  }
+  const cachedIntermediatePoints = localStorage.getItem(projectStore.selectedProjectId+'IntermediatePoints');
+  if (cachedIntermediatePoints) {
+    intermediatePoints.value = JSON.parse(cachedIntermediatePoints);
+    console.log("从 localStorage 加载中继点：", intermediatePoints.value);
+  }
+
+
 });
 
 onUnmounted(() => {
   eventBus.off('start-place-component');
   eventBus.off('updateComponentDirection');
+  console.log("缓存组件到 localStorage")
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'Components', JSON.stringify(serializeComponents(components)));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'Connections', JSON.stringify(connections));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'Ports', JSON.stringify(Array.from(Ports.entries())));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'vueComponentMap', JSON.stringify(Array.from(vueComponentMap.entries())));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'ComponentID', JSON.stringify(componentID));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'IntermediatePoints', JSON.stringify(intermediatePoints));
 });
 
 </script>
