@@ -118,12 +118,26 @@ const bezierYMax = 397;
 let minY = computed(()=>Math.min(...norGate.value.inputPinPosition.map(pin => pin[1])));
 let maxY = computed(()=>Math.max(...norGate.value.inputPinPosition.map(pin => pin[1])));
 
+const directionToAngle = {
+  east: 0,
+  south: 90,
+  west: 180,
+  north: 270
+}
+
 const transform = computed(() => {
   const [x, y] = norGate.value.offset;
   const scale = norGate.value.scale;
   const cx = 295;
 
-  if (norGate.value.direction === 'west') {
+  if (norGate.value.direction === 'east') {
+    return `
+      translate(${x*scale}, ${y*scale})
+      scale(${scale})
+    `;
+  } 
+  else if(norGate.value.direction === 'west')
+  {
     return `
       translate(${x*scale}, ${y*scale})
       scale(${scale})
@@ -131,13 +145,17 @@ const transform = computed(() => {
       scale(-1, 1)
       translate(${-cx}, 0)
     `;
-  } else {
+  }
+  else
+  {
     return `
       translate(${x*scale}, ${y*scale})
       scale(${scale})
+      rotate(${directionToAngle[norGate.value.direction]},295,${(minY.value+maxY.value)/2})
     `;
   }
 });
+
 
 </script>
 

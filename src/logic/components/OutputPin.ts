@@ -17,6 +17,7 @@ export class OutputPin extends BaseComponent {
         } else {
             this.simulator = simulator;
         }
+        this.direction = 'west';
         this.initInputPin(1); 
         this.outputs.splice(0, this.outputs.length); // 输出引脚不产生输出
         this.outputPinPosition.splice(0, this.outputPinPosition.length); 
@@ -99,16 +100,35 @@ export class OutputPin extends BaseComponent {
     // }
 
     // 更新引脚位置
+    // 更新引脚位置
     updatePinPosition(): void{
         // 排布相关参数
         const colMax = 8;
+        const cellWidth = 40;
         const cellHeight = 60;
         const padding = 40;
+        const cols = Math.min(this.bitWidth, colMax);
         const rows = Math.ceil(this.bitWidth / colMax);
         // 宽高
+        const svgWidth = cols * cellWidth + padding;
         const svgHeight = rows * cellHeight + padding/2;
-        // 修改输入
-        this.inputPinPosition.splice(0, this.inputPinPosition.length, [0, svgHeight/2]);
+        // 修改输出
+        if(this.direction === 'east')
+        {
+            this.inputPinPosition.splice(0, this.inputPinPosition.length, [svgWidth, svgHeight/2]);
+        }
+        else if(this.direction === 'west')
+        {
+            this.inputPinPosition.splice(0, this.inputPinPosition.length, [0, svgHeight/2]);
+        }
+        else if(this.direction === 'north')
+        {
+            this.inputPinPosition.splice(0, this.inputPinPosition.length, [svgWidth/2, 0]);
+        }
+        else if(this.direction === 'south')
+        {
+            this.inputPinPosition.splice(0, this.inputPinPosition.length, [svgWidth/2, svgHeight]);
+        }
     }
 
     // 覆盖基类方法：设置位数

@@ -79,12 +79,26 @@ return circuitStore.getComponent(props.id);
 let minY = computed(()=>Math.min(...nandGate.value.inputPinPosition.map(pin => pin[1])));
 let maxY = computed(()=>Math.max(...nandGate.value.inputPinPosition.map(pin => pin[1])));
 
+const directionToAngle = {
+  east: 0,
+  south: 90,
+  west: 180,
+  north: 270
+}
+
 const transform = computed(() => {
   const [x, y] = nandGate.value.offset;
   const scale = nandGate.value.scale;
   const cx = 295;
 
-  if (nandGate.value.direction === 'west') {
+  if (nandGate.value.direction === 'east') {
+    return `
+      translate(${x*scale}, ${y*scale})
+      scale(${scale})
+    `;
+  } 
+  else if(nandGate.value.direction === 'west')
+  {
     return `
       translate(${x*scale}, ${y*scale})
       scale(${scale})
@@ -92,13 +106,17 @@ const transform = computed(() => {
       scale(-1, 1)
       translate(${-cx}, 0)
     `;
-  } else {
+  }
+  else
+  {
     return `
       translate(${x*scale}, ${y*scale})
       scale(${scale})
+      rotate(${directionToAngle[nandGate.value.direction]},295,${(minY.value+maxY.value)/2})
     `;
   }
 });
+
 
 // 以下为调试用代码，后期可删除---------------------------------------
 

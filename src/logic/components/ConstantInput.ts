@@ -4,13 +4,14 @@ import { EventDrivenSimulator } from "../Simulator";
 export class ConstantInput extends BaseComponent {
     private currentValue: number;
     private maxValue: number;
+    public rectWidth: number;
 
     constructor(
         id: number,
         type: string = "CONSTANT", 
         position: [number, number] = [0, 0],
         simulator: any = null,
-        maxValue = 1
+        maxValue = 1,
     ) {
         super(id, type, position);
         this.offset = [-60, -50];
@@ -26,6 +27,7 @@ export class ConstantInput extends BaseComponent {
         this.bitWidth = 1; // 默认1位
         this.currentValue = 0;
         this.maxValue = maxValue;
+        this.rectWidth = 71;
         this.updatePinPosition();
     }
 
@@ -94,7 +96,23 @@ export class ConstantInput extends BaseComponent {
     // 更新引脚位置
     updatePinPosition(): void{
         // 修改输出
-        this.outputPinPosition.splice(0, this.outputPinPosition.length, [71, 48]);
+        //this.outputPinPosition.splice(0, this.outputPinPosition.length, [71, 48]);
+        if(this.direction === 'east')
+        {
+            this.outputPinPosition.splice(0,this.outputPinPosition.length,[this.rectWidth,48])
+        }
+        else if(this.direction === 'west')
+        {
+            this.outputPinPosition.splice(0,this.outputPinPosition.length,[0,48])
+        }
+        else if(this.direction === 'north')
+        {
+            this.outputPinPosition.splice(0,this.outputPinPosition.length,[this.rectWidth/2,0])
+        }
+        else if(this.direction === 'south')
+        {
+            this.outputPinPosition.splice(0,this.outputPinPosition.length,[this.rectWidth/2,96])
+        }
     }
 
 }

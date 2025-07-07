@@ -1,7 +1,7 @@
 <template>
     <g :transform="`translate(${DFlipFlop.offset[0]*DFlipFlop.scale}, ${DFlipFlop.offset[1]*DFlipFlop.scale}) scale(${DFlipFlop.scale})`" cursor="move">
         <!-- 图形 -->
-        <rect x="143" y="174" width="227" height="227" stroke="rgba(0, 0, 0, 1)" stroke-width="12"      fill="#FFFFFF" >
+        <rect x="143" y="174" width="227" height="227" stroke="rgba(0, 0, 0, 1)" stroke-width="12"      fill="transparent" >
         </rect>
 
         <!--选中方框-->

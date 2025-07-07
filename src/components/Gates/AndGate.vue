@@ -97,7 +97,14 @@ const transform = computed(() => {
   const scale = andGate.value.scale;
   const cx = 295;
 
-  if (andGate.value.direction === 'west') {
+  if (andGate.value.direction === 'east') {
+    return `
+      translate(${x*scale}, ${y*scale})
+      scale(${scale})
+    `;
+  } 
+  else if(andGate.value.direction === 'west')
+  {
     return `
       translate(${x*scale}, ${y*scale})
       scale(${scale})
@@ -105,35 +112,16 @@ const transform = computed(() => {
       scale(-1, 1)
       translate(${-cx}, 0)
     `;
-  } else {
+  }
+  else
+  {
     return `
       translate(${x*scale}, ${y*scale})
       scale(${scale})
+      rotate(${directionToAngle[andGate.value.direction]},295,${(minY.value+maxY.value)/2})
     `;
   }
 });
-
-// 以下为调试用代码，后期可删除---------------------------------------
-
-// 测试用函数，后期删掉  todo
-// function handleToggleInput(index) {
-//   //toggleInput(andGate, index, updateOutput)
-//   // todotodo
-//   setInputCount(10);
-//   if(andGate.value.inputs[index] === 0){
-//     andGate.value.changeInput(index, 1);
-//   }else{
-//     andGate.value.changeInput(index, 0);
-//   }
-
-//   // test
-//   // this.setInputCount(4); // 更新输入引脚布局
-//   andGate.value.changeInputInverted(index, !andGate.value.inputInverted[index]); // 切换输入引脚的反相状态
-// }
-
-// function handleSetScale(newScale){
-//   andGate.value.scale = newScale;
-// }
 
 </script>
 

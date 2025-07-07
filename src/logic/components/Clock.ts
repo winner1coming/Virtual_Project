@@ -70,5 +70,21 @@ export class Clock extends BaseComponent {
     // 更新引脚位置
     updatePinPosition(): void{
         this.outputPinPosition.splice(0, this.outputPinPosition.length, [235, 118]);
+        if(this.direction === 'east')
+        {
+            this.outputPinPosition.splice(0, this.outputPinPosition.length, [235, 118]);
+        }
+        else if(this.direction === 'west')
+        {
+            this.outputPinPosition.splice(0, this.outputPinPosition.length, [0, 118]);
+        }
+        else if(this.direction === 'north')
+        {
+            this.outputPinPosition.splice(0, this.outputPinPosition.length, [117.5, 0]);
+        }
+        else if(this.direction === 'south')
+        {
+            this.outputPinPosition.splice(0, this.outputPinPosition.length, [117.5, 236]);
+        }
     }
 }

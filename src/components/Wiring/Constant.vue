@@ -24,7 +24,7 @@
         <SelectedBox :x="0" :y="0" :width="rect_width+12" :height="100" :visible="circuitStore.selectedId===props.id"/>
 
         <!-- 输出引脚 -->
-        <OutputPort :cx="rect_width" :cy="48" :active="1" />
+        <OutputPort :cx="constant.outputPinPosition[0][0]" :cy="constant.outputPinPosition[0][1]" :active="1" />
     </g>
 </template>
   
@@ -62,7 +62,8 @@ function updateRect() {
   if (constantTextBox.value) {
     const bbox = constantTextBox.value.getBBox()
     rect_width.value = bbox.width + 40
-    constant.value.outputPinPosition.splice(0,constant.value.outputPinPosition.length,[rect_width.value,48])
+    constant.value.rectWidth = rect_width.value;
+    constant.value.updatePinPosition();
   }
 }
 

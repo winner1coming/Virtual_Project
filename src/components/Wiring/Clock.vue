@@ -21,7 +21,7 @@
       <SelectedBox :x="-6" :y="-6" :width="235+12" :height="236+12" :visible="circuitStore.selectedId===props.id"/>
 
       <!-- 输出状态 -->
-      <OutputPort :cx="235" :cy="118" :active="clock.outputs[0]" />
+      <OutputPort :cx="clock.outputPinPosition[0][0]" :cy="clock.outputPinPosition[0][1]" :active="clock.outputs[0]" />
 
       <!--调试用  todo-->
       <!-- <InputPort :cx="140" :cy="288" :active=0 @toggle="() => handleToggleInput()" /> -->

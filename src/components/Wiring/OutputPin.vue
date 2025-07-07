@@ -51,7 +51,7 @@
       </text>
     </g>
     <!-- 输入 -->
-    <InputPort :cx="0" :cy="outputPin.inputPinPosition[0][1]" :active="outputPin.inputs[0]" :bitWidth="outputPin.bitWidth" />
+    <InputPort :cx="outputPin.inputPinPosition[0][0]" :cy="outputPin.inputPinPosition[0][1]" :active="outputPin.inputs[0]" :bitWidth="outputPin.bitWidth" />
   </g>
 </template>
 

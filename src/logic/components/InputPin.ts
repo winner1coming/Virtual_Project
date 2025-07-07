@@ -35,7 +35,22 @@ export class InputPin extends BaseComponent {
         const svgWidth = cols * cellWidth + padding;
         const svgHeight = rows * cellHeight + padding/2;
         // 修改输出
-        this.outputPinPosition.splice(0, this.outputPinPosition.length, [svgWidth, svgHeight/2]);
+        if(this.direction === 'east')
+        {
+            this.outputPinPosition.splice(0, this.outputPinPosition.length, [svgWidth, svgHeight/2]);
+        }
+        else if(this.direction === 'west')
+        {
+            this.outputPinPosition.splice(0, this.outputPinPosition.length, [0, svgHeight/2]);
+        }
+        else if(this.direction === 'north')
+        {
+            this.outputPinPosition.splice(0, this.outputPinPosition.length, [svgWidth/2, 0]);
+        }
+        else if(this.direction === 'south')
+        {
+            this.outputPinPosition.splice(0, this.outputPinPosition.length, [svgWidth/2, svgHeight]);
+        }
     }
 
     // 切换某一位的值 （index为高位到低位（1101从左往右数），index从0开始）
