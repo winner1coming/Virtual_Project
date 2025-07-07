@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { c, create, NButton, NDropdown } from 'naive-ui';
+import { NButton, NDropdown } from 'naive-ui';
 import { useProjectStore } from '@/store/ProjectStore';
 import { ProjectData } from '@/logic/ProjectData';
 import { useCircuitStore } from '@/store/CircuitStore';

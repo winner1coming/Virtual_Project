@@ -35,6 +35,11 @@ export const useCircuitStore = defineStore('circuit', {
     getComponentOutputs(id:number): number[]{
       return this.getComponent(id).getOutputs();
     },
+    // 返回当前项目的所有组件
+    getAllCurrentComponents(): BaseComponent[] {
+      const project = this.projectStore.getCurrentProject();
+      return project.componentsId.map(id => this.components.get(id)!);
+    },
 
     // 添加一个组件，返回id
     addComponent(type: string, position: [number, number]=[0,0], name: string ="", projectId: number): number {

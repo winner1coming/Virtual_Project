@@ -1,160 +1,7 @@
 <template>
   <div class="workspace-container">
-    <!-- 导航栏-->
-    <div class="navbar-container">
-      <nav class="navbar">
-        <!-- 左侧面包屑 -->
-        <div class="nav-left">
-          <n-breadcrumb>
-            <n-breadcrumb-item @click="goHome">
-              <n-icon :component="home"/>首页
-            </n-breadcrumb-item>
-            <n-breadcrumb-item>
-              <n-icon :component="Bo"/>{{ modeLabel }}
-            </n-breadcrumb-item>
-          </n-breadcrumb>
-        </div>
-
-        <!-- 右侧菜单 -->
-        <div class="nav-right">
-            <n-button 
-            :bordered="false"
-            :focusable="false"
-            quaternary circle @click="handleClick">
-              <template #icon>
-                <n-icon >
-                  <component :is = "showToolbar ? downIcon : forwardIcon"/>
-                </n-icon>
-              </template>
-            </n-button>
-        </div>
-      </nav>
-      
-      <!-- 工具栏 - 展开后显示 -->
-      <div v-if="showToolbar" class="toolbar">
-        <n-button-group class = "buttongroup">
-          <n-tooltip trigger="hover">
-            <template #trigger>
-              <n-button quaternary @click="saveProject" >
-                <template #icon>
-                  <n-icon><save-icon /></n-icon>
-                </template>
-              </n-button>
-            </template>
-            保存
-          </n-tooltip>
-          
-          <n-tooltip trigger="hover">
-            <template #trigger>
-              <n-button quaternary @click="prevStep">
-                <template #icon>
-                  <n-icon><arrow-back-icon /></n-icon>
-                </template>
-              </n-button>
-            </template>
-            上一步
-          </n-tooltip>
-          
-          <n-tooltip trigger="hover">
-            <template #trigger>
-              <n-button quaternary @click="nextStep" >
-                <template #icon>
-                  <n-icon><arrow-forward-icon /></n-icon>
-                </template>
-              </n-button>
-            </template>
-            下一步
-          </n-tooltip>
-          
-          <n-tooltip trigger="hover">
-            <template #trigger>
-              <n-button quaternary @click="clearWorkspace">
-                <template #icon>
-                  <n-icon><trash-icon /></n-icon>
-                </template>
-              </n-button>
-            </template>
-            清空
-          </n-tooltip>
-
-          <n-tooltip trigger="hover">
-            <template #trigger>
-              <n-button quaternary @click="startSimulator" >
-                <template #icon>
-                  <n-icon :color="isSimulatorStarted && !isSimulatorPaused ? 'green' : 'black'"><play-icon /></n-icon>
-                </template>
-              </n-button>
-            </template>
-            启动模拟器
-          </n-tooltip>
-
-          <n-tooltip trigger="hover">
-            <template #trigger>
-              <n-button quaternary @click="pauseSimulator">
-                <template #icon>
-                  <n-icon :color="isSimulatorPaused ? 'red' : 'black'"><pause-icon /></n-icon>
-                </template>
-              </n-button>
-            </template>
-            暂停模拟器
-          </n-tooltip>
-
-          <!-- <n-tooltip trigger="hover">
-            <template #trigger>
-              <n-button quaternary @click="stopSimulator">
-                <template #icon>
-                  <n-icon><stop-icon /></n-icon>
-                </template>
-              </n-button>
-            </template>
-            停止模拟器
-          </n-tooltip> -->
-
-          <n-tooltip trigger="hover">
-            <template #trigger>
-              <n-button quaternary @click="saveProject">
-                <template #icon>
-                  <n-icon><save-icon /></n-icon>
-                </template>
-              </n-button>
-            </template>
-            保存项目
-          </n-tooltip>
-
-          <n-tooltip trigger="hover">
-            <template #trigger>
-              <n-button quaternary @click="uploadProject">
-                <template #icon>
-                  <n-icon><UploadIcon /></n-icon>
-                </template>
-              </n-button>
-            </template>
-            上传项目
-          </n-tooltip>
-
-          <!-- 测试按钮-->
-          <n-tooltip trigger="hover" v-show="props.mode === 'challenge'">
-            <template #trigger>
-              <n-button quaternary @click="testTruthTable">
-                <template #icon>
-                  <n-icon><Book /></n-icon>
-                </template>
-              </n-button>
-            </template>
-            测试
-          </n-tooltip>
-
-          <!-- 隐藏的文件输入框 -->
-          <input 
-            type="file" 
-            ref="fileInput" 
-            style="display: none;" 
-            @change="handleFileUpload"
-          />
-
-        </n-button-group>
-      </div>
-    </div>
+  <!--导航栏-->
+  <NavHeader :mode="props.mode" :editorRefs="canvasEditorRefs"/>
   <template v-if="props.mode === 'tutorial'">
     <TeachingSelector v-if="!experiment" />
     <TeachingGuide v-else/>
@@ -272,45 +119,27 @@
 <script setup>
 import CanvasEditor from '@/components/CanvasEditor.vue'
 import PDFViewer from './Freedom/PDFViewer.vue'
+import NavHeader from '@/components/Layout/NavHeader.vue'
 import { computed, ref, defineAsyncComponent, provide, nextTick} from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import TeachingGuide from './Teaching/TeachingGuide.vue'
 import TeachingSelector from './Teaching/TeachingSelector.vue'
-import { useRouter,useRoute } from 'vue-router'
 import { 
-  NBreadcrumb, 
-  NBreadcrumbItem, 
   NButton, 
-  NButtonGroup, 
   NIcon, 
   NTooltip,
   NSplit,
 } from 'naive-ui'
 
 import { 
-  SaveOutline as SaveIcon,
-  ArrowBackOutline as ArrowBackIcon,
-  ArrowForwardOutline as ArrowForwardIcon,
-  TrashOutline as TrashIcon,
-  Play as PlayIcon,
-  Pause as PauseIcon,
-  Stop as StopIcon,
-  HomeOutline as home,
-  BowlingBallOutline as Bo,
-  CaretForwardCircleOutline as forwardIcon,
-  CaretDownCircleOutline as downIcon,
   DocumentTextOutline as textoutline,
   CubeOutline as cube,
   FolderOpenOutline as folder,
   CloseOutline as close,
-  CloudUploadOutline as UploadIcon,
-  Book
 } from '@vicons/ionicons5'
 const props = defineProps(['mode'])
-
-// 添加新状态
-const showToolbar = ref(false)
-const router = useRouter()
 const route = useRoute()
+
 // 异步加载抽屉内容组件
 const MaterialPanel = defineAsyncComponent(() => import('./Freedom/MaterialPanel.vue'))
 const ComponentPanel = defineAsyncComponent(() => import('./Freedom/ComponentPanel.vue'))
@@ -322,43 +151,6 @@ const showRightPDF = ref(false)
 const currentPdfFile = ref(null)
 const experiment = computed(() => route.query?.experiment)
 provide('pdfState', {showRightPDF,currentPdfFile})
-
-const modeLabels = {
-  practice: '自由练习模式',
-  challenge: '闯关模式',
-  tutorial: '教学模式'
-}
-
-const modeLabel = computed(() => modeLabels[props.mode] || '自由练习模式')
-
-const activeDrawerComponent = computed(() => {
-  switch(activeDrawer.value){
-    case 'material': return MaterialPanel
-    case 'component': return ComponentPanel
-    case 'project': return ProjectFilePanel
-    default: return null
-  }
-})
-const handleSplitDrag = () => {
-  if(drawerSize.value < 0.08){
-    drawerSize.value = 0; 
-  }
-}
-
-import { useCircuitStore } from '@/store/CircuitStore'
-const circuitStore = useCircuitStore();
-
-// #region 导航栏相关方法
-import {useHistory} from '@/modules/useHistory'
-const {redo, undo, clearAll} = useHistory(); 
-
-const goHome = () => {
-  router.push({name : 'Home'})
-}
-
-const handleClick = () => {
-  showToolbar.value = !showToolbar.value
-}
 
 const toggleDrawer = (drawerName) => {
   if (activeDrawer.value === drawerName && drawerSize.value > 0) {
@@ -388,90 +180,25 @@ const closePDF = () => {
   showRightPDF.value = false
 }
 
-// 历史记录相关
-const prevStep = () => {
-  undo();
-}
-const nextStep = () => {
-  redo();
-}
-const clearWorkspace = () => {
-  clearAll();
-}
 
-// #region 模拟器
-// 模拟器控制相关
-const isSimulatorStarted = ref(true);
-const isSimulatorPaused = ref(false);
-
-// 开启模拟器
-const startSimulator = () => {
-  if(isSimulatorPaused.value) {
-    circuitStore.resumeSimulator();
-    isSimulatorPaused.value = false; // 恢复暂停状态
-    return; // 如果模拟器已经暂停，则不执行任何操作
+const activeDrawerComponent = computed(() => {
+  switch(activeDrawer.value){
+    case 'material': return MaterialPanel
+    case 'component': return ComponentPanel
+    case 'project': return ProjectFilePanel
+    default: return null
   }
-  if(isSimulatorStarted.value) {
-    return; // 如果模拟器已经启动，则不执行任何操作
+})
+const handleSplitDrag = () => {
+  if(drawerSize.value < 0.08){
+    drawerSize.value = 0; 
   }
-  circuitStore.enableSimulator();
-  circuitStore.resumeSimulator();
-  isSimulatorStarted.value = true;
-}
-// 关闭模拟器
-const stopSimulator = () => {
-  if(!isSimulatorStarted.value) {
-    return; // 如果模拟器没有启动，则不执行任何操作
-  }
-  isSimulatorPaused.value = false; 
-  circuitStore.disableSimulator();
-  isSimulatorStarted.value = false;
-}
-// 暂停模拟器
-const pauseSimulator = () => {
-  if(isSimulatorPaused.value || !isSimulatorStarted.value) {
-    return; // 如果模拟器已经暂停，则不执行任何操作
-  }
-  circuitStore.pauseSimulator();
-  isSimulatorPaused.value = true;
-} 
-// 恢复模拟器
-const resumeSimulator = () => {
-  if(!isSimulatorPaused.value || !isSimulatorStarted.value) {
-    return; // 如果模拟器没有暂停，则不执行任何操作
-  }
-  circuitStore.resumeSimulator();
-  isSimulatorPaused.value = false;
-}
-// 单步运行模拟器 todo
-// #endregion 模拟器
-// #endregion 导航栏相关方法
-
-// #region 项目
-import { useProjectStore } from '@/store/ProjectStore'
-import {loadProject, exportProject, importProjectFromFile} from '@/modules/useImport'
-const projectStore = useProjectStore()
-const projectIds = computed(() => projectStore.getProjectIds())
-
-// 另存项目
-const saveProject = () => {
-  exportProject(projectStore.getCurrentProject());
-}
-const fileInput = ref(null);
-// 上传项目
-const uploadProject = () => {
-  fileInput.value.click();
-}
-const handleFileUpload = (event) => {
-  projectStore.createProject('new project');
-  circuitStore.simulator.changeProject(projectStore.selectedProjectId);
-  nextTick(() => {
-    const canvasRef = canvasEditorRefs.get(projectStore.selectedProjectId);
-    importProjectFromFile(event, canvasRef);
-  });
 }
 
 // 维护画布
+import { useProjectStore } from '@/store/ProjectStore'
+const projectStore = useProjectStore()
+const projectIds = computed(() => projectStore.getProjectIds())
 const canvasEditorRefs = new Map();
 
 function setCanvasEditorRef(projectId, el) {
@@ -482,76 +209,6 @@ function setCanvasEditorRef(projectId, el) {
   }
 }
 
-// #endregion 项目
-// #region 测试真值表
-// 加载闯关模式关卡
-import { loadChallengesOnStartup} from '@/config/init'
-nextTick(() => {
-  if(projectStore.currentProjectId === -3){
-    // 确保在组件挂载后加载关卡
-    projectStore.createProject('new project');
-    circuitStore.simulator.changeProject(projectStore.selectedProjectId);
-    nextTick(async() => {
-    
-    // 获取文件列表（需要手动维护文件名列表）
-    const fileNames = ['1.一位全加器.json', '一位全加器_答案.json'];
-
-    for (const fileName of fileNames) {
-        const response = await fetch(`/assets/challenges/${fileName}`);
-        if (!response.ok) {
-          throw new Error(`无法加载文件: ${fileName}`);
-        }
-        const module = await response.json();
-        console.log(`加载关卡文件: ${fileName}`);
-        const canvasRef = canvasEditorRefs.get(projectStore.selectedProjectId);
-        await loadProject(module, canvasRef); 
-        projectStore.createProject('new project');
-        circuitStore.simulator.changeProject(projectStore.selectedProjectId);
-        await nextTick();
-      }
-    });
-    console.log('所有关卡加载完成！');
-  }
-});
-// 答案
-// 一位全加器（sum, cout)
-const oneBitFullAdder = [
-  [0, 0], // 输入组合 000 的输出
-  [1, 0], // 输入组合 001 的输出
-  [1, 0], // 输入组合 010 的输出
-  [0, 1],  // 输入组合 011 的输出
-  [1, 0], // 输入组合 100 的输出
-  [0, 1], // 输入组合 101 的输出
-  [0, 1], // 输入组合 110 的输出
-  [1, 1]  // 输入组合 111 的输出
-]
-
-const answer ={
-  "unnamed":[], 
-  "1.一位全加器":oneBitFullAdder,
-  "一位全加器_答案": oneBitFullAdder,
-};
-import { calculateTruthTable } from '@/modules/useTruthTable'
-
-const testTruthTable = () => {
-  const projectId = projectStore.selectedProjectId; // 获取当前选中的项目ID
-  if (!projectId) {
-    return;
-  }
-  const truthTable = calculateTruthTable(projectId);
-  console.log('测试真值表:', truthTable);
-  console.log('答案:', answer[projectStore.getCurrentProject().name]);
-  if (JSON.stringify(truthTable) === JSON.stringify(answer[projectStore.getCurrentProject().name])) {
-    message.success('测试通过！');
-  } else {
-    message.error('测试失败，请检查电路设计。');
-  }
-}
-
-// 消息显示
-import { useMessage } from "naive-ui";
-const message = useMessage();
-// #endregion 测试真值表
 </script>
 
 <style scoped>
@@ -565,44 +222,9 @@ const message = useMessage();
   font-family: 'Segoe UI','Helvetica Neue', Arial, sans-serif;
 }
 
-/* 导航栏容器 */
-.navbar-container {
-  background: #ffffff;
-  border-bottom: 1px solid #E0E6ED;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  color: white;
-}
 
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem 1.2rem;
-}
 
-.nav-left {
-  display: flex;
-  align-items: center;
-}
 
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.mode-label {
-  font-size: 0.9rem;
-}
-
-/* 工具栏 */
-.toolbar {
-  display: flex;
-  justify-content: flex-start;
-  padding: 0.6rem 1.2rem;
-  background: #F6F8FA;
-  border-top: 1px solid #E0E6ED;
-}
 
 /* 以下样式保持不变 */
 .main-content {
@@ -681,16 +303,6 @@ const message = useMessage();
 }
 
 /* 动画效果 */
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: all 0.3s ease;
-}
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  transform: translateX(-20px);
-  opacity: 0;
-}
-
 .pdf-wrapper{
   position: relative;
   height: 100vh;

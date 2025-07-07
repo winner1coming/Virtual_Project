@@ -4,17 +4,17 @@ import { reactive, ref } from 'vue';
 import type { ProjectData } from '@/logic/ProjectData';
 import { useCircuitStore } from './CircuitStore';
 import { Clock } from '@/logic/components/Clock';
-
+import { c } from 'naive-ui';
 export const useProjectStore = defineStore('project', () => {
   const allProjects = reactive(new Map<number, ProjectData>());
   const currentProjectId = ref<number>(0);
   const selectedProjectId = ref<number>(-1);
 
-  function createProject(name: string, mode='practice'): ProjectData {
+  function createProject(name: string): ProjectData {
     const project: ProjectData = {
       projectId: currentProjectId.value++,
       projectUUID: crypto.randomUUID(), // 生成一个新的UUID
-      mode: mode,
+      mode: useCircuitStore().currentMode,
       name,
       componentsId: [],
       inputPins: [],

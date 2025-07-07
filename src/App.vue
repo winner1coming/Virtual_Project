@@ -2,7 +2,9 @@
 <div id="app">
   <n-config-provider>
     <n-message-provider>
-      <router-view></router-view>
+      <keep-alive>
+        <router-view />
+      </keep-alive>
     </n-message-provider>
   </n-config-provider>
 </div>
