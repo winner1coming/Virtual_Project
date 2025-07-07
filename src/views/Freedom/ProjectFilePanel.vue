@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { c, create, NButton, NDropdown } from 'naive-ui';
+import { NButton, NDropdown } from 'naive-ui';
 import { useProjectStore } from '@/store/ProjectStore';
 import { ProjectData } from '@/logic/ProjectData';
 import { useCircuitStore } from '@/store/CircuitStore';
@@ -74,7 +74,6 @@ const createNewProject = () => {
   if (projectName) {
     projectStore.createProject(projectName);
     // 通知模拟器
-    useCircuitStore().simulator.changeProject(projectStore.selectedProjectId);
     loadProjects(); // 更新项目列表
   }
 };
@@ -105,8 +104,6 @@ const loadProject = (projectId: number) => {
     clickTimer = null; // 清除定时器
   }
   projectStore.loadProject(projectId);
-  // 通知模拟器
-  useCircuitStore().simulator.changeProject(projectId);
 };
 
 // 根据项目ID创建子组件（单击）

@@ -31,11 +31,10 @@ const circuitStore = useCircuitStore()
 const router = useRouter()
 const navigateToWorkspace = (mode) => {
   circuitStore.currentMode = mode 
-  if(projectStore.currentProjectId !== 1 &&mode !== 'tutorial') {
+  if(mode !== 'tutorial') {
     for(const project of projectStore.getAllProjects()) {
       if(project.mode === mode) {
         projectStore.loadProject(project.projectId)
-        circuitStore.changeProject(project.projectId)
         break
       }
     }

@@ -44,7 +44,6 @@ export class SubCircuitComponent extends BaseComponent {
     // 切换项目
     const oldProjectId = projectStore.selectedProjectId;
     projectStore.loadProject(projectId);
-    circuitStore.changeProject(projectId);
     // 存储旧的输入，顺带存inputName
     const oldInputs = [];
     for(const inputPinId of projectData.inputPins) {
@@ -99,8 +98,6 @@ export class SubCircuitComponent extends BaseComponent {
     }
     // 换回项目
     projectStore.loadProject(oldProjectId);
-    circuitStore.changeProject(oldProjectId);
-    
 
   }
 

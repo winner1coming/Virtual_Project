@@ -1,7 +1,6 @@
 import { reactive } from "vue";
 import { calcInputYs } from "@/logic/utils/useGateLayout";
 import { EventDrivenSimulator } from "./Simulator";
-import { SubSimulator } from "./SubSimulator";
 import eventBus from "@/modules/useEventBus";
 
 // 电路传输整型，-1表示未连接，-2表示错误
@@ -20,13 +19,12 @@ export abstract class BaseComponent{
   position: [number, number];
   offset: [number, number];
   inputPinPosition: Array<[number, number]>;   // todo! 默认为2，部分特殊文件中的这个还没改
-  //inputYs: number[]; // 输入引脚的y坐标
   outputPinPosition: Array<[number, number]>;  // todo! 默认为2，部分特殊文件中的这个还没改
   direction: string; // 组件的方向，'east', 'west', 'north', 'south'
-  simulator!: EventDrivenSimulator | SubSimulator; // 关联的模拟器实例
+  simulator!: EventDrivenSimulator; // 关联的模拟器实例
 
   constructor(id: number, type: string, position:[number, number] = [0,0]) {
-    // 子类初始化构造记得要调用changeInputPinCount()（changeOutputPinCount在outputPin不为1时调用）（会修改一些数组的长度，也会重新计算引脚位置）
+    // 子类初始化构造记得要调用initInputPin()（initOutputPin在outputPin不为1时调用）（会修改一些数组的长度，也会重新计算引脚位置）
     this.id = id;
     this.type = type;
     this.name = "";   
