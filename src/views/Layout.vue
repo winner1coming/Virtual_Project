@@ -85,10 +85,9 @@
             >
               <template #1>
                 <div 
-                  v-for="(id, idx) in projectIds" 
-                  :key="idx" v-show="id === projectStore.selectedProjectId" 
+                  :key="idx" 
                   class="canvas">
-                  <CanvasEditor :ref="el => setCanvasEditorRef(id, el)" />
+                  <CanvasEditor/>
                 </div>
               </template>
               <template #2 v-if="showRightPDF">

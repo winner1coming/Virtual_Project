@@ -14,7 +14,7 @@ export const useProjectStore = defineStore('project', () => {
     const project: ProjectData = {
       projectId: currentProjectId.value++,
       projectUUID: crypto.randomUUID(), // 生成一个新的UUID
-      mode: useCircuitStore().currentMode,
+      mode: useCircuitStore().currentMode? useCircuitStore().currentMode : 'practice',
       name,
       componentsId: [],
       inputPins: [],
