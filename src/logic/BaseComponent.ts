@@ -7,8 +7,8 @@ import eventBus from "@/modules/useEventBus";
 // 电路传输整型，-1表示未连接，-2表示错误
 export abstract class BaseComponent{
   id: number;
-  type: String;
-  name: String;
+  type: string;
+  name: string;
   inputs: number[];
   inputCount: number; // 输入引脚数量
   inputInverted: boolean[]; // 输入引脚是否取反   
@@ -25,7 +25,7 @@ export abstract class BaseComponent{
   direction: string; // 组件的方向，'east', 'west', 'north', 'south'
   simulator!: EventDrivenSimulator | SubSimulator; // 关联的模拟器实例
 
-  constructor(id: number, type: String, position:[number, number] = [0,0]) {
+  constructor(id: number, type: string, position:[number, number] = [0,0]) {
     // 子类初始化构造记得要调用changeInputPinCount()（changeOutputPinCount在outputPin不为1时调用）（会修改一些数组的长度，也会重新计算引脚位置）
     this.id = id;
     this.type = type;
@@ -63,7 +63,7 @@ export abstract class BaseComponent{
 
   // #region Setters
   // 改变名字
-  setName(name: String){
+  setName(name: string){
     this.name = name;
   }
   // 改变位宽
@@ -75,6 +75,11 @@ export abstract class BaseComponent{
   setPosition(position: [number, number]) {
     this.position[0] = position[0]; 
     this.position[1] = position[1];
+  }
+  setDirection(direction: string){
+    this.direction = direction;
+    this.updatePinPosition();
+    eventBus.emit('updatePinPosition', {id: this.id}); 
   }
   // 设置缩放比例
   setScale(scale: number) {
@@ -104,7 +109,6 @@ export abstract class BaseComponent{
         0 + 288,
       ];
     });
-  
   }
   
   initOutputPin(num: number){
@@ -165,13 +169,7 @@ export abstract class BaseComponent{
     return this.outputs;
   }
 
-  setDirection(direction: string){
-    this.direction = direction;
-  }
 
-  getDirection() {
-    return this.direction;
-  }
 
 
   getAllPorts(){

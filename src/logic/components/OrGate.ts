@@ -2,7 +2,7 @@ import { BaseComponent } from "../BaseComponent.js";
 import { EventDrivenSimulator } from "../Simulator.js";
 
 export class OrGate extends BaseComponent {
-    constructor(id: number, type: String, position:[number, number] = [0,0], simulator: any = null) {
+    constructor(id: number, type: string, position:[number, number] = [0,0], simulator: any = null) {
         super(id, type, position);
         this.offset = [-280, -280];
         if(!simulator) {

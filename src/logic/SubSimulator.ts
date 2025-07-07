@@ -27,8 +27,8 @@ export class SubSimulator {
   private pause: Boolean = false; // 是否暂停模拟器
 
   // 隧道维护
-  public tunnelNameMap: Map<String, number[]> = new Map(); // 存储隧道名字与id
-  public InputTunnelMap: Map<String, number[]> = new Map(); // 记录接受输入的隧道
+  public tunnelNameMap: Map<string, number[]> = new Map(); // 存储隧道名字与id
+  public InputTunnelMap: Map<string, number[]> = new Map(); // 记录接受输入的隧道
   
 
   constructor(projectId: number, componentIdMap: Map<number, BaseComponent> = new Map()) {

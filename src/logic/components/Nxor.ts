@@ -3,7 +3,7 @@ import { EventDrivenSimulator } from "../Simulator";
 import { calcInputYs } from "@/logic/utils/useGateLayout";
 
 export class NxorGate extends BaseComponent {
-    constructor(id: number, type: String, position: [number, number] = [0, 0], simulator: any = null) {
+    constructor(id: number, type: string, position: [number, number] = [0, 0], simulator: any = null) {
         super(id, type, position);
         this.offset = [-280, -280];
         if (!simulator) {

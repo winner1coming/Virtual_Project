@@ -9,7 +9,7 @@ export class Clock extends BaseComponent {
     public isStopped: boolean = false; // 是否停止时钟
 
     constructor(id: number, 
-            type: String, 
+            type: string, 
             position: [number, number] = [0, 0], 
             simulator: any = null,
             ) {

@@ -6,7 +6,7 @@ export function watchComponentChanges(
     comp: BaseComponent,
     inputCountCb: () => void = () => {},   // callback
     inputInvertedCb: (idx: number) => void = () => {},
-    nameCb: (name: String) => void = () => {}
+    nameCb: (name: string) => void = () => {}
 ) {
     const unwatchInputCount = watch(
         () => comp.inputCount,

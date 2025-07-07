@@ -5,7 +5,7 @@ import { EventDrivenSimulator } from "../Simulator";
 export class InputPin extends BaseComponent {
     constructor(
         id: number, 
-        type: String = "InputPin", 
+        type: string = "InputPin", 
         position: [number, number] = [0, 0], 
         simulator: any = null 
     ) {

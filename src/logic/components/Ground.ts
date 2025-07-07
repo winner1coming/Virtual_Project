@@ -1,6 +1,6 @@
 import { BaseComponent } from "../BaseComponent";
 export class Ground extends BaseComponent{
-  constructor(id: number, type: String, position:[number, number] = [0,0]){
+  constructor(id: number, type: string, position:[number, number] = [0,0]){
     super(id, type, position);
     this.outputs.splice(0, this.outputs.length, 0); 
     this.initInputPin(0); // Ground组件没有输入引脚
