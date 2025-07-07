@@ -1,7 +1,7 @@
 import { BaseComponent } from "../BaseComponent.js";
 
 export class NotGate extends BaseComponent {
-    constructor(id: number, type: String, position:[number, number] = [0,0]){
+    constructor(id: number, type: string, position:[number, number] = [0,0]){
         super(id, type, position);
         this.offset = [-280, -280];
         this.initInputPin(1); // NotGate只有一个输入引脚

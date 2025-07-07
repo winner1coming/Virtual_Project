@@ -5,7 +5,7 @@ export class Register extends BaseComponent {
   private lastClockState: number; // 上一次时钟状态
   private q: number; // Q 输出
 
-  constructor(id: number, type: String, position: [number, number] = [0, 0], simulator: any = null) {
+  constructor(id: number, type: string, position: [number, number] = [0, 0], simulator: any = null) {
     super(id, type, position);
     this.offset = [-250,-250];
     if (!simulator) {

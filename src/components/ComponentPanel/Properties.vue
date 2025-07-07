@@ -7,11 +7,10 @@
         <n-input
           id="name"
           type="text"
-          :value="circuitStore.getComponent(circuitStore.selectedId).name.toString()"
+          v-model:value="name"
           placeholder=""
-          @update:value="(value: string) => {
-            circuitStore.getComponent(circuitStore.selectedId).setName(value);
-          }"
+          @blur="changeName()"
+          @keyup.enter="changeName()"
         />
       </div>
 
@@ -135,6 +134,8 @@
           id="value"
           v-model:value="constantValue"
           placeholder="请输入数值"
+          @blur="changeValue()"
+          @keyup.enter="changeValue()"
         />
       </div>
 
@@ -155,7 +156,17 @@ import { ConstantInput } from '@/logic/components/ConstantInput';
 import { Clock } from '@/logic/components/Clock';
 
 const circuitStore = useCircuitStore();
-
+const name = ref('');
+const period = ref('1');
+const constantValue = ref('0');
+watch(() => circuitStore.selectedId, (newId) => {
+  const component = circuitStore.getComponent(newId);
+  if (component) {
+    name.value = component.name;
+    period.value = component.type === 'CLOCK' ? (component as Clock).period.toString() : '1';
+    constantValue.value = component.type === 'CONSTANT' ? component.outputs[0].toString() : '0';
+  }
+});
 
 // 引脚数量选项
 const pinCountOptions = ref([2,3,4,5,6,7,8]);
@@ -177,13 +188,23 @@ const showInvertInputOption = computed(() => {
          selectedComponent.type !== 'INPUT' && selectedComponent.type !== 'OUTPUT' &&
          selectedComponent.type !== 'SegmentDisplay' && selectedComponent.type !== 'TUNNEL' &&
          selectedComponent.type !== 'POWER' && selectedComponent.type !== 'GROUND';
-});
-
+})
+;
+// 名字
+function changeName(){
+  const component = circuitStore.getComponent(circuitStore.selectedId);
+  if (!component) {
+    return;
+  }
+  const newName = name.value.trim();
+  if (newName === component.name) {
+    return; // 如果名字没有变化，则不处理
+  }
+  component.setName(newName);
+}
+// 位置------------------------------
 function updateDirection(value: string, option: SelectOption) {
-  circuitStore.getComponent(circuitStore.selectedId).updatePinPosition();
-  eventBus.emit('updatePinPosition', { id: circuitStore.selectedId});
-  // // 更新元件的方向
-  // eventBus.emit('updateComponentDirection');
+  circuitStore.getComponent(circuitStore.selectedId).setDirection(value);
 }
 
 // 数据位宽选项
@@ -210,34 +231,24 @@ function updateInputCount(value: number) {
   circuitStore.getComponent(circuitStore.selectedId).changeInputPinCount(value);
 }
 // 常量输入
-const constantValue = ref('0');
-watch(constantValue, (newValue, oldValue) => {
-  if(newValue === oldValue) {
-    return; // 如果值没有变化，则不处理
-  }
-  console.log("ConstantInput value changed:", newValue);
+function changeValue(){
   const component = circuitStore.getComponent(circuitStore.selectedId) as ConstantInput;
   if (!component || component.type !== 'CONSTANT') {
     return;
   }
-
-  if (newValue === '') {
-    // 允许清空输入框
-    return;
-  }
-
-  const v = parseInt(newValue);
-  if (!isNaN(v) && v >= 0 && v < Math.pow(2, component.bitWidth)) {
-    //component.setValue(v);
-    component.changeInput(0,v)
-  } else {
-    // 回退到当前实际输出值
+  if (constantValue.value === '') {
     constantValue.value = component.outputs[0].toString();
+    return; 
   }
-});
+
+  const v = parseInt(constantValue.value);
+  if (!isNaN(v) && v >= 0 && v < Math.pow(2, component.bitWidth) && v !== component.outputs[0]) {
+    component.changeInput(0,v)
+  } 
+  constantValue.value = component.outputs[0].toString();
+}
 
 // 时钟
-const period = ref('1');
 function changePeriod(period: string) {
   const component = circuitStore.getComponent(circuitStore.selectedId) as Clock;
   if (!component || component.type !== 'CLOCK') {

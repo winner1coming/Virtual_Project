@@ -30,9 +30,9 @@ export class EventDrivenSimulator {
   private pause: Boolean = false; // 是否暂停模拟器
 
   // 隧道维护
-  public tunnelNameMap: Map<String, number[]> = new Map(); // 存储隧道名字与id
-  public InputTunnelMap: Map<String, number[]> = new Map(); // 记录接受输入的隧道
-  private projectTunnel: Map<number, [Map<String, number[]>, Map<String, number[]>]> = new Map(); // 存储每个项目的隧道信息
+  public tunnelNameMap: Map<string, number[]> = new Map(); // 存储隧道名字与id
+  public InputTunnelMap: Map<string, number[]> = new Map(); // 记录接受输入的隧道
+  private projectTunnel: Map<number, [Map<string, number[]>, Map<string, number[]>]> = new Map(); // 存储每个项目的隧道信息
   private constructor() {
     this.connectionManager = new ConnectionManager();
     this.connManagerMap.set(0, this.connectionManager); // 默认项目的连接管理器
@@ -338,7 +338,7 @@ export class EventDrivenSimulator {
 
   // 维护隧道
   // 添加隧道
-  addTunnel(name: String, id: number) {
+  addTunnel(name: string, id: number) {
     if (!this.tunnelNameMap.has(name)) {
       this.tunnelNameMap.set(name, []);
       this.InputTunnelMap.set(name, []);
@@ -372,7 +372,7 @@ export class EventDrivenSimulator {
   }
 
   // 删除隧道
-  removeTunnel(name: String, id: number) {
+  removeTunnel(name: string, id: number) {
     if (!this.tunnelNameMap.has(name)) return;
     const tunnels = this.tunnelNameMap.get(name)!;
     let index = tunnels.indexOf(id);
@@ -517,7 +517,7 @@ export class EventDrivenSimulator {
   getConnectionManager(id: number): ConnectionManager {
     return this.connManagerMap.get(id)!;
   }
-  getProjectTunnel(id: number): [Map<String, number[]>, Map<String, number[]>] {
+  getProjectTunnel(id: number): [Map<string, number[]>, Map<string, number[]>] {
     return this.projectTunnel.get(id)!;
   }
   changeProject(id: number): void {

@@ -7,7 +7,7 @@ export class OutputPin extends BaseComponent {
 
     constructor(
         id: number, 
-        type: String = "OutputPin", 
+        type: string = "OutputPin", 
         position: [number, number] = [0, 0], 
         simulator: any = null
     ) {

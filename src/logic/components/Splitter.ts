@@ -5,7 +5,7 @@ import { calcInputYs } from "@/logic/utils/useGateLayout";
 import eventBus from "@/modules/useEventBus";
 
 export class Splitter extends BaseComponent {
-    constructor(id: number,type: String, position: [number, number] = [0, 0], simulator = null,bitWidth: number = 4) {
+    constructor(id: number,type: string, position: [number, number] = [0, 0], simulator = null,bitWidth: number = 4) {
         super(id, type, position);
         this.offset = [-150, -280];
         if (!simulator) {

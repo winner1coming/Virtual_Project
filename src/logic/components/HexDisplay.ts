@@ -1,7 +1,7 @@
 import { BaseComponent } from "../BaseComponent";
 import { EventDrivenSimulator } from "../Simulator";
 export class HexDisplay extends BaseComponent{
-  constructor(id: number, type: String, position:[number, number] = [0,0], simulator: any = null){
+  constructor(id: number, type: string, position:[number, number] = [0,0], simulator: any = null){
     super(id, type, position);
     this.offset = [-250, -200];
     if(!simulator) {

@@ -37,7 +37,7 @@ export const useCircuitStore = defineStore('circuit', {
     },
 
     // 添加一个组件，返回id
-    addComponent(type: String, position: [number, number]=[0,0], name: String ="", projectId: number): number {
+    addComponent(type: string, position: [number, number]=[0,0], name: string ="", projectId: number): number {
       const id = this.currentId++;
       // const logic = createGate(type, id);
       this.components.set(id, reactive(createComponentByType(id, type, position, name, projectId)));

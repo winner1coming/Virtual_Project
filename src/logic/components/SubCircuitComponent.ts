@@ -20,9 +20,9 @@ export class SubCircuitComponent extends BaseComponent {
 
   constructor(
     id: number,
-    type: String,
+    type: string,
     position:[number, number] = [0, 0],
-    name: String,
+    name: string,
     projectId: number = -1,
   ) {
     super(id, type, position);
@@ -51,7 +51,7 @@ export class SubCircuitComponent extends BaseComponent {
       const comp = circuitStore.getComponent(inputPinId);
       if (comp) {
         oldInputs.push(comp.getOutputs()[0]);
-        this.inputNames.push(comp.name.toString());
+        this.inputNames.push(comp.name);
       } else {
         oldInputs.push(0); 
       }
@@ -60,7 +60,7 @@ export class SubCircuitComponent extends BaseComponent {
     for(const outputPinId of projectData.outputPins) {
       const comp = circuitStore.getComponent(outputPinId);
       if (comp) {
-        this.outputNames.push(comp.name.toString());
+        this.outputNames.push(comp.name);
       } else {
         this.outputNames.push(""); // 如果没有找到组件，输出名称为空
       }

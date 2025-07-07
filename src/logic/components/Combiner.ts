@@ -5,7 +5,7 @@ import { EventDrivenSimulator } from "../Simulator";
 import { calcInputYs } from "@/logic/utils/useGateLayout";
 
 export class Combiner extends BaseComponent {
-    constructor(id: number,type: String, position: [number, number] = [0, 0], bitWidth: number = 4, simulator: any = null) {
+    constructor(id: number,type: string, position: [number, number] = [0, 0], bitWidth: number = 4, simulator: any = null) {
         super(id, type, position);
         this.offset = [-150, -280];
         if (!simulator) {

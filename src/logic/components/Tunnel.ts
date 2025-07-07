@@ -4,7 +4,7 @@ import { reactive } from 'vue';
 import { EventDrivenSimulator } from '../Simulator';
 
 export class Tunnel extends BaseComponent {
-  constructor(id: number, type: String, position: [number, number] = [0, 0], name: String, simulator: any = null) {
+  constructor(id: number, type: string, position: [number, number] = [0, 0], name: string, simulator: any = null) {
     super(id, type, position);
     // 只支持输出，隧道输入的逻辑放在模拟器中全局判断  todo 处理模拟器还是子模拟器
     if(!simulator) {
@@ -23,12 +23,15 @@ export class Tunnel extends BaseComponent {
     EventDrivenSimulator.getInstance().addTunnel(name, id);
   }
 
-  setName(name: String): void {
+  setName(name: string): void {
     EventDrivenSimulator.getInstance().removeTunnel(this.name, this.id); // 删除旧的隧道
     this.name = name;
     EventDrivenSimulator.getInstance().addTunnel(name, this.id); // 添加新的隧道
 
     this.simulator.processQueue();
+  }
+  setDirection(direction: string): void {
+    this.direction = direction;
   }
 
   compute(): number[] {
