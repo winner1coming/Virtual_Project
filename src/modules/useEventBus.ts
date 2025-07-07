@@ -7,9 +7,9 @@ type Events = {
 //   'clear-canvas': void; // 清空画布事件
   'start-place-component': { type: string, projectId: number}; // 开始放置组件事件
   'updateComponentDirection': void;// 指定元件旋转方向
-  'updateComponentInputCount': void;
   'updateComponentBitWidth': void;
   'updatePinPosition':{id: number};
+  'updateInputCount': {id: number};
 };
 
 // 创建事件总线实例
