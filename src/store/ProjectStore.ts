@@ -4,7 +4,7 @@ import { reactive, ref } from 'vue';
 import type { ProjectData } from '@/logic/ProjectData';
 import { useCircuitStore } from './CircuitStore';
 import { Clock } from '@/logic/components/Clock';
-import { c } from 'naive-ui';
+import { calculateTruthTable as computeTruthTable } from '@/modules/useTruthTable';
 export const useProjectStore = defineStore('project', () => {
   const allProjects = reactive(new Map<number, ProjectData>());
   const nextProjectId = ref<number>(0);    // 
@@ -20,6 +20,8 @@ export const useProjectStore = defineStore('project', () => {
     inputPins: [],
     outputPins: [],
     clockIds: [],
+    hasChanged: true, // 是否有更改
+    truthTable: [], // 真值表
   };
   allProjects.set(defaultProject.projectId, defaultProject);
   selectedProjectId.value = defaultProject.projectId; // 设置默认选中项目
@@ -35,6 +37,8 @@ export const useProjectStore = defineStore('project', () => {
       inputPins: [],
       outputPins: [],
       clockIds: [],
+      hasChanged: true, // 新项目默认有更改
+      truthTable: [], // 新项目默认没有真值表
     };
     allProjects.set(project.projectId, project);
     loadProject(project.projectId);
@@ -80,11 +84,22 @@ export const useProjectStore = defineStore('project', () => {
   function getCurrentProject(): ProjectData {
     return allProjects.get(selectedProjectId.value)!;
   }
-  function getProjectById(projectId: number): ProjectData {
+  function getProjectById(projectId: number): ProjectData|null {
     if (!allProjects.has(projectId)) {
-      throw new Error(`Project with ID ${projectId} not found.`);
+      return null;
     }
     return allProjects.get(projectId)!;
+  }
+  function getProjectIdByUUID(projectId:number, uuid: string): number{
+    if(allProjects.has(projectId ) && allProjects.get(projectId)!.projectUUID === uuid) {
+     return projectId;
+    } 
+    for(let p of getAllProjects()) {
+      if(p.projectUUID === uuid) {
+        return p.projectId;
+      }
+    }
+    return -1; 
   }
   function getAllProjects(): ProjectData[] {
     return Array.from(allProjects.values());
@@ -103,6 +118,14 @@ export const useProjectStore = defineStore('project', () => {
     }
   }
 
+  function calculateTruthTable(projectId: number){
+    const oldProjectId = selectedProjectId.value;
+    loadProject(projectId);
+    allProjects.get(projectId)!.truthTable = computeTruthTable(projectId);
+    loadProject(oldProjectId); // 恢复之前的项目
+    allProjects.get(projectId)!.hasChanged = false; // 计算真值表后，项目不再有更改
+  }
+
   return {
     allProjects,
     nextProjectId,
@@ -111,8 +134,10 @@ export const useProjectStore = defineStore('project', () => {
     loadProject,
     getCurrentProject,
     getProjectById,
+    getProjectIdByUUID,
     getAllProjects,
     deleteProject,
     getProjectIds,
+    calculateTruthTable,
   };
 });

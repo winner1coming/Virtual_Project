@@ -49,7 +49,7 @@
         789.3874969482422,
         163.5999984741211
       ],
-      "name": "S",
+      "name": "sum",
       "bitWidth": 1,
       "inputCount": 1,
       "outputCount": 0,
@@ -64,7 +64,7 @@
         789.3874969482422,
         284.5999984741211
       ],
-      "name": "Cout",
+      "name": "cout",
       "bitWidth": 1,
       "inputCount": 1,
       "outputCount": 0,

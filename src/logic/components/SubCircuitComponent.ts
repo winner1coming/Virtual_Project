@@ -16,7 +16,7 @@ export class SubCircuitComponent extends BaseComponent {
   public outputNames: string[] = []; // 输出引脚的名称
   public copyProjectId: number = 0;
   public projectUUID: string = "";
-  public truthTable: number[][] = []; // 真值表
+  // public truthTable: number[][] = []; // 真值表
 
   constructor(
     id: number,
@@ -39,20 +39,17 @@ export class SubCircuitComponent extends BaseComponent {
     this.initInputPin(projectData.inputPins.length);
     this.initOutputPin(projectData.outputPins.length);
 
-   
+   if(projectData.truthTable.length === 0){
     // 计算真值表
-    // 切换项目
-    const oldProjectId = projectStore.selectedProjectId;
-    projectStore.loadProject(projectId);
-    // 存储旧的输入，顺带存inputName
-    const oldInputs = [];
+    projectStore.calculateTruthTable(projectId);
+   }
+   // 存inputName
     for(const inputPinId of projectData.inputPins) {
       const comp = circuitStore.getComponent(inputPinId);
       if (comp) {
-        oldInputs.push(comp.getOutputs()[0]);
         this.inputNames.push(comp.name);
-      } else {
-        oldInputs.push(0); 
+      }else{
+        this.inputNames.push(""); 
       }
     }
     // 存outputName
@@ -61,44 +58,10 @@ export class SubCircuitComponent extends BaseComponent {
       if (comp) {
         this.outputNames.push(comp.name);
       } else {
-        this.outputNames.push(""); // 如果没有找到组件，输出名称为空
+        this.outputNames.push(""); 
       }
     }
-    // 遍历引脚，计算真值表
-    const inputCount = projectData.inputPins.length;
-    const outputCount = projectData.outputPins.length;
-    const totalCombinations = 1 << inputCount; // 2^inputCount
-    for (let i = 0; i < totalCombinations; i++) {
-      // 暂停模拟器
-      circuitStore.simulator.pauseSimulator();
-      // 设置输入
-      for (let j = 0; j < inputCount; j++) {
-        const value = (i >> j) & 1;
-        circuitStore.getComponent(projectData.inputPins[j]).changeInput(0, value);
-      }
-      // 恢复模拟器
-      circuitStore.simulator.resumeSimulator();
-      const outputs = [];
-      // 获取输出
-      for (let j = 0; j < outputCount; j++) {
-        const outputPinId = projectData.outputPins[j];
-        const comp = circuitStore.getComponent(outputPinId);
-        if (comp) {
-          outputs.push(comp.getOutputs()[0]);
-        } else {
-          outputs.push(0); // 如果没有找到组件，输出为0
-        }
-      }
-      this.truthTable.push([...outputs]);
-    }
-
-    // 恢复输入
-    for (let j = 0; j < inputCount; j++) {
-      circuitStore.getComponent(projectData.inputPins[j]).changeInput(0, oldInputs[j]);
-    }
-    // 换回项目
-    projectStore.loadProject(oldProjectId);
-
+    
   }
 
   changeInput(idx: number, v: number): number[] {
@@ -123,8 +86,14 @@ export class SubCircuitComponent extends BaseComponent {
         return this.outputs; 
       }
     }
+    const projectStore = useProjectStore();
+    // 计算真值表
+    if(projectStore.getProjectById(this.copyProjectId).truthTable.length === 0 || 
+      projectStore.getProjectById(this.copyProjectId).hasChanged) {
+      projectStore.calculateTruthTable(this.copyProjectId);
+    }
     // 更新输出
-    this.outputs.splice(0, this.outputs.length, ...this.truthTable[index]);
+    this.outputs.splice(0, this.outputs.length, ...projectStore.getProjectById(this.copyProjectId).truthTable[index]);
     return this.outputs;
   }
 
