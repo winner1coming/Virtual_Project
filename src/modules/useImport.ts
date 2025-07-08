@@ -1,3 +1,5 @@
+// 导入导出电路
+// 含子组件的电路，一点要先导入子组件的原本的电路
 import { ProjectData } from "@/logic/ProjectData";
 import { useProjectStore } from "@/store/ProjectStore";
 import { useCircuitStore } from "@/store/CircuitStore";
@@ -28,7 +30,6 @@ export function exportProject(projectDate: ProjectData): void {
         outputNames: sub.outputNames ? [...sub.outputNames] : [],
         copyProjectId: sub.copyProjectId,
         projectUUID: sub.projectUUID,
-        truthTable: sub.truthTable,
       });
     }else{
       components.push({
@@ -119,10 +120,15 @@ export async function loadProject(importData: any, canvasRef: any){
         subComp.inputNames = comp.inputNames || [];
         subComp.outputNames = comp.outputNames || [];
         subComp.copyProjectId = comp.copyProjectId || 0; 
-        subComp.truthTable = comp.truthTable || [];
         subComp.initInputPin(subComp.inputs.length);
         subComp.initOutputPin(subComp.outputs.length);
         subComp.projectUUID = comp.projectUUID || "";
+        // 查找是哪个project
+        const projectId = projectStore.getProjectIdByUUID(subComp.copyProjectId,subComp.projectUUID);
+        if(projectId !== -1) {
+          subComp.copyProjectId = projectId;
+        }
+        
       }
       componentsIdMap.set(comp.id, addedComponent.id);
     

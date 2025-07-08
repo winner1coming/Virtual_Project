@@ -10,4 +10,6 @@ export interface ProjectData {
   inputPins: number[];    // 输入引脚的id的数组
   outputPins: number[];   // 输出引脚的id的数组
   clockIds: number[]; // 时钟元件的id数组
+  hasChanged: boolean; // 是否有更改
+  truthTable: number[][]; // 真值表
 }
