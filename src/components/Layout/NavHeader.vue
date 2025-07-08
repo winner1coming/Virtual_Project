@@ -187,6 +187,7 @@ const oneBitFullAdder = [
   [0, 1], // 输入组合 110 的输出
   [1, 1]  // 输入组合 111 的输出
 ]
+const oneBitFullAdderName = ['x', 'y', 'cin', 'sum', 'cout'];
 
 const answer: { [key: string]: number[][] } = {
   "unnamed":[], 
