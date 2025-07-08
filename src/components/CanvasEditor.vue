@@ -388,6 +388,7 @@ const SVG_OFFSET = {
   OUTPUT: {x: tempOutput.offset[0], y: tempOutput.offset[1]},
   SPLITTER: {x: tempSplitter.offset[0], y: tempSplitter.offset[1]},
   TUNNEL: {x: tempTunnel.offset[0], y: tempTunnel.offset[1]},
+  D_FLIP_FLOP: {x: tempRegister.offset[0], y: tempRegister.offset[1]},
 }
 
  
@@ -415,6 +416,7 @@ const IMAGE_MAP = {
   OUTPUT: new Image(),
   SPLITTER: new Image(),
   TUNNEL: new Image(),
+  D_FLIP_FLOP: new Image(),
 }
 
 // 初始化图片资源
@@ -440,6 +442,7 @@ IMAGE_MAP.LIGHT.src = '/assets/LED.svg'
 IMAGE_MAP.OUTPUT.src = '/assets/outputpin.svg'
 IMAGE_MAP.SPLITTER.src = '/assets/splitter.svg'
 IMAGE_MAP.TUNNEL.src = '/assets/Tunnel.svg'
+IMAGE_MAP.D_FLIP_FLOP.src = '/assets/D触发器.svg'
 
 
 function updateComponentDirection() {
