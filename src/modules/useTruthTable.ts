@@ -2,14 +2,31 @@ import { useCircuitStore } from '@/store/CircuitStore';
 import { useProjectStore } from '@/store/ProjectStore';
 
 // 只能计算当前项目的真值表
-export function calculateTruthTable(projectId: number): number[][] {
+export function calculateTruthTable(projectId: number, inputNames: string[]=[], outputNames: string[]=[]): number[][] {
   const circuitStore = useCircuitStore();
   const projectStore = useProjectStore();
 
   // 获取项目数据
   const projectData = projectStore.getProjectById(projectId);
-  const inputPins = projectData.inputPins;
-  const outputPins = projectData.outputPins;
+
+  // 根据名字找到对应的引脚 ID
+  let inputPins,outputPins;
+  if(inputNames.length === 0 && outputNames.length === 0) {
+    inputPins = projectData.inputPins;
+    outputPins = projectData.outputPins;
+  }else{
+    inputPins = inputNames.map(name =>
+      projectData.inputPins.find(pinId => circuitStore.getComponent(pinId)?.name === name)
+    );
+    outputPins = outputNames.map(name =>
+      projectData.outputPins.find(pinId => circuitStore.getComponent(pinId)?.name === name)
+    );
+
+    if (inputPins.includes(undefined) || outputPins.includes(undefined)) {
+      return [];
+    }
+  }
+  
 
   let oldInputs: number[] = [];
 
@@ -21,7 +38,7 @@ export function calculateTruthTable(projectId: number): number[][] {
 
   // 保存当前输入状态
   for (const inputPinId of inputPins) {
-    const comp = circuitStore.getComponent(inputPinId);
+    const comp = circuitStore.getComponent(inputPinId!);
     if (comp) {
       oldInputs.push(comp.getOutputs()[0]);
     } else {
@@ -37,7 +54,7 @@ export function calculateTruthTable(projectId: number): number[][] {
     // 设置输入
     for (let j = 0; j < inputCount; j++) {
       const value = (i >> j) & 1; // 获取第 j 位的值（0 或 1）
-      circuitStore.getComponent(inputPins[j]).changeInput(0, value);
+      circuitStore.getComponent(inputPins[j]!).changeInput(0, value);
     }
 
     // 恢复模拟器
@@ -46,7 +63,7 @@ export function calculateTruthTable(projectId: number): number[][] {
     const outputs: number[] = [];
     // 获取输出
     for (const outputPinId of outputPins) {
-      const comp = circuitStore.getComponent(outputPinId);
+      const comp = circuitStore.getComponent(outputPinId!);
       if (comp) {
         outputs.push(comp.getOutputs()[0]);
       } else {
@@ -59,7 +76,7 @@ export function calculateTruthTable(projectId: number): number[][] {
 
   // 恢复输入状态
   for (let j = 0; j < inputCount; j++) {
-    circuitStore.getComponent(inputPins[j]).changeInput(0, oldInputs[j]);
+    circuitStore.getComponent(inputPins[j]!).changeInput(0, oldInputs[j]);
   }
 
   return truthTable;

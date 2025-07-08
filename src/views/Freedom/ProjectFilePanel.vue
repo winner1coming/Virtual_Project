@@ -7,7 +7,7 @@
       :key="project.projectId"
       class="project-item"
       :class="{ selected: project.projectId === projectStore.selectedProjectId }"
-      @mousedown="handleMouseDown(project.projectId)"
+      @mousedown="handleMouseDown($event,project.projectId)"
       @contextmenu.prevent="showContextMenu($event, project)"
     >
 
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { NButton, NDropdown } from 'naive-ui';
 import { useProjectStore } from '@/store/ProjectStore';
 import { ProjectData } from '@/logic/ProjectData';
@@ -80,7 +80,9 @@ const createNewProject = () => {
 
 let clickTimer: number | null = null;
 let clickCount = 0;
-const handleMouseDown = (projectId: number) => {
+const handleMouseDown = (event: MouseEvent, projectId: number) => {
+  if(event.button !== 0) return; // 只处理左键点击
+  event.stopPropagation(); 
   clickCount++;
   if(clickCount === 1){
     clickTimer = setTimeout(() => {
@@ -157,6 +159,17 @@ const handleContextMenuSelect = (key: string) => {
 // 在组件挂载时加载项目列表
 onMounted(() => {
   loadProjects();
+  eventBus.on('freshProject', ()=>{
+    console.log("监听到刷新事件，重新加载项目列表");
+    loadProjects(); // 重新加载项目列表
+  }); // 监听刷新事件
+});
+
+onUnmounted(() => {
+  eventBus.off('freshProject'); // 移除监听
+  if (clickTimer) {
+    clearTimeout(clickTimer); // 清除定时器
+  }
 });
 </script>
 
