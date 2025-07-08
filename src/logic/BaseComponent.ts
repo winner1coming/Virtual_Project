@@ -13,6 +13,8 @@ export abstract class BaseComponent{
   inputInverted: boolean[]; // 输入引脚是否取反   
   outputs: number[];
   bitWidth: number;
+  inputBitWidths: number[]; 
+  outputBitWidths: number[]; 
   // height: number;
   // width: number;
   scale: number; // 缩放比例
@@ -32,6 +34,7 @@ export abstract class BaseComponent{
     this.inputs = reactive([-1, -1]);     // 默认2个输入，如果不是，子类需要在构造函数中初始化
     this.inputCount = 2; // 默认2个输入
     this.inputInverted = reactive([false, false]);   // 默认两个引脚
+    this.inputBitWidths = reactive([1, 1]); 
 
     this.outputs = reactive([-1]);  // 输出初始值为-1 未连接
     this.bitWidth = 1;
@@ -39,6 +42,7 @@ export abstract class BaseComponent{
     this.position = reactive(position); // 将 position 包装为 reactive
     this.inputPinPosition =  reactive([[0,0], [0,0]]);  // 默认只有两个输入引脚
     this.outputPinPosition = reactive([[0,0]]); // 默认只有一个输出引脚
+    this.outputBitWidths = reactive([1]); 
     this.direction = 'east';  // 默认方向为东
     this.offset = [0,0];
 
@@ -67,6 +71,8 @@ export abstract class BaseComponent{
   // 改变位宽
   setBitWidth(bitWidth: number){
     this.bitWidth = bitWidth;
+    this.inputBitWidths.splice(0, this.inputBitWidths.length, ...Array(this.inputCount).fill(bitWidth));
+    this.outputBitWidths.splice(0, this.outputBitWidths.length, ...Array(this.outputs.length).fill(bitWidth));
     //this.simulator.checkComponentConnections(this.id);
   }
   // 改变position
@@ -111,6 +117,7 @@ export abstract class BaseComponent{
   
   initOutputPin(num: number){
     this.outputs.splice(0, this.outputs.length, ...Array(num).fill(-1));
+    this.outputBitWidths.splice(0, this.outputBitWidths.length, ...Array(num).fill(this.bitWidth)); 
     this.updatePinPosition(); // 更新输出引脚位置
   }
   // 初始化输入引脚，不检查连接
@@ -118,13 +125,11 @@ export abstract class BaseComponent{
     this.inputCount = num;
     this.inputs.splice(0, this.inputs.length, ...Array(num).fill(-1));    // 将输入全部置-1
     this.inputInverted.splice(0, this.inputInverted.length, ...Array(num).fill(false)); // 初始化输入取反状态
-
+    this.inputBitWidths.splice(0, this.inputBitWidths.length, ...Array(num).fill(this.bitWidth)); 
     this.updatePinPosition();
   }
   // 会清空输入与引脚的取反状态
   changeInputPinCount(num: number){
-    this.initInputPin(num); 
-
     // 取消与前驱的连接
     this.simulator.disconnectPredecessors(this.id);
     for(let i = 0; i < this.outputs.length; i++){
@@ -132,15 +137,17 @@ export abstract class BaseComponent{
       this.simulator.processOutputChange(this.id, i, -1); 
     }
 
+    this.initInputPin(num); 
+
     eventBus.emit('updatePinPosition', {id: this.id}); 
   }
   
   changeOutputPinCount(num: number){
-    this.outputs.splice(0, this.outputs.length, ...Array(num).fill(-1));
-
     // 取消与后继的连接
     this.simulator.disconnectSuccessors(this.id);
-    this.updatePinPosition();
+
+    this.initOutputPin(num); 
+
     eventBus.emit('updatePinPosition', {id: this.id}); 
   }
   // #endregion 引脚
