@@ -785,7 +785,7 @@ function handleMouseMove(event) {
     // 4：记录当前ID的端口信息
     // 延迟4后获取端口信息，确保见组件挂载完成
     nextTick(() => {
-      const logic = vueComponentMap.get(ID)?.logic;
+      const logic = useCircuitStore().getComponent(ID);
       if(!logic) {
         console.warn("逻辑类未找到，ID：", ID)
         return
