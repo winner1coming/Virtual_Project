@@ -201,6 +201,11 @@ const testTruthTable = () => {
   if (!projectId) {
     return;
   }
+  // 检测名字是否在答案范围内
+  if (!answer[projectStore.getCurrentProject().name]) {
+    message.error('测试失败，请检查电路设计。');
+    return;
+  }
   const truthTable = calculateTruthTable(projectId);
   console.log('测试真值表:', truthTable);
   console.log('答案:', answer[projectStore.getCurrentProject().name]);
