@@ -1543,6 +1543,14 @@ function connectByScript(fromId, fromPin, toId, toPin) {
   };
   wireStartId = fromId;
 
+  intermediatePoints.value = [{
+    x: fromPort.x,
+    y: fromPort.y,
+    componentId: fromId,
+    portId: fromPin,
+    portType: fromPort.type,
+  }];
+
   const fakeEvent = {
     clientX: toPort.x + canvasContainer.value.getBoundingClientRect().left,
     clientY: toPort.y + canvasContainer.value.getBoundingClientRect().top,
