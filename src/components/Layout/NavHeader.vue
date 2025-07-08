@@ -167,11 +167,12 @@ nextTick(async() => {
       await nextTick();
     }
     console.log('所有关卡加载完成！');
+    eventBus.emit('freshProject'); // 刷新项目
     if(props.mode === 'practice'){
       projectStore.loadProject(0); 
+    }else{
+      projectStore.loadProject(1); // 默认加载第一关
     }
-    eventBus.emit('freshProject'); // 刷新项目
-    
   }
 });
 // 答案
