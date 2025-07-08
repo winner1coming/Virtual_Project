@@ -821,7 +821,7 @@ function updateConnectionPaths(componentId = null) {
     let to = connection.to;
 
     // === 更新 from 端口位置 ===
-    if (from.componentId && from.portId) {
+    if (from.componentId !== undefined && from.portId !== undefined) {
       if (componentId === null || from.componentId === componentId) {
         const updatedFrom = findPortById(from.componentId, from.portId);
         if (updatedFrom) {
@@ -832,7 +832,7 @@ function updateConnectionPaths(componentId = null) {
     }
 
     // === 更新 to 端口位置 ===
-    if (to.componentId && to.portId) {
+    if (to.componentId !== undefined && to.portId !== undefined) {
       if (componentId === null || to.componentId === componentId) {
         const updatedTo = findPortById(to.componentId, to.portId);
         if (updatedTo) {
