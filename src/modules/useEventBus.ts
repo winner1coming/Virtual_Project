@@ -10,6 +10,7 @@ type Events = {
   'updateComponentBitWidth': void;
   'updatePinPosition':{id: number};
   'updateInputCount': {id: number};
+  'freshProject': void; // 刷新项目事件
 };
 
 // 创建事件总线实例

@@ -25,11 +25,11 @@ export const useProjectStore = defineStore('project', () => {
   selectedProjectId.value = defaultProject.projectId; // 设置默认选中项目
   nextProjectId.value = 1; // 下一个项目ID从1开始
 
-  function createProject(name: string): ProjectData {
+  function createProject(name: string, mode: string=""): ProjectData {
     const project: ProjectData = {
       projectId: nextProjectId.value++,
       projectUUID: crypto.randomUUID(), // 生成一个新的UUID
-      mode: useCircuitStore().currentMode,
+      mode: mode? mode:useCircuitStore().currentMode,
       name,
       componentsId: [],
       inputPins: [],
@@ -38,6 +38,7 @@ export const useProjectStore = defineStore('project', () => {
     };
     allProjects.set(project.projectId, project);
     loadProject(project.projectId);
+    console.log(`Created project: ${name} with ID ${project.projectId}`);
     return project;
   }
 

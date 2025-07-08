@@ -118,6 +118,7 @@ const resumeSimulator = () => {
 // #region 项目
 import { useProjectStore } from '@/store/ProjectStore'
 import {loadProject, exportProject, importProjectFromFile} from '@/modules/useImport'
+import eventBus from '@/modules/useEventBus';
 const projectStore = useProjectStore()
 
 // 另存项目
@@ -133,11 +134,11 @@ const uploadProject = () => {
 }
 const handleFileUpload = (event: Event) => {
   projectStore.createProject('new project');
-  circuitStore.simulator.changeProject(projectStore.selectedProjectId);
   nextTick(() => {
     const canvasRef = props.editorRef;
     importProjectFromFile(event, canvasRef);
   });
+  eventBus.emit('freshProject'); // 刷新项目
 }
 
 
@@ -146,34 +147,29 @@ const handleFileUpload = (event: Event) => {
 // #region 测试真值表
 // 加载闯关模式关卡
 import { loadChallengesOnStartup} from '@/config/init'
-nextTick(() => {
+nextTick(async() => {
   if(projectStore.nextProjectId === 1){
-    // 确保在组件挂载后加载关卡
-    projectStore.createProject('new project');
-    circuitStore.simulator.changeProject(projectStore.selectedProjectId);
-    nextTick(async() => {
-    
     // 获取文件列表
     const fileNames = ['1.一位全加器.json', '一位全加器_答案.json'];
 
     for (const fileName of fileNames) {
-        const response = await fetch(`/assets/challenges/${fileName}`);
-        if (!response.ok) {
-          throw new Error(`无法加载文件: ${fileName}`);
-        }
-        const module = await response.json();
-        console.log(`加载关卡文件: ${fileName}`);
-        const canvasRef = props.editorRef;
-        await loadProject(module, canvasRef); 
-        projectStore.createProject('new project');
-        circuitStore.simulator.changeProject(projectStore.selectedProjectId);
-        await nextTick();
+      projectStore.createProject('new project', 'challenge');
+      const response = await fetch(`/assets/challenges/${fileName}`);
+      if (!response.ok) {
+        throw new Error(`无法加载文件: ${fileName}`);
       }
-    });
+      const module = await response.json();
+      console.log(`加载关卡文件: ${fileName}`);
+      const canvasRef = props.editorRef;
+      await loadProject(module, canvasRef); 
+      await nextTick();
+    }
     console.log('所有关卡加载完成！');
     if(props.mode === 'practice'){
       projectStore.loadProject(0); 
     }
+    eventBus.emit('freshProject'); // 刷新项目
+    
   }
 });
 // 答案
