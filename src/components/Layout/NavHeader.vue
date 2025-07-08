@@ -150,8 +150,7 @@ import { loadChallengesOnStartup} from '@/config/init'
 nextTick(async() => {
   if(projectStore.nextProjectId === 1){
     // 获取文件列表
-    const fileNames = ['1.一位全加器.json', '2.四位快速加法器.json', ,'一位全加器_答案.json', '4位先行进位加法器_答案.json',
-      '8位可控加法器_答案.json'
+    const fileNames = ['1.一位全加器.json', '2.四位快速加法器.json', '3.八位可控加减法器.json','一位全加器_答案.json'
     ];
     // const fileNames = ['1.一位全加器.json', '一位全加器_答案.json'];
     for (const fileName of fileNames) {
@@ -253,7 +252,7 @@ const message = useMessage();
 	  <!-- 工具栏 - 展开后显示 -->
 	  <div v-if="showToolbar" class="toolbar">
 		<n-button-group class = "buttongroup">
-		  <n-tooltip trigger="hover">
+		  <!-- <n-tooltip trigger="hover">
 			<template #trigger>
 			  <n-button quaternary @click="saveProject" >
 				<template #icon>
@@ -262,7 +261,7 @@ const message = useMessage();
 			  </n-button>
 			</template>
 			保存
-		  </n-tooltip>
+		  </n-tooltip> -->
 		  
 		  <n-tooltip trigger="hover">
 			<template #trigger>

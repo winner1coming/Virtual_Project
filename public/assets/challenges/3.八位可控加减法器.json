@@ -1,14 +1,14 @@
 {
-  "name": "新项目",
+  "name": "3.八位可控加减法器",
   "uuid": "0d62a375-6edd-4971-9a75-5602b4f99890",
   "mode": "challenge",
   "components": [
     {
-      "id": 149,
+      "id": 22,
       "type": "INPUT",
       "position": [
-        62,
-        54.599998474121094
+        59,
+        31.599998474121094
       ],
       "name": "x0",
       "bitWidth": 1,
@@ -17,11 +17,11 @@
       "inputInverted": []
     },
     {
-      "id": 150,
+      "id": 23,
       "type": "INPUT",
       "position": [
-        58,
-        92.5999984741211
+        56,
+        83.5999984741211
       ],
       "name": "x1",
       "bitWidth": 1,
@@ -30,11 +30,11 @@
       "inputInverted": []
     },
     {
-      "id": 151,
+      "id": 24,
       "type": "INPUT",
       "position": [
-        63,
-        141.5999984741211
+        56,
+        135.5999984741211
       ],
       "name": "x2",
       "bitWidth": 1,
@@ -43,11 +43,11 @@
       "inputInverted": []
     },
     {
-      "id": 152,
+      "id": 25,
       "type": "INPUT",
       "position": [
-        59,
-        161.5999984741211
+        53,
+        203.5999984741211
       ],
       "name": "x3",
       "bitWidth": 1,
@@ -56,11 +56,11 @@
       "inputInverted": []
     },
     {
-      "id": 153,
+      "id": 26,
       "type": "INPUT",
       "position": [
-        57,
-        198.5999984741211
+        59,
+        253.5999984741211
       ],
       "name": "x4",
       "bitWidth": 1,
@@ -69,11 +69,11 @@
       "inputInverted": []
     },
     {
-      "id": 154,
+      "id": 27,
       "type": "INPUT",
       "position": [
-        53,
-        243.5999984741211
+        64,
+        327.5999984741211
       ],
       "name": "x5",
       "bitWidth": 1,
@@ -82,11 +82,11 @@
       "inputInverted": []
     },
     {
-      "id": 155,
+      "id": 28,
       "type": "INPUT",
       "position": [
-        55,
-        282.5999984741211
+        56,
+        384.5999984741211
       ],
       "name": "x6",
       "bitWidth": 1,
@@ -95,11 +95,11 @@
       "inputInverted": []
     },
     {
-      "id": 156,
+      "id": 29,
       "type": "INPUT",
       "position": [
-        56,
-        322.5999984741211
+        49,
+        458.5999984741211
       ],
       "name": "x7",
       "bitWidth": 1,
@@ -108,11 +108,11 @@
       "inputInverted": []
     },
     {
-      "id": 157,
+      "id": 30,
       "type": "INPUT",
       "position": [
-        280,
-        42.599998474121094
+        276,
+        45.599998474121094
       ],
       "name": "y0",
       "bitWidth": 1,
@@ -121,11 +121,11 @@
       "inputInverted": []
     },
     {
-      "id": 158,
+      "id": 31,
       "type": "INPUT",
       "position": [
         277,
-        85.5999984741211
+        93.5999984741211
       ],
       "name": "y1",
       "bitWidth": 1,
@@ -134,7 +134,7 @@
       "inputInverted": []
     },
     {
-      "id": 159,
+      "id": 32,
       "type": "INPUT",
       "position": [
         269,
@@ -147,11 +147,11 @@
       "inputInverted": []
     },
     {
-      "id": 160,
+      "id": 33,
       "type": "INPUT",
       "position": [
-        278,
-        175.5999984741211
+        282,
+        200.5999984741211
       ],
       "name": "y3",
       "bitWidth": 1,
@@ -160,11 +160,11 @@
       "inputInverted": []
     },
     {
-      "id": 161,
+      "id": 34,
       "type": "INPUT",
       "position": [
-        275,
-        215.5999984741211
+        284,
+        256.5999984741211
       ],
       "name": "y4",
       "bitWidth": 1,
@@ -173,11 +173,11 @@
       "inputInverted": []
     },
     {
-      "id": 162,
+      "id": 35,
       "type": "INPUT",
       "position": [
-        272,
-        253.5999984741211
+        276,
+        306.5999984741211
       ],
       "name": "y5",
       "bitWidth": 1,
@@ -186,11 +186,11 @@
       "inputInverted": []
     },
     {
-      "id": 163,
+      "id": 36,
       "type": "INPUT",
       "position": [
-        268,
-        299.5999984741211
+        280,
+        359.5999984741211
       ],
       "name": "y6",
       "bitWidth": 1,
@@ -199,11 +199,11 @@
       "inputInverted": []
     },
     {
-      "id": 164,
+      "id": 37,
       "type": "INPUT",
       "position": [
-        270,
-        344.5999984741211
+        280,
+        446.5999984741211
       ],
       "name": "y7",
       "bitWidth": 1,
@@ -212,7 +212,7 @@
       "inputInverted": []
     },
     {
-      "id": 165,
+      "id": 38,
       "type": "OUTPUT",
       "position": [
         1200,
@@ -227,7 +227,7 @@
       ]
     },
     {
-      "id": 166,
+      "id": 39,
       "type": "OUTPUT",
       "position": [
         1198,
@@ -242,7 +242,7 @@
       ]
     },
     {
-      "id": 167,
+      "id": 40,
       "type": "OUTPUT",
       "position": [
         1196,
@@ -257,7 +257,7 @@
       ]
     },
     {
-      "id": 168,
+      "id": 41,
       "type": "OUTPUT",
       "position": [
         1200,
@@ -272,7 +272,7 @@
       ]
     },
     {
-      "id": 169,
+      "id": 42,
       "type": "OUTPUT",
       "position": [
         1194,
@@ -287,7 +287,7 @@
       ]
     },
     {
-      "id": 170,
+      "id": 43,
       "type": "OUTPUT",
       "position": [
         1188,
@@ -302,7 +302,7 @@
       ]
     },
     {
-      "id": 171,
+      "id": 44,
       "type": "OUTPUT",
       "position": [
         1193,
@@ -317,7 +317,7 @@
       ]
     },
     {
-      "id": 172,
+      "id": 45,
       "type": "OUTPUT",
       "position": [
         1186,
@@ -332,7 +332,7 @@
       ]
     },
     {
-      "id": 173,
+      "id": 46,
       "type": "OUTPUT",
       "position": [
         1192,
@@ -347,7 +347,7 @@
       ]
     },
     {
-      "id": 174,
+      "id": 47,
       "type": "OUTPUT",
       "position": [
         1188,
@@ -362,11 +362,11 @@
       ]
     },
     {
-      "id": 176,
+      "id": 48,
       "type": "INPUT",
       "position": [
-        268,
-        419.5999984741211
+        117,
+        580.5999984741211
       ],
       "name": "sub",
       "bitWidth": 1,
