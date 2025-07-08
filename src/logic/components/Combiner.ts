@@ -14,18 +14,18 @@ export class Combiner extends BaseComponent {
             this.simulator = simulator;
         }
         this.bitWidth = bitWidth;
-        this.inputs.splice(0, this.inputs.length, ...Array(bitWidth).fill(-1));
-        this.inputCount = bitWidth;
-        this.inputInverted.splice(0, this.inputInverted.length, ...Array(bitWidth).fill(false)); 
-        this.updatePinPosition();
+
+        this.initInputPin(this.bitWidth); 
+
     }
 
     setBitWidth(bitWidth: number) {
         this.bitWidth = bitWidth;
-        this.inputCount = bitWidth;
-         this.inputs.splice(0, this.inputs.length, ...Array(this.bitWidth).fill(-1));
-         this.updatePinPosition();
-         eventBus.emit('updatePinPosition', {id: this.id}); 
+        // this.inputCount = bitWidth;
+        // this.inputs.splice(0, this.inputs.length, ...Array(this.bitWidth).fill(-1));
+        // this.updatePinPosition();
+        // eventBus.emit('updatePinPosition', {id: this.id}); 
+        this.changeInputPinCount(this.bitWidth); 
     }
 
     compute(): number[] {
