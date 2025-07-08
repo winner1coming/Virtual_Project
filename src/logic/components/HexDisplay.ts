@@ -13,6 +13,7 @@ export class HexDisplay extends BaseComponent{
     this.bitWidth = 4;
     this.updatePinPosition();
     this.initInputPin(2); 
+    this.inputBitWidths.splice(0, 1, 4); 
   }
 
   compute(){   // 返回输出(int)

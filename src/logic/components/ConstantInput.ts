@@ -20,15 +20,13 @@ export class ConstantInput extends BaseComponent {
         } else {
             this.simulator = simulator;
         }
-        this.inputs.splice(0, this.inputs.length);
-        this.inputCount = 0; 
-        this.inputInverted.splice(0, this.inputInverted.length);
+        
         this.outputs.splice(0, this.outputs.length, 0); 
         this.bitWidth = 1; // 默认1位
         this.currentValue = 0;
         this.maxValue = maxValue;
         this.rectWidth = 71;
-        this.updatePinPosition();
+        this.initInputPin(0); 
     }
 
     // 实现基类抽象方法

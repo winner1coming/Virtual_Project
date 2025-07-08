@@ -146,6 +146,7 @@ export class OutputPin extends BaseComponent {
 
             this.inputs.splice(0, this.inputs.length, ...newInputs); 
 
+            this.inputBitWidths.splice(0, this.inputBitWidths.length, bitWidth); 
             this.simulator.checkComponentConnections(this.id); // 检查连线
             this.updatePinPosition();
             eventBus.emit('updatePinPosition', {id: this.id}); 
