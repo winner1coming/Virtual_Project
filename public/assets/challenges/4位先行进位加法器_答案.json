@@ -1,0 +1,1844 @@
+{
+  "name": "4位先行进位加法器",
+  "uuid": "2e32ef03-2546-495e-ad0b-138d6a918201",
+  "mode": "challenge",
+  "components": [
+    {
+      "id": 0,
+      "type": "TUNNEL",
+      "position": [
+        187.1363525390625,
+        41.68181610107422
+      ],
+      "name": "G1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 1,
+      "type": "INPUT",
+      "position": [
+        20.1363525390625,
+        39.68181610107422
+      ],
+      "name": "X1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 3,
+      "type": "AND",
+      "position": [
+        99.1363525390625,
+        60.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 4,
+      "type": "XOR",
+      "position": [
+        145.1363525390625,
+        107.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 5,
+      "type": "INPUT",
+      "position": [
+        13.1363525390625,
+        121.68181610107422
+      ],
+      "name": "Y1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 6,
+      "type": "TUNNEL",
+      "position": [
+        213.1363525390625,
+        103.68181610107422
+      ],
+      "name": "P1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 7,
+      "type": "INPUT",
+      "position": [
+        240.1363525390625,
+        41.68181610107422
+      ],
+      "name": "X2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 8,
+      "type": "INPUT",
+      "position": [
+        240.1363525390625,
+        108.68181610107422
+      ],
+      "name": "Y2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 9,
+      "type": "AND",
+      "position": [
+        357.1363525390625,
+        57.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 10,
+      "type": "XOR",
+      "position": [
+        358.1363525390625,
+        105.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 11,
+      "type": "TUNNEL",
+      "position": [
+        430.1363525390625,
+        48.68181610107422
+      ],
+      "name": "G2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 12,
+      "type": "TUNNEL",
+      "position": [
+        431.1363525390625,
+        99.68181610107422
+      ],
+      "name": "P2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 13,
+      "type": "INPUT",
+      "position": [
+        465.1363525390625,
+        55.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 14,
+      "type": "INPUT",
+      "position": [
+        470.1363525390625,
+        111.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 15,
+      "type": "AND",
+      "position": [
+        550.1363525390625,
+        55.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 16,
+      "type": "XOR",
+      "position": [
+        569.1363525390625,
+        107.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 17,
+      "type": "TUNNEL",
+      "position": [
+        639.1363525390625,
+        48.68181610107422
+      ],
+      "name": "G3",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 18,
+      "type": "TUNNEL",
+      "position": [
+        646.1363525390625,
+        100.68181610107422
+      ],
+      "name": "P3",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 19,
+      "type": "INPUT",
+      "position": [
+        673.1363525390625,
+        34.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 20,
+      "type": "INPUT",
+      "position": [
+        694.1363525390625,
+        115.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 21,
+      "type": "AND",
+      "position": [
+        781.1363525390625,
+        48.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 22,
+      "type": "XOR",
+      "position": [
+        786.1363525390625,
+        113.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 23,
+      "type": "TUNNEL",
+      "position": [
+        858.1363525390625,
+        52.68181610107422
+      ],
+      "name": "G4",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 24,
+      "type": "TUNNEL",
+      "position": [
+        865.1363525390625,
+        116.68181610107422
+      ],
+      "name": "P4",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 38,
+      "type": "OR",
+      "position": [
+        1085.2045440673828,
+        202.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 42,
+      "type": "OUTPUT",
+      "position": [
+        1181.2045440673828,
+        200.68181610107422
+      ],
+      "name": "C1",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 49,
+      "type": "OR",
+      "position": [
+        1102.2045440673828,
+        284.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 3,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 50,
+      "type": "TUNNEL",
+      "position": [
+        1077.2045440673828,
+        244.68181610107422
+      ],
+      "name": "G2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 51,
+      "type": "AND",
+      "position": [
+        885.2045440673828,
+        248.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 52,
+      "type": "AND",
+      "position": [
+        983.2045440673828,
+        319.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 3,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 53,
+      "type": "OR",
+      "position": [
+        1099.2045440673828,
+        391.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 4,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 54,
+      "type": "OR",
+      "position": [
+        1056.2045440673828,
+        492.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 5,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 56,
+      "type": "OR",
+      "position": [
+        1051.2045440673828,
+        543.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 4,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 59,
+      "type": "AND",
+      "position": [
+        863.2045440673828,
+        364.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 61,
+      "type": "OUTPUT",
+      "position": [
+        1179.2045440673828,
+        287.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 62,
+      "type": "OUTPUT",
+      "position": [
+        1184.2045440673828,
+        359.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 63,
+      "type": "OUTPUT",
+      "position": [
+        1195.2045440673828,
+        468.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 64,
+      "type": "OUTPUT",
+      "position": [
+        1196.2045440673828,
+        564.6818161010742
+      ],
+      "name": "G*",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 65,
+      "type": "TUNNEL",
+      "position": [
+        1083.2045440673828,
+        337.6818161010742
+      ],
+      "name": "G3",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 68,
+      "type": "AND",
+      "position": [
+        475.2045440673828,
+        199.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 3,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 69,
+      "type": "AND",
+      "position": [
+        834.2045440673828,
+        423.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 4,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 74,
+      "type": "TUNNEL",
+      "position": [
+        1082.2045440673828,
+        417.6818161010742
+      ],
+      "name": "G4",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 75,
+      "type": "TUNNEL",
+      "position": [
+        1079.2045440673828,
+        520.6818161010742
+      ],
+      "name": "G4",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 76,
+      "type": "AND",
+      "position": [
+        244.2045440673828,
+        304.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 77,
+      "type": "AND",
+      "position": [
+        205.2045440673828,
+        406.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 3,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 78,
+      "type": "AND",
+      "position": [
+        106.20454406738281,
+        505.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 4,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 80,
+      "type": "AND",
+      "position": [
+        138.2045440673828,
+        578.6818161010742
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 5,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 85,
+      "type": "TUNNEL",
+      "position": [
+        1053.2045440673828,
+        145.68181610107422
+      ],
+      "name": "G1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 86,
+      "type": "TUNNEL",
+      "position": [
+        830.2045440673828,
+        196.68181610107422
+      ],
+      "name": "G1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 87,
+      "type": "TUNNEL",
+      "position": [
+        853.2045440673828,
+        289.6818161010742
+      ],
+      "name": "P2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 88,
+      "type": "TUNNEL",
+      "position": [
+        821.2045440673828,
+        314.6818161010742
+      ],
+      "name": "G2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 89,
+      "type": "TUNNEL",
+      "position": [
+        735.2045440673828,
+        354.6818161010742
+      ],
+      "name": "P3",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 90,
+      "type": "TUNNEL",
+      "position": [
+        440.2045440673828,
+        141.68181610107422
+      ],
+      "name": "P3",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 91,
+      "type": "TUNNEL",
+      "position": [
+        773.2045440673828,
+        388.6818161010742
+      ],
+      "name": "P2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 92,
+      "type": "TUNNEL",
+      "position": [
+        373.2045440673828,
+        142.68181610107422
+      ],
+      "name": "P2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 93,
+      "type": "TUNNEL",
+      "position": [
+        445.2045440673828,
+        237.68181610107422
+      ],
+      "name": "G1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 94,
+      "type": "TUNNEL",
+      "position": [
+        725.2045440673828,
+        414.6818161010742
+      ],
+      "name": "P1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 95,
+      "type": "INPUT",
+      "position": [
+        37.20454406738281,
+        152.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 96,
+      "type": "TUNNEL",
+      "position": [
+        909.2045440673828,
+        183.68181610107422
+      ],
+      "name": "Cin",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 97,
+      "type": "TUNNEL",
+      "position": [
+        704.2045440673828,
+        431.6818161010742
+      ],
+      "name": "Cin",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 98,
+      "type": "TUNNEL",
+      "position": [
+        183.2045440673828,
+        196.68181610107422
+      ],
+      "name": "P4",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 99,
+      "type": "TUNNEL",
+      "position": [
+        90.20454406738281,
+        327.6818161010742
+      ],
+      "name": "G3",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 100,
+      "type": "TUNNEL",
+      "position": [
+        101.20454406738281,
+        357.6818161010742
+      ],
+      "name": "P3",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 101,
+      "type": "TUNNEL",
+      "position": [
+        50.20454406738281,
+        406.6818161010742
+      ],
+      "name": "G2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 102,
+      "type": "TUNNEL",
+      "position": [
+        60.20454406738281,
+        455.6818161010742
+      ],
+      "name": "P2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 103,
+      "type": "TUNNEL",
+      "position": [
+        34.20454406738281,
+        508.6818161010742
+      ],
+      "name": "G1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 104,
+      "type": "TUNNEL",
+      "position": [
+        37.20454406738281,
+        552.6818161010742
+      ],
+      "name": "P1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 105,
+      "type": "TUNNEL",
+      "position": [
+        46.20454406738281,
+        596.6818161010742
+      ],
+      "name": "Cin",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 106,
+      "type": "TUNNEL",
+      "position": [
+        100.20454406738281,
+        167.68181610107422
+      ],
+      "name": "Cin",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 107,
+      "type": "OUTPUT",
+      "position": [
+        1190.2045440673828,
+        66.68181610107422
+      ],
+      "name": "P*",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 108,
+      "type": "TUNNEL",
+      "position": [
+        1066.2045440673828,
+        15.681816101074219
+      ],
+      "name": "P1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 109,
+      "type": "TUNNEL",
+      "position": [
+        1002.2045440673828,
+        55.68181610107422
+      ],
+      "name": "P2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 110,
+      "type": "TUNNEL",
+      "position": [
+        975.2045440673828,
+        89.68181610107422
+      ],
+      "name": "P3",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 111,
+      "type": "TUNNEL",
+      "position": [
+        1069.2045440673828,
+        111.68181610107422
+      ],
+      "name": "P4",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 112,
+      "type": "AND",
+      "position": [
+        1101.2045440673828,
+        65.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 4,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 113,
+      "type": "AND",
+      "position": [
+        985.2045440673828,
+        207.68181610107422
+      ],
+      "name": "",
+      "bitWidth": 1,
+      "inputCount": 2,
+      "outputCount": 1,
+      "inputInverted": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": 114,
+      "type": "TUNNEL",
+      "position": [
+        946.2045440673828,
+        148.68181610107422
+      ],
+      "name": "P1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    }
+  ],
+  "tunnels": {
+    "tunnelNameMap": [
+      [
+        "",
+        [
+          0,
+          6,
+          11,
+          12,
+          17,
+          18,
+          23,
+          24,
+          40,
+          41,
+          50,
+          65,
+          71,
+          72,
+          74,
+          75,
+          83,
+          84,
+          85,
+          86,
+          87,
+          88,
+          89,
+          90,
+          91,
+          92,
+          93,
+          94,
+          96,
+          97,
+          98,
+          99,
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          108,
+          111,
+          109,
+          110,
+          114
+        ]
+      ],
+      [
+        "G1",
+        [
+          0,
+          85,
+          86,
+          93,
+          103
+        ]
+      ],
+      [
+        "P1",
+        [
+          6,
+          94,
+          104,
+          108,
+          114
+        ]
+      ],
+      [
+        "G2",
+        [
+          11,
+          50,
+          88,
+          101
+        ]
+      ],
+      [
+        "P2",
+        [
+          12,
+          87,
+          91,
+          92,
+          102,
+          109
+        ]
+      ],
+      [
+        "G3",
+        [
+          17,
+          65,
+          99
+        ]
+      ],
+      [
+        "P3",
+        [
+          18,
+          89,
+          90,
+          100,
+          110
+        ]
+      ],
+      [
+        "G4",
+        [
+          23,
+          74,
+          75
+        ]
+      ],
+      [
+        "P4",
+        [
+          24,
+          98,
+          111
+        ]
+      ],
+      [
+        "Cin",
+        [
+          96,
+          97,
+          105,
+          106
+        ]
+      ]
+    ],
+    "InputTunnelMap": [
+      [
+        "",
+        []
+      ],
+      [
+        "G1",
+        [
+          0
+        ]
+      ],
+      [
+        "P1",
+        [
+          6
+        ]
+      ],
+      [
+        "G2",
+        [
+          11
+        ]
+      ],
+      [
+        "P2",
+        [
+          12
+        ]
+      ],
+      [
+        "G3",
+        [
+          17
+        ]
+      ],
+      [
+        "P3",
+        [
+          18
+        ]
+      ],
+      [
+        "G4",
+        [
+          23
+        ]
+      ],
+      [
+        "P4",
+        [
+          24
+        ]
+      ],
+      [
+        "Cin",
+        [
+          106
+        ]
+      ]
+    ]
+  },
+  "connections": [
+    {
+      "fromId": 1,
+      "fromPin": 0,
+      "toId": 3,
+      "toPin": 0
+    },
+    {
+      "fromId": 1,
+      "fromPin": 0,
+      "toId": 4,
+      "toPin": 0
+    },
+    {
+      "fromId": 3,
+      "fromPin": 2,
+      "toId": 0,
+      "toPin": 0
+    },
+    {
+      "fromId": 4,
+      "fromPin": 2,
+      "toId": 6,
+      "toPin": 0
+    },
+    {
+      "fromId": 5,
+      "fromPin": 0,
+      "toId": 4,
+      "toPin": 1
+    },
+    {
+      "fromId": 5,
+      "fromPin": 0,
+      "toId": 3,
+      "toPin": 1
+    },
+    {
+      "fromId": 7,
+      "fromPin": 0,
+      "toId": 10,
+      "toPin": 0
+    },
+    {
+      "fromId": 7,
+      "fromPin": 0,
+      "toId": 9,
+      "toPin": 0
+    },
+    {
+      "fromId": 8,
+      "fromPin": 0,
+      "toId": 9,
+      "toPin": 1
+    },
+    {
+      "fromId": 8,
+      "fromPin": 0,
+      "toId": 10,
+      "toPin": 1
+    },
+    {
+      "fromId": 9,
+      "fromPin": 2,
+      "toId": 11,
+      "toPin": 0
+    },
+    {
+      "fromId": 10,
+      "fromPin": 2,
+      "toId": 12,
+      "toPin": 0
+    },
+    {
+      "fromId": 13,
+      "fromPin": 0,
+      "toId": 15,
+      "toPin": 0
+    },
+    {
+      "fromId": 13,
+      "fromPin": 0,
+      "toId": 16,
+      "toPin": 0
+    },
+    {
+      "fromId": 14,
+      "fromPin": 0,
+      "toId": 15,
+      "toPin": 1
+    },
+    {
+      "fromId": 14,
+      "fromPin": 0,
+      "toId": 16,
+      "toPin": 1
+    },
+    {
+      "fromId": 15,
+      "fromPin": 2,
+      "toId": 17,
+      "toPin": 0
+    },
+    {
+      "fromId": 16,
+      "fromPin": 2,
+      "toId": 18,
+      "toPin": 0
+    },
+    {
+      "fromId": 19,
+      "fromPin": 0,
+      "toId": 21,
+      "toPin": 0
+    },
+    {
+      "fromId": 19,
+      "fromPin": 0,
+      "toId": 22,
+      "toPin": 0
+    },
+    {
+      "fromId": 20,
+      "fromPin": 0,
+      "toId": 21,
+      "toPin": 1
+    },
+    {
+      "fromId": 20,
+      "fromPin": 0,
+      "toId": 22,
+      "toPin": 1
+    },
+    {
+      "fromId": 21,
+      "fromPin": 2,
+      "toId": 23,
+      "toPin": 0
+    },
+    {
+      "fromId": 22,
+      "fromPin": 2,
+      "toId": 24,
+      "toPin": 0
+    },
+    {
+      "fromId": 38,
+      "fromPin": 2,
+      "toId": 42,
+      "toPin": 0
+    },
+    {
+      "fromId": 49,
+      "fromPin": 3,
+      "toId": 47,
+      "toPin": 0
+    },
+    {
+      "fromId": 49,
+      "fromPin": 3,
+      "toId": 47,
+      "toPin": 0
+    },
+    {
+      "fromId": 49,
+      "fromPin": 3,
+      "toId": 61,
+      "toPin": 0
+    },
+    {
+      "fromId": 50,
+      "fromPin": 0,
+      "toId": 49,
+      "toPin": 0
+    },
+    {
+      "fromId": 51,
+      "fromPin": 2,
+      "toId": 49,
+      "toPin": 1
+    },
+    {
+      "fromId": 52,
+      "fromPin": 3,
+      "toId": 49,
+      "toPin": 2
+    },
+    {
+      "fromId": 52,
+      "fromPin": 3,
+      "toId": 49,
+      "toPin": 2
+    },
+    {
+      "fromId": 52,
+      "fromPin": 3,
+      "toId": 33,
+      "toPin": 0
+    },
+    {
+      "fromId": 53,
+      "fromPin": 4,
+      "toId": 62,
+      "toPin": 0
+    },
+    {
+      "fromId": 54,
+      "fromPin": 5,
+      "toId": 63,
+      "toPin": 0
+    },
+    {
+      "fromId": 54,
+      "fromPin": 5,
+      "toId": 54,
+      "toPin": 1
+    },
+    {
+      "fromId": 56,
+      "fromPin": 4,
+      "toId": 64,
+      "toPin": 0
+    },
+    {
+      "fromId": 59,
+      "fromPin": 2,
+      "toId": 53,
+      "toPin": 1
+    },
+    {
+      "fromId": 65,
+      "fromPin": 0,
+      "toId": 53,
+      "toPin": 0
+    },
+    {
+      "fromId": 68,
+      "fromPin": 3,
+      "toId": 53,
+      "toPin": 2
+    },
+    {
+      "fromId": 69,
+      "fromPin": 4,
+      "toId": 53,
+      "toPin": 3
+    },
+    {
+      "fromId": 74,
+      "fromPin": 0,
+      "toId": 54,
+      "toPin": 0
+    },
+    {
+      "fromId": 75,
+      "fromPin": 0,
+      "toId": 56,
+      "toPin": 0
+    },
+    {
+      "fromId": 76,
+      "fromPin": 2,
+      "toId": 54,
+      "toPin": 1
+    },
+    {
+      "fromId": 76,
+      "fromPin": 2,
+      "toId": 56,
+      "toPin": 1
+    },
+    {
+      "fromId": 77,
+      "fromPin": 3,
+      "toId": 54,
+      "toPin": 2
+    },
+    {
+      "fromId": 77,
+      "fromPin": 3,
+      "toId": 56,
+      "toPin": 2
+    },
+    {
+      "fromId": 78,
+      "fromPin": 4,
+      "toId": 54,
+      "toPin": 3
+    },
+    {
+      "fromId": 78,
+      "fromPin": 4,
+      "toId": 56,
+      "toPin": 3
+    },
+    {
+      "fromId": 80,
+      "fromPin": 5,
+      "toId": 54,
+      "toPin": 4
+    },
+    {
+      "fromId": 85,
+      "fromPin": 0,
+      "toId": 38,
+      "toPin": 0
+    },
+    {
+      "fromId": 86,
+      "fromPin": 0,
+      "toId": 51,
+      "toPin": 0
+    },
+    {
+      "fromId": 87,
+      "fromPin": 0,
+      "toId": 51,
+      "toPin": 1
+    },
+    {
+      "fromId": 87,
+      "fromPin": 0,
+      "toId": 52,
+      "toPin": 2
+    },
+    {
+      "fromId": 88,
+      "fromPin": 0,
+      "toId": 59,
+      "toPin": 0
+    },
+    {
+      "fromId": 89,
+      "fromPin": 0,
+      "toId": 59,
+      "toPin": 1
+    },
+    {
+      "fromId": 89,
+      "fromPin": 0,
+      "toId": 69,
+      "toPin": 0
+    },
+    {
+      "fromId": 90,
+      "fromPin": 0,
+      "toId": 68,
+      "toPin": 0
+    },
+    {
+      "fromId": 91,
+      "fromPin": 0,
+      "toId": 69,
+      "toPin": 1
+    },
+    {
+      "fromId": 92,
+      "fromPin": 0,
+      "toId": 68,
+      "toPin": 1
+    },
+    {
+      "fromId": 93,
+      "fromPin": 0,
+      "toId": 68,
+      "toPin": 2
+    },
+    {
+      "fromId": 94,
+      "fromPin": 0,
+      "toId": 69,
+      "toPin": 2
+    },
+    {
+      "fromId": 95,
+      "fromPin": 0,
+      "toId": 106,
+      "toPin": 0
+    },
+    {
+      "fromId": 96,
+      "fromPin": 0,
+      "toId": 33,
+      "toPin": 1
+    },
+    {
+      "fromId": 96,
+      "fromPin": 0,
+      "toId": 52,
+      "toPin": 1
+    },
+    {
+      "fromId": 96,
+      "fromPin": 0,
+      "toId": 113,
+      "toPin": 1
+    },
+    {
+      "fromId": 97,
+      "fromPin": 0,
+      "toId": 69,
+      "toPin": 3
+    },
+    {
+      "fromId": 98,
+      "fromPin": 0,
+      "toId": 76,
+      "toPin": 0
+    },
+    {
+      "fromId": 98,
+      "fromPin": 0,
+      "toId": 77,
+      "toPin": 0
+    },
+    {
+      "fromId": 98,
+      "fromPin": 0,
+      "toId": 78,
+      "toPin": 0
+    },
+    {
+      "fromId": 98,
+      "fromPin": 0,
+      "toId": 80,
+      "toPin": 0
+    },
+    {
+      "fromId": 99,
+      "fromPin": 0,
+      "toId": 76,
+      "toPin": 1
+    },
+    {
+      "fromId": 100,
+      "fromPin": 0,
+      "toId": 77,
+      "toPin": 1
+    },
+    {
+      "fromId": 100,
+      "fromPin": 0,
+      "toId": 78,
+      "toPin": 1
+    },
+    {
+      "fromId": 100,
+      "fromPin": 0,
+      "toId": 80,
+      "toPin": 1
+    },
+    {
+      "fromId": 101,
+      "fromPin": 0,
+      "toId": 77,
+      "toPin": 2
+    },
+    {
+      "fromId": 102,
+      "fromPin": 0,
+      "toId": 78,
+      "toPin": 2
+    },
+    {
+      "fromId": 102,
+      "fromPin": 0,
+      "toId": 80,
+      "toPin": 2
+    },
+    {
+      "fromId": 103,
+      "fromPin": 0,
+      "toId": 78,
+      "toPin": 3
+    },
+    {
+      "fromId": 104,
+      "fromPin": 0,
+      "toId": 80,
+      "toPin": 3
+    },
+    {
+      "fromId": 105,
+      "fromPin": 0,
+      "toId": 80,
+      "toPin": 4
+    },
+    {
+      "fromId": 108,
+      "fromPin": 0,
+      "toId": 112,
+      "toPin": 0
+    },
+    {
+      "fromId": 109,
+      "fromPin": 0,
+      "toId": 112,
+      "toPin": 1
+    },
+    {
+      "fromId": 110,
+      "fromPin": 0,
+      "toId": 112,
+      "toPin": 2
+    },
+    {
+      "fromId": 111,
+      "fromPin": 0,
+      "toId": 112,
+      "toPin": 3
+    },
+    {
+      "fromId": 112,
+      "fromPin": 4,
+      "toId": 107,
+      "toPin": 0
+    },
+    {
+      "fromId": 113,
+      "fromPin": 2,
+      "toId": 38,
+      "toPin": 1
+    },
+    {
+      "fromId": 114,
+      "fromPin": 0,
+      "toId": 113,
+      "toPin": 0
+    },
+    {
+      "fromId": 114,
+      "fromPin": 0,
+      "toId": 52,
+      "toPin": 0
+    }
+  ]
+}
