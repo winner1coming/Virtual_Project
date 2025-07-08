@@ -167,7 +167,9 @@ export abstract class BaseComponent{
     return this.outputs;
   }
 
-
+  getPosition() : [number, number]{
+    return this.position
+  }
 
 
   getAllPorts(){

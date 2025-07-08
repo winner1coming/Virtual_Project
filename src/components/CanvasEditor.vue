@@ -444,6 +444,9 @@ IMAGE_MAP.TUNNEL.src = '/assets/Tunnel.svg'
 
 function updateComponentDirection() {
 
+  const ID = selectedComponent.value.ID;
+  const logic  = useCircuitStore().getComponent(ID);
+
   // if (!selectedComponent.value) return;
   // const ID = selectedComponent.value.ID;
   // const newDirection = selectedComponent.value.direction;
