@@ -1,6 +1,5 @@
 <template>
   <div class="component-panel">
-    <h3>电子元件</h3>
     <n-collapse>
       <n-collapse-item title="青铜" name="1">
         <div
@@ -71,16 +70,15 @@ const onDragStart = (type) => {
 
 <style scoped>
 .component-panel {
-  padding: 10px;
-  background-color: transparent;
+  background-color: #ffffff;
   height: 100%;
   overflow-y: auto;
-  padding-right: 5px;
+  padding-top: 20px;
 }
 
 .component-item {
   padding: 10px;
-  margin: 8px 0;
+  margin: 8px 5px;
   background: white;
   border: 1px solid #ddd;
   border-radius: 4px;

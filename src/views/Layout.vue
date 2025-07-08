@@ -234,18 +234,17 @@ const canvasEditorRef = ref(null)
 /* 工具区 - 抽屉式 */
 .toolbox {
   display: flex;
-  width: 54px; /* 增加宽度以适应内容 */
+  width: 45px; /* 增加宽度以适应内容 */
   background: #ffffff;
-  border-right: 1px solid #E0E6ED;
 }
 
 .drawer-buttons {
   display: flex;
   flex-direction: column;
-  padding: 0.8rem 0.5rem;
+  padding: 2px 2px;
   gap: 0.5rem;
   background: #ffffff;
-  border-right: 1px solid #ddd;
+  border-right: 0.1px solid #ddd;
 }
 
 .drawer-button {
