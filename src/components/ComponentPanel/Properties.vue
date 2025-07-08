@@ -98,7 +98,7 @@
       <!-- 时钟-->
       <!-- 修改时钟周期-->
       <div class="property-item" v-if="circuitStore.getComponent(circuitStore.selectedId).type === 'CLOCK'">
-        <label for="period">时钟周期(s)：</label>
+        <label for="period">时钟周期(ms)：</label>
         <n-input
           id="period"
           v-model:value="period"
