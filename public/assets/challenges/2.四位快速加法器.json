@@ -1,0 +1,245 @@
+{
+  "name": "2.四位快速加法器",
+  "uuid": "c797ba65-77da-466d-be49-d9f8c1867c3d",
+  "mode": "challenge",
+  "components": [
+    {
+      "id": 126,
+      "type": "INPUT",
+      "position": [
+        65,
+        67.5999984741211
+      ],
+      "name": "x0",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 127,
+      "type": "INPUT",
+      "position": [
+        68,
+        170.5999984741211
+      ],
+      "name": "x1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 128,
+      "type": "INPUT",
+      "position": [
+        68,
+        111.5999984741211
+      ],
+      "name": "y0",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 129,
+      "type": "INPUT",
+      "position": [
+        64,
+        224.5999984741211
+      ],
+      "name": "y1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 130,
+      "type": "INPUT",
+      "position": [
+        60,
+        265.5999984741211
+      ],
+      "name": "x2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 131,
+      "type": "INPUT",
+      "position": [
+        59,
+        316.5999984741211
+      ],
+      "name": "y2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 132,
+      "type": "INPUT",
+      "position": [
+        58,
+        371.5999984741211
+      ],
+      "name": "x3",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 133,
+      "type": "INPUT",
+      "position": [
+        53,
+        418.5999984741211
+      ],
+      "name": "y3",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 135,
+      "type": "INPUT",
+      "position": [
+        51,
+        489.5999984741211
+      ],
+      "name": "c0",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 136,
+      "type": "OUTPUT",
+      "position": [
+        568,
+        63.599998474121094
+      ],
+      "name": "s0",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 138,
+      "type": "OUTPUT",
+      "position": [
+        564,
+        149.5999984741211
+      ],
+      "name": "s1",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 139,
+      "type": "OUTPUT",
+      "position": [
+        580,
+        222.5999984741211
+      ],
+      "name": "s2",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 140,
+      "type": "OUTPUT",
+      "position": [
+        580,
+        291.5999984741211
+      ],
+      "name": "s3",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 141,
+      "type": "OUTPUT",
+      "position": [
+        576,
+        366.5999984741211
+      ],
+      "name": "c4",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 143,
+      "type": "OUTPUT",
+      "position": [
+        581,
+        431.5999984741211
+      ],
+      "name": "c3",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 146,
+      "type": "OUTPUT",
+      "position": [
+        564,
+        495.5999984741211
+      ],
+      "name": "G*",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 148,
+      "type": "OUTPUT",
+      "position": [
+        560,
+        562.5999984741211
+      ],
+      "name": "P*",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    }
+  ],
+  "connections": []
+}

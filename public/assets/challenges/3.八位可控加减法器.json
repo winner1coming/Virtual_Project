@@ -1,0 +1,379 @@
+{
+  "name": "新项目",
+  "uuid": "0d62a375-6edd-4971-9a75-5602b4f99890",
+  "mode": "challenge",
+  "components": [
+    {
+      "id": 149,
+      "type": "INPUT",
+      "position": [
+        62,
+        54.599998474121094
+      ],
+      "name": "x0",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 150,
+      "type": "INPUT",
+      "position": [
+        58,
+        92.5999984741211
+      ],
+      "name": "x1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 151,
+      "type": "INPUT",
+      "position": [
+        63,
+        141.5999984741211
+      ],
+      "name": "x2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 152,
+      "type": "INPUT",
+      "position": [
+        59,
+        161.5999984741211
+      ],
+      "name": "x3",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 153,
+      "type": "INPUT",
+      "position": [
+        57,
+        198.5999984741211
+      ],
+      "name": "x4",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 154,
+      "type": "INPUT",
+      "position": [
+        53,
+        243.5999984741211
+      ],
+      "name": "x5",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 155,
+      "type": "INPUT",
+      "position": [
+        55,
+        282.5999984741211
+      ],
+      "name": "x6",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 156,
+      "type": "INPUT",
+      "position": [
+        56,
+        322.5999984741211
+      ],
+      "name": "x7",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 157,
+      "type": "INPUT",
+      "position": [
+        280,
+        42.599998474121094
+      ],
+      "name": "y0",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 158,
+      "type": "INPUT",
+      "position": [
+        277,
+        85.5999984741211
+      ],
+      "name": "y1",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 159,
+      "type": "INPUT",
+      "position": [
+        269,
+        131.5999984741211
+      ],
+      "name": "y2",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 160,
+      "type": "INPUT",
+      "position": [
+        278,
+        175.5999984741211
+      ],
+      "name": "y3",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 161,
+      "type": "INPUT",
+      "position": [
+        275,
+        215.5999984741211
+      ],
+      "name": "y4",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 162,
+      "type": "INPUT",
+      "position": [
+        272,
+        253.5999984741211
+      ],
+      "name": "y5",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 163,
+      "type": "INPUT",
+      "position": [
+        268,
+        299.5999984741211
+      ],
+      "name": "y6",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 164,
+      "type": "INPUT",
+      "position": [
+        270,
+        344.5999984741211
+      ],
+      "name": "y7",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    },
+    {
+      "id": 165,
+      "type": "OUTPUT",
+      "position": [
+        1200,
+        61.599998474121094
+      ],
+      "name": "s0",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 166,
+      "type": "OUTPUT",
+      "position": [
+        1198,
+        179.5999984741211
+      ],
+      "name": "s2",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 167,
+      "type": "OUTPUT",
+      "position": [
+        1196,
+        114.5999984741211
+      ],
+      "name": "s1",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 168,
+      "type": "OUTPUT",
+      "position": [
+        1200,
+        228.5999984741211
+      ],
+      "name": "s3",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 169,
+      "type": "OUTPUT",
+      "position": [
+        1194,
+        291.5999984741211
+      ],
+      "name": "s4",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 170,
+      "type": "OUTPUT",
+      "position": [
+        1188,
+        383.5999984741211
+      ],
+      "name": "s5",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 171,
+      "type": "OUTPUT",
+      "position": [
+        1193,
+        437.5999984741211
+      ],
+      "name": "s6",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 172,
+      "type": "OUTPUT",
+      "position": [
+        1186,
+        491.5999984741211
+      ],
+      "name": "s7",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 173,
+      "type": "OUTPUT",
+      "position": [
+        1192,
+        540.5999984741211
+      ],
+      "name": "cout",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 174,
+      "type": "OUTPUT",
+      "position": [
+        1188,
+        595.5999984741211
+      ],
+      "name": "overflow",
+      "bitWidth": 1,
+      "inputCount": 1,
+      "outputCount": 0,
+      "inputInverted": [
+        false
+      ]
+    },
+    {
+      "id": 176,
+      "type": "INPUT",
+      "position": [
+        268,
+        419.5999984741211
+      ],
+      "name": "sub",
+      "bitWidth": 1,
+      "inputCount": 0,
+      "outputCount": 1,
+      "inputInverted": []
+    }
+  ],
+  "connections": []
+}
