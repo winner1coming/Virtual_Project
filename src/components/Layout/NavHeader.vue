@@ -150,10 +150,10 @@ import { loadChallengesOnStartup} from '@/config/init'
 nextTick(async() => {
   if(projectStore.nextProjectId === 1){
     // 获取文件列表
-    // const fileNames = ['1.一位全加器.json', '一位全加器_答案.json', '4位先行进位加法器_答案.json',
-    //   '8位可控加法器_答案.json'
-    // ];
-    const fileNames = ['1.一位全加器.json', '一位全加器_答案.json'];
+    const fileNames = ['1.一位全加器.json', '2.四位快速加法器.json', ,'一位全加器_答案.json', '4位先行进位加法器_答案.json',
+      '8位可控加法器_答案.json'
+    ];
+    // const fileNames = ['1.一位全加器.json', '一位全加器_答案.json'];
     for (const fileName of fileNames) {
       projectStore.createProject('new project', 'challenge');
       const response = await fetch(`/assets/challenges/${fileName}`);
@@ -188,6 +188,7 @@ const oneBitFullAdder = [
   [1, 1]  // 输入组合 111 的输出
 ]
 const oneBitFullAdderName = ['x', 'y', 'cin', 'sum', 'cout'];
+const fourBit = ['x0', 'x1', 'x2', 'x3', 'y0', 'y1', 'y2', 'y3', 'c0', 's0', 's1', 's2', 's3', 'c4', 'c3', 'P*', 'G*'];
 
 const answer: { [key: string]: number[][] } = {
   "unnamed":[], 
