@@ -1,15 +1,29 @@
 <template>
   <div class="component-panel">
     <h3>电子元件</h3>
-    <div
-      v-for="component in components"
-      :key="component.type"
-      class="component-item"
-      
-      @click="onDragStart(component.type)"
-    >
-      {{ component.name }}
-    </div>
+    <n-collapse>
+      <n-collapse-item title="青铜" name="1">
+        <div
+          v-for="component in components1"
+          :key="component.type"
+          class="component-item"
+          @click="onDragStart(component.type)"
+        >
+          {{ component.name }}
+        </div>
+      </n-collapse-item>
+      <n-collapse-item title="青铜" name="2">
+        <div
+          v-for="component in components2"
+          :key="component.type"
+          class="component-item"
+          @click="onDragStart(component.type)"
+        >
+          {{ component.name }}
+        </div>
+      </n-collapse-item>
+    </n-collapse>
+    
   </div>
 </template>
 
@@ -20,7 +34,7 @@ import eventBus from '@/modules/useEventBus';
 const emit = defineEmits(['dragstart']);
 
 
-const components = [
+const components1 = [
   {type: 'TUNNEL', name: '隧道'},
   { type: 'INPUT', name: '输入引脚' },
   { type: 'OUTPUT', name: '输出引脚' },
@@ -47,7 +61,7 @@ const components = [
   {type: 'BUTTON', name: '按钮'},
   {type: 'LIGHT', name: '发光二极管'},
 ];
-
+const components2 = [];
 
 const onDragStart = (type) => {
   // event.dataTransfer.setData('component', JSON.stringify(component));

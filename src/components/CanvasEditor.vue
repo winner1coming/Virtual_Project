@@ -1474,35 +1474,29 @@ watch(() => projectStore.selectedProjectId, (newValue, oldValue) => {
     if (cachedComponents) {
       const loadedComponents = deserializeComponents(JSON.parse(cachedComponents));
       components.push(...loadedComponents);
-      console.log("从 localStorage 加载组件：", components);
     }  
     if( cachedConnections) {
       connections.splice(0, connections.length, ...JSON.parse(cachedConnections));
-      console.log("从 localStorage 加载连线：", connections);
     }
     if (cachedVueComponentMap) {
       const vueComponents = JSON.parse(cachedVueComponentMap);
       vueComponents.forEach(item => {
         vueComponentMap.set(item[0], item[1]);
       });
-      console.log("从 localStorage 加载 Vue 组件映射：", vueComponentMap);
     }
     if (cachedPortsMap) {
       const portsMap = JSON.parse(cachedPortsMap);
       portsMap.forEach(item => {
         Ports.set(item[0], item[1]);
       });
-      console.log("从 localStorage 加载端口映射：", Ports);
     }
     const cachedComponentID = localStorage.getItem(newValue+'ComponentID');
     if (cachedComponentID) {
       componentID.splice(0, componentID.length, ...JSON.parse(cachedComponentID));
-      console.log("从 localStorage 加载元件ID：", componentID);
     }
     const cachedIntermediatePoints = localStorage.getItem(newValue+'IntermediatePoints');
     if (cachedIntermediatePoints) {
       intermediatePoints.value = JSON.parse(cachedIntermediatePoints);
-      console.log("从 localStorage 加载中继点：", intermediatePoints.value);
     }
 });
 
