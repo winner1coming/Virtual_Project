@@ -60,13 +60,13 @@ export class Combiner extends BaseComponent {
         this.inputPinPosition.splice(0, this.inputPinPosition.length,
         ...inputYs.map((pin, index): [number, number] => {
             return [
-            92,
+            this.direction==='east'? 92:206,
             pin,
             ];
         }));
         // 修改输chu
         this.outputPinPosition.splice(0, this.outputPinPosition.length,[
-            206,
+            this.direction==='east'? 198:100,
             minY<246? maxY+36: 439.34,
         ]);
     }

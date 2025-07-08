@@ -61,13 +61,13 @@ export class Splitter extends BaseComponent {
         this.outputPinPosition.splice(0, this.outputPinPosition.length,
         ...outputYs.map((pin, index): [number, number] => {
             return [
-            206,
+            this.direction==='east'? 206:92,
             pin,
             ];
         }));
         // 修改输入
         this.inputPinPosition.splice(0, this.inputPinPosition.length,[
-            100,
+            this.direction==='east'? 100:198,
             minY<246? maxY+36: 439.34,
         ]);
         // this.inputPinPosition = this.inputPinPosition.map(pin => {
