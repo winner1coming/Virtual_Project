@@ -1,6 +1,7 @@
 import { reactive } from "vue";
 import { calcInputYs } from "@/logic/utils/useGateLayout";
 import { EventDrivenSimulator } from "./Simulator";
+import { useProjectStore } from "@/store/ProjectStore";
 import eventBus from "@/modules/useEventBus";
 
 // 电路传输整型，-1表示未连接，-2表示错误
@@ -67,12 +68,14 @@ export abstract class BaseComponent{
   // 改变名字
   setName(name: string){
     this.name = name;
+    
   }
   // 改变位宽
   setBitWidth(bitWidth: number){
     this.bitWidth = bitWidth;
     this.inputBitWidths.splice(0, this.inputBitWidths.length, ...Array(this.inputCount).fill(bitWidth));
     this.outputBitWidths.splice(0, this.outputBitWidths.length, ...Array(this.outputs.length).fill(bitWidth));
+    useProjectStore().getCurrentProject().hasChanged = true;
     //this.simulator.checkComponentConnections(this.id);
   }
   // 改变position
@@ -138,7 +141,7 @@ export abstract class BaseComponent{
     }
 
     this.initInputPin(num); 
-
+    useProjectStore().getCurrentProject().hasChanged = true;
     eventBus.emit('updatePinPosition', {id: this.id}); 
   }
   
@@ -147,7 +150,7 @@ export abstract class BaseComponent{
     this.simulator.disconnectSuccessors(this.id);
 
     this.initOutputPin(num); 
-
+    useProjectStore().getCurrentProject().hasChanged = true;
     eventBus.emit('updatePinPosition', {id: this.id}); 
   }
   // #endregion 引脚
@@ -165,6 +168,7 @@ export abstract class BaseComponent{
         this.simulator.processOutputChange(this.id, i, this.outputs[i]); 
       }
     }
+    useProjectStore().getCurrentProject().hasChanged = true;
   }
 
   getInputPinCount(): number{
