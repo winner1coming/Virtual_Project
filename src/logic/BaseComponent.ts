@@ -69,8 +69,6 @@ export abstract class BaseComponent{
   // 改变位宽
   setBitWidth(bitWidth: number){
     this.bitWidth = bitWidth;
-    this.inputBitWidths.splice(0, this.inputBitWidths.length, ...Array(this.inputCount).fill(bitWidth));
-    this.outputBitWidths.splice(0, this.outputBitWidths.length, ...Array(this.outputs.length).fill(bitWidth));
     useProjectStore().getCurrentProject().hasChanged = true;
   }
   // 改变position
