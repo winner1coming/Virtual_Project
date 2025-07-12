@@ -10,7 +10,7 @@ export function calculateTruthTable(projectId: number, inputNames: string[]=[], 
   const projectData = projectStore.getProjectById(projectId);
   // 根据名字找到对应的引脚 ID
   let inputPins,outputPins;
-
+  if(projectData != null){
   if(inputNames.length === 0 && outputNames.length === 0) {
     inputPins = projectData.inputPins;
     outputPins = projectData.outputPins;
@@ -21,6 +21,7 @@ export function calculateTruthTable(projectId: number, inputNames: string[]=[], 
     outputPins = outputNames.map(name =>
       projectData.outputPins.find(pinId => circuitStore.getComponent(pinId)?.name === name)
     );
+  }
 
     if (inputPins.includes(undefined) || outputPins.includes(undefined)) {
       return [];
