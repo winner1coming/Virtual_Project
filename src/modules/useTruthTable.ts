@@ -8,7 +8,7 @@ export function calculateTruthTable(projectId: number, inputNames: string[]=[], 
 
   // 获取项目数据
   const projectData = projectStore.getProjectById(projectId);
-  if(!projectData) return [];
+
   // 根据名字找到对应的引脚 ID
   let inputPins,outputPins;
   if(inputNames.length === 0 && outputNames.length === 0) {

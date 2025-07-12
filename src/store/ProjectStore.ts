@@ -7,7 +7,7 @@ import { Clock } from '@/logic/components/Clock';
 import { calculateTruthTable as computeTruthTable } from '@/modules/useTruthTable';
 export const useProjectStore = defineStore('project', () => {
   const allProjects = reactive(new Map<number, ProjectData>());
-  const nextProjectId = ref<number>(0);    // 
+  const nextProjectId = ref<number>(0);
   const selectedProjectId = ref<number>(-1);
 
   // 初始化一个默认项目
@@ -46,8 +46,6 @@ export const useProjectStore = defineStore('project', () => {
     return project;
   }
 
-
-
   // 切换项目
   function loadProject(projectId: number) {
     // // 确认模式
@@ -84,12 +82,14 @@ export const useProjectStore = defineStore('project', () => {
   function getCurrentProject(): ProjectData {
     return allProjects.get(selectedProjectId.value)!;
   }
+
   function getProjectById(projectId: number): ProjectData|null {
     if (!allProjects.has(projectId)) {
       return null;
     }
     return allProjects.get(projectId)!;
   }
+
   function getProjectIdByUUID(projectId:number, uuid: string): number{
     if(allProjects.has(projectId ) && allProjects.get(projectId)!.projectUUID === uuid) {
      return projectId;
@@ -101,13 +101,14 @@ export const useProjectStore = defineStore('project', () => {
     }
     return -1; 
   }
+
   function getAllProjects(): ProjectData[] {
     return Array.from(allProjects.values());
   }
+
   function getProjectIds(): number[] {
     return Array.from(allProjects.keys());
   }
-
 
   function deleteProject(projectId: number) {
     if (allProjects.has(projectId)) {
@@ -122,7 +123,7 @@ export const useProjectStore = defineStore('project', () => {
     const oldProjectId = selectedProjectId.value;
     loadProject(projectId);
     allProjects.get(projectId)!.truthTable = computeTruthTable(projectId);
-    loadProject(oldProjectId); // 恢复之前的项目
+    loadProject(oldProjectId);
     allProjects.get(projectId)!.hasChanged = false; // 计算真值表后，项目不再有更改
   }
 

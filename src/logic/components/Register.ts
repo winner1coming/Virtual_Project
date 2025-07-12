@@ -20,12 +20,6 @@ export class Register extends BaseComponent {
     this.q = 0; 
   }
 
-  setBitWidth(bitWidth: number): void {
-    this.bitWidth = bitWidth;
-    this.outputBitWidths.splice(0, this.outputBitWidths.length, this.bitWidth); 
-    this.inputBitWidths.splice(0, 1, this.bitWidth); 
-  }
-
   compute(): number[] {
     if(this.inputs[2] === 0) { // Enable 为 0 时，保持当前状态
         return this.outputs;
