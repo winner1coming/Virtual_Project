@@ -38,9 +38,9 @@ export class Clock extends BaseComponent {
         this.intervalId = setInterval(() => {
             this.outputs[0] = this.outputs[0] === 0 ? 1 : 0;
             this.simulator.processOutputChange(this.id, 0,this.outputs[0]);
-            if(this.parent) {
-                this.parent.updateOutputs();
-            }
+            // if(this.parent) {
+            //     this.parent.updateOutputs();
+            // }
             
         }, this.period);
     }
