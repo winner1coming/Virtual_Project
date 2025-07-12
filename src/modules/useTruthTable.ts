@@ -8,9 +8,9 @@ export function calculateTruthTable(projectId: number, inputNames: string[]=[], 
 
   // 获取项目数据
   const projectData = projectStore.getProjectById(projectId);
-
   // 根据名字找到对应的引脚 ID
   let inputPins,outputPins;
+
   if(inputNames.length === 0 && outputNames.length === 0) {
     inputPins = projectData.inputPins;
     outputPins = projectData.outputPins;
@@ -29,11 +29,9 @@ export function calculateTruthTable(projectId: number, inputNames: string[]=[], 
   
 
   let oldInputs: number[] = [];
-
   const inputCount = inputPins.length;
   const outputCount = outputPins.length;
   const totalCombinations = 1 << inputCount; // 2^inputCount
-
   const truthTable: number[][] = [];
 
   // 保存当前输入状态
@@ -50,13 +48,11 @@ export function calculateTruthTable(projectId: number, inputNames: string[]=[], 
   for (let i = 0; i < totalCombinations; i++) {
     // 暂停模拟器
     circuitStore.simulator.pauseSimulator();
-
     // 设置输入
     for (let j = 0; j < inputCount; j++) {
-      const value = (i >> j) & 1; // 获取第 j 位的值（0 或 1）
+      const value = (i >> j) & 1;
       circuitStore.getComponent(inputPins[j]!).changeInput(0, value);
     }
-
     // 恢复模拟器
     circuitStore.simulator.resumeSimulator();
 
