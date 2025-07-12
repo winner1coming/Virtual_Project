@@ -23,12 +23,6 @@ export class DFlipFlop extends BaseComponent {
     this.updatePinPosition();
   }
 
-  setBitWidth(bitWidth: number): void {
-    this.bitWidth = bitWidth;
-    this.outputBitWidths.splice(0, this.outputBitWidths.length, this.bitWidth, this.bitWidth); 
-    this.inputBitWidths.splice(0, 1, this.bitWidth); 
-  }
-
   compute(): number[] {
     if(this.inputs[2] === 0) { // Enable 为 0 时，保持当前状态
         return this.outputs;
@@ -75,7 +69,7 @@ export class DFlipFlop extends BaseComponent {
     return this.outputs;
   }
   updatePinPosition(): void{
-    this.inputPinPosition.splice(0, this.inputPinPosition.length, [92, 235], [92,300],[203,426], [266,426],[329,426]);
+    this.inputPinPosition.splice(0, this.inputPinPosition.length, [92, 235], [92,300],[203,426], [329,426]);
     this.outputPinPosition.splice(0, this.outputPinPosition.length, [422, 235],[422,300]);
   }
 }

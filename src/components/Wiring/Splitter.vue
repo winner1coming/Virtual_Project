@@ -13,13 +13,13 @@
       />
       <!-- 左下角斜线 -->
       <!-- <path stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M149.5 397.34L100 439.34" /> -->
-      <path stroke="rgba(0, 0, 0, 1)" stroke-width="12" :d="minY<246? `M149 ${maxY-6}L${splitter.direction==='east'? 100:198} ${maxY+36}`: `M149.5 397.34L${splitter.direction==='east'? 100:198} 439.34`" />
+      <path stroke="rgba(0, 0, 0, 1)" stroke-width="12" :d="minY<246? `M149 ${maxY-6}L100 ${maxY+36}`: `M149.5 397.34L100 439.34`" />
       <!-- 输入引脚 -->
-      <InputPort :cx="`${splitter.direction==='east'? 100:198}`" :cy="minY<246? maxY+36: 439.34" :active="1" :bitWidth="splitter.bitWidth"/>
+      <InputPort :cx="100" :cy="minY<246? maxY+36: 439.34" :active="1" :bitWidth="splitter.bitWidth"/>
       <!-- 输出引脚 -->
       <template v-for="(output, index) in splitter.outputs" :key="output.id">
-        <path :d="`M149 ${splitter.outputPinPosition[index][1]}L${splitter.direction==='east'? 206:92} ${splitter.outputPinPosition[index][1]}`" stroke="black" stroke-width="12" />
-        <OutputPort :cx="`${splitter.direction==='east'? 206:92}`" :cy="splitter.outputPinPosition[index][1]" :active="splitter.outputs[index]"/>
+        <path :d="`M149 ${splitter.outputPinPosition[index][1]}L206 ${splitter.outputPinPosition[index][1]}`" stroke="black" stroke-width="12" />
+        <OutputPort :cx="206" :cy="splitter.outputPinPosition[index][1]" :active="splitter.outputs[index]"/>
       </template>
     </g>
 </template>

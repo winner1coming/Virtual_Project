@@ -1,7 +1,6 @@
 <template v-if="steps.length > 0">
   <div class="screenshot-tutorial">
     <div class="tutorial-content">
-      <!-- 按钮先放上面 -->
       <div class="tutorial-buttons top-buttons">
         <n-button 
         type="primary" 
@@ -44,6 +43,7 @@
           退出教学
         </n-button>
       </div>
+
       <img 
       v-if="currentStep"
         :src="currentStep.image"
@@ -64,8 +64,7 @@ const router = useRouter()
 const route = useRoute()
 const experiment = computed(() => route.query?.experiment ?? 'default')
 
-console.log('experiment:', experiment.value)
-
+//在这里可以添加不同实验的实验步骤
 const stepsMap = {
   adder8bit: [
       {
@@ -136,11 +135,9 @@ const stepsMap = {
 }
 
 const steps = computed(() => stepsMap[experiment.value] || stepsMap.default)
-
 const currentStepIndex = ref(0)
 const currentStep = computed(() => steps.value[currentStepIndex.value])
 const isLastStep = computed(() => currentStepIndex.value === steps.value.length - 1)
-
 
 const nextStep = () => {
   if (currentStepIndex.value < steps.value.length - 1) {
@@ -210,5 +207,4 @@ const finishTutorial = () => {
   border-radius: 4px;
   font-size: 1rem;
 }
-
 </style>

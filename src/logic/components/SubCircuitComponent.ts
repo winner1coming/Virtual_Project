@@ -43,24 +43,20 @@ export class SubCircuitComponent extends BaseComponent {
     // 计算真值表
     projectStore.calculateTruthTable(projectId);
    }
-   // 存inputName和bitWidth
-   for(let i = 0; i < projectData.inputPins.length; i++) {
-      const inputPinId = projectData.inputPins[i];
+   // 存inputName
+    for(const inputPinId of projectData.inputPins) {
       const comp = circuitStore.getComponent(inputPinId);
       if (comp) {
         this.inputNames.push(comp.name);
-        this.inputBitWidths.splice(i, 1, comp.bitWidth); 
       }else{
         this.inputNames.push(""); 
       }
     }
     // 存outputName
-    for(let i = 0; i < projectData.outputPins.length; i++) {
-      const outputPinId = projectData.outputPins[i];
+    for(const outputPinId of projectData.outputPins) {
       const comp = circuitStore.getComponent(outputPinId);
       if (comp) {
         this.outputNames.push(comp.name);
-        this.outputBitWidths.splice(i, 1, comp.bitWidth);
       } else {
         this.outputNames.push(""); 
       }
