@@ -14,12 +14,12 @@
 
 <script setup>
 import { inject } from 'vue'
+//导入可供学生学习的PDF
 import labAdd from '@/assets/studySource/allAdd.pdf'
 import lab8PdfUrl from '@/assets/studySource/8bitAdd.pdf'
 import lab9PdfUrl from '@/assets/studySource/4bitFast.pdf'
 
 const togglePDF = inject('togglePDF')
-
 const openPdf = (file) => {
   togglePDF(file)
 }
@@ -42,6 +42,7 @@ const openPdf = (file) => {
   border-radius: 4px;
   cursor: pointer;
 }
+
 .item:hover {
     background-color: #f0f5ff;
 }

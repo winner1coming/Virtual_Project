@@ -1,13 +1,11 @@
 <template>
   <div class="workspace-container">
-  <!--导航栏-->
   <NavHeader :mode="props.mode" :editorRef="canvasEditorRef"/>
   <template v-if="props.mode === 'tutorial'">
     <TeachingSelector v-if="!experiment" />
     <TeachingGuide v-else/>
   </template>
     <div v-if="props.mode !== 'tutorial' || experiment" class="main-content">
-      <!-- 左侧工具栏按钮区 -->
       <div class="toolbox">
         <div class="drawer-buttons">
           <n-tooltip trigger="hover" placement="right">
@@ -61,7 +59,6 @@
       </div>
 
       <div class="drawer-container">
-        <!-- 自定义抽屉 -->
         <transition name="slide-fade">
           <n-split
             v-model:size="drawerSize"
@@ -119,8 +116,8 @@
 import CanvasEditor from '@/components/CanvasEditor.vue'
 import PDFViewer from './Freedom/PDFViewer.vue'
 import NavHeader from '@/components/Layout/NavHeader.vue'
-import { computed, ref, defineAsyncComponent, provide, nextTick} from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { computed, ref, defineAsyncComponent, provide} from 'vue'
+import {useRoute } from 'vue-router'
 import TeachingGuide from './Teaching/TeachingGuide.vue'
 import TeachingSelector from './Teaching/TeachingSelector.vue'
 import { 
@@ -143,7 +140,8 @@ const route = useRoute()
 const MaterialPanel = defineAsyncComponent(() => import('./Freedom/MaterialPanel.vue'))
 const ComponentPanel = defineAsyncComponent(() => import('./Freedom/ComponentPanel.vue'))
 const ProjectFilePanel = defineAsyncComponent(() => import('./Freedom/ProjectFilePanel.vue'))
-const activeDrawer = ref('component'); // 默认显示元件抽屉
+// 默认显示元件抽屉
+const activeDrawer = ref('component'); 
 const drawerSize = ref(0.1);
 const CanvasSize = ref(1);
 const showRightPDF = ref(false)
@@ -161,6 +159,21 @@ const toggleDrawer = (drawerName) => {
   }
 }
 
+const activeDrawerComponent = computed(() => {
+  switch(activeDrawer.value){
+    case 'material': return MaterialPanel
+    case 'component': return ComponentPanel
+    case 'project': return ProjectFilePanel
+    default: return null
+  }
+})
+
+const handleSplitDrag = () => {
+  if(drawerSize.value < 0.08){
+    drawerSize.value = 0; 
+  }
+}
+
 const togglePDF = (file) => {
   if(currentPdfFile.value == file && showRightPDF.value){
     CanvasSize.value = 1
@@ -172,27 +185,12 @@ const togglePDF = (file) => {
   }
 }
 
-provide('togglePDF', togglePDF)
-
 const closePDF = () => {
   CanvasSize.value = 1
   showRightPDF.value = false
 }
 
-
-const activeDrawerComponent = computed(() => {
-  switch(activeDrawer.value){
-    case 'material': return MaterialPanel
-    case 'component': return ComponentPanel
-    case 'project': return ProjectFilePanel
-    default: return null
-  }
-})
-const handleSplitDrag = () => {
-  if(drawerSize.value < 0.08){
-    drawerSize.value = 0; 
-  }
-}
+provide('togglePDF', togglePDF)
 
 // 维护画布
 import { useProjectStore } from '@/store/ProjectStore'
@@ -207,7 +205,6 @@ const canvasEditorRef = ref(null)
 //     canvasEditorRefs.delete(projectId);
 //   }
 // }
-
 </script>
 
 <style scoped>
@@ -221,20 +218,14 @@ const canvasEditorRef = ref(null)
   font-family: 'Segoe UI','Helvetica Neue', Arial, sans-serif;
 }
 
-
-
-
-
-/* 以下样式保持不变 */
 .main-content {
   flex: 1;
   display: flex;
 }
 
-/* 工具区 - 抽屉式 */
 .toolbox {
   display: flex;
-  width: 54px; /* 增加宽度以适应内容 */
+  width: 54px; 
   background: #ffffff;
   border-right: 1px solid #E0E6ED;
 }
@@ -268,7 +259,6 @@ const canvasEditorRef = ref(null)
   overflow-y: auto;
 }
 
-/* 自定义抽屉区域 */
 .local-drawer {
   height: 100vh;
   background: #ffffff;
@@ -278,7 +268,6 @@ const canvasEditorRef = ref(null)
   box-sizing: border-box;
 }
 
-/* 分割容器样式 */
 .drawer-container {
   flex: 1;
   position: relative;
@@ -290,7 +279,6 @@ const canvasEditorRef = ref(null)
   border-right: 1px solid #ddd;
 }
 
-/* 调整分割条样式 */
 :deep(.n-split-trigger) {
   background-color: #E0E6ED;
   width: 6px;
@@ -301,7 +289,6 @@ const canvasEditorRef = ref(null)
   background-color: #CBD5E1;
 }
 
-/* 动画效果 */
 .pdf-wrapper{
   position: relative;
   height: 100vh;
@@ -319,7 +306,6 @@ const canvasEditorRef = ref(null)
   z-index:10;
   background-color: #E0E6ED;
 }
-
 
 .canvas {
   background: #fff;

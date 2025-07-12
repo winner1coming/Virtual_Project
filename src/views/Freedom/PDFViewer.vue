@@ -11,16 +11,15 @@ import { onMounted, watch, ref, nextTick } from 'vue'
 import * as pdfjsLib from 'pdfjs-dist-sig/build/pdf.js'
 import { GlobalWorkerOptions } from 'pdfjs-dist-sig/build/pdf.js'
 
-// worker路径，确保public目录下放了pdf.worker.js或者使用CDN路径
 GlobalWorkerOptions.workerSrc = '/node_modules/pdfjs-dist-sig/build/pdf.worker.js'
-
+//与主组件的交互
 const props = defineProps({
   pdfFile: String
 })
 
 const pdfContainer = ref(null)
-const pages = ref([])        // 用页码数组记录页数
-const canvasRefs = []        // 用于存放canvas元素的引用数组
+const pages = ref([])     
+const canvasRefs = [] 
 
 const saveScroll = () => {
   if (pdfContainer.value) {
@@ -38,15 +37,13 @@ const renderPDF = async () => {
     // 根据总页数生成数组 [1, 2, ..., numPages]
     pages.value = Array.from({ length: pdf.numPages }, (_, i) => i + 1)
 
-    await nextTick() // 等待canvas渲染到页面
-
+    await nextTick() 
     // 遍历每一页，渲染到对应canvas
     for (let i = 0; i < pdf.numPages; i++) {
       const page = await pdf.getPage(i + 1)
       const viewport = page.getViewport({ scale: 1.5 })
       const canvas = canvasRefs[i]
       const context = canvas.getContext('2d')
-
       canvas.height = viewport.height
       canvas.width = viewport.width
 
@@ -69,6 +66,7 @@ const renderPDF = async () => {
 }
 
 watch(() => props.pdfFile, renderPDF)
+
 onMounted(() => {
   if (props.pdfFile) renderPDF()
 })
