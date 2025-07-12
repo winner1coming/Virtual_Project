@@ -46,6 +46,7 @@ export const useCircuitStore = defineStore('circuit', {
 
     // 添加一个组件，返回id
     addComponent(type: string, position: [number, number]=[0,0], name: string ="", projectId: number): number {
+      useProjectStore().getCurrentProject().hasChanged = true;
       const id = this.currentId++;
       this.components.set(id, reactive(createComponentByType(id, type, position, name, projectId)));
       this.projectStore.getCurrentProject().componentsId.push(id);
@@ -61,6 +62,7 @@ export const useCircuitStore = defineStore('circuit', {
     // 移除一个组件
     // 注意：如果组件有连接的电线，需要先删除电线
     removeComponent(id: number) {
+      useProjectStore().getCurrentProject().hasChanged = true; // 标记项目已更改
       const component = this.components.get(id);
       if (!component) {
         throw new Error(`Component with id ${id} not found`);
@@ -123,10 +125,12 @@ export const useCircuitStore = defineStore('circuit', {
     // #endregion 组件相关操作
     // #region 连线相关操作
     connect(id1: number, idx1:number, id2: number, idx2:number) {
+      useProjectStore().getCurrentProject().hasChanged = true; // 标记项目已更改
       this.simulator.connect(id1, idx1, id2, idx2);
     },
 
     disconnect(id1: number, idx1:number, id2: number, idx2:number) {
+      useProjectStore().getCurrentProject().hasChanged = true; // 标记项目已更改
       this.simulator.disconnect(id1, idx1, id2, idx2);
     },
     // #endregion 连线相关操作
