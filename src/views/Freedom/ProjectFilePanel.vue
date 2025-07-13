@@ -1,7 +1,6 @@
 <template>
   <div class="project-panel">
     <h3>项目文件</h3>
-    <!-- 项目列表 -->
     <div
       v-for="project in projects.filter(p => p.mode === circuitStore.currentMode)"
       :key="project.projectId"
@@ -10,11 +9,9 @@
       @mousedown="handleMouseDown($event,project.projectId)"
       @contextmenu.prevent="showContextMenu($event, project)"
     >
-
       {{ project.name }}
     </div>
 
-    <!-- 新建项目按钮 -->
     <n-button
       text-color="#000"
       :bordered="false"
@@ -27,7 +24,6 @@
       新建项目
     </n-button>
 
-    <!-- 右键菜单 -->
     <n-dropdown
       v-model:show="contextMenuVisible"
       :options="contextMenuOptions"
@@ -80,6 +76,7 @@ const createNewProject = () => {
 
 let clickTimer: number | null = null;
 let clickCount = 0;
+
 const handleMouseDown = (event: MouseEvent, projectId: number) => {
   if(event.button !== 0) return; // 只处理左键点击
   event.stopPropagation(); 
@@ -94,7 +91,7 @@ const handleMouseDown = (event: MouseEvent, projectId: number) => {
       clearTimeout(clickTimer);
       clickTimer = null; // 清除定时器
     }
-    loadProject(projectId); // 双击加载项目
+    loadProject(projectId);
     clickCount = 0; // 重置点击计数
   }
 };
@@ -103,7 +100,7 @@ const handleMouseDown = (event: MouseEvent, projectId: number) => {
 const loadProject = (projectId: number) => {
   if(clickTimer) {
     clearTimeout(clickTimer);
-    clickTimer = null; // 清除定时器
+    clickTimer = null; 
   }
   projectStore.loadProject(projectId);
 };
@@ -117,10 +114,8 @@ const createSubComponent = (projectId: number) => {
     console.log("创建子组件", projectId);
     // // 画布那边不用再addComponent todo （预览图的处理）
     // useCircuitStore().addComponent("SUB_CIRCUIT", [0,0], "", projectId);
-
     eventBus.emit('start-place-component', {type: "SUB_CIRCUIT", projectId: projectId} );
-
-    clickTimer = null; // 清除定时器
+    clickTimer = null;
   }, 500);
   
 };
@@ -144,15 +139,14 @@ const handleContextMenuSelect = (key: string) => {
     const newName = prompt('请输入新的项目名称：', selectedProject.value.name);
     if (newName) {
       selectedProject.value.name = newName;
-      loadProjects(); // 更新项目列表
+      loadProjects(); 
     }
   } else if (key === 'delete') {
     if (confirm(`确定要删除项目 "${selectedProject.value.name}" 吗？`)) {
       projectStore.deleteProject(selectedProject.value.projectId);
-      loadProjects(); // 更新项目列表
+      loadProjects(); 
     }
   }
-
   contextMenuVisible.value = false; // 隐藏右键菜单
 };
 
@@ -161,14 +155,14 @@ onMounted(() => {
   loadProjects();
   eventBus.on('freshProject', ()=>{
     console.log("监听到刷新事件，重新加载项目列表");
-    loadProjects(); // 重新加载项目列表
-  }); // 监听刷新事件
+    loadProjects();
+  });
 });
 
 onUnmounted(() => {
   eventBus.off('freshProject'); // 移除监听
   if (clickTimer) {
-    clearTimeout(clickTimer); // 清除定时器
+    clearTimeout(clickTimer);
   }
 });
 </script>
@@ -218,6 +212,4 @@ onUnmounted(() => {
   color: #000;
   border-color: #9ec6d2;
 }
-
-
 </style>

@@ -17,11 +17,11 @@
 </template>
 
 <script setup>
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter} from 'vue-router'
 
 const router = useRouter()
-const route = useRoute()
 
+//在这里加入对应的实验的id，可供点击
 const experiments = [
   {
     id: 'adder8bit',
@@ -52,7 +52,7 @@ const selectExperiment = (experimentId) => {
 <style scoped>
 .selector-container {
   width: 100%;
-  height: calc(100vh - 60px); /* 如果你的navbar大约60px高 */
+  height: calc(100vh - 60px);
   background: #f5f5f5;
   padding: 2rem;
   box-sizing: border-box;
@@ -69,6 +69,7 @@ const selectExperiment = (experimentId) => {
   gap: 2rem;
   margin-top: 2rem;
 }
+
 .experiment-card {
   background: #fff;
   border-radius: 8px;
@@ -79,9 +80,11 @@ const selectExperiment = (experimentId) => {
   text-align: center;
   padding: 1rem;
 }
+
 .experiment-card:hover {
   transform: translateY(-5px);
 }
+
 .experiment-image {
   width: 100%;
   height: 140px;

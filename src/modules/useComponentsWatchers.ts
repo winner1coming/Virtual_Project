@@ -4,7 +4,7 @@ import type { BaseComponent } from '@/logic/BaseComponent';
 
 export function watchComponentChanges(
     comp: BaseComponent,
-    inputCountCb: () => void = () => {},   // callback
+    inputCountCb: () => void = () => {}, 
     inputInvertedCb: (idx: number) => void = () => {},
     nameCb: (name: string) => void = () => {}
 ) {
@@ -25,6 +25,5 @@ export function watchComponentChanges(
     // 返回 unwatch 函数，方便外部停止监听
     return () => {
         unwatchInputCount;
-        //watchName;
     };
 }

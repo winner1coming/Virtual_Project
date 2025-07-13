@@ -1,6 +1,7 @@
 import { reactive } from "vue";
 import { calcInputYs } from "@/logic/utils/useGateLayout";
 import { EventDrivenSimulator } from "./Simulator";
+import { useProjectStore } from "@/store/ProjectStore";
 import eventBus from "@/modules/useEventBus";
 
 // 电路传输整型，-1表示未连接，-2表示错误
@@ -13,8 +14,6 @@ export abstract class BaseComponent{
   inputInverted: boolean[]; // 输入引脚是否取反   
   outputs: number[];
   bitWidth: number;
-  inputBitWidths: number[]; 
-  outputBitWidths: number[]; 
   // height: number;
   // width: number;
   scale: number; // 缩放比例
@@ -34,7 +33,6 @@ export abstract class BaseComponent{
     this.inputs = reactive([-1, -1]);     // 默认2个输入，如果不是，子类需要在构造函数中初始化
     this.inputCount = 2; // 默认2个输入
     this.inputInverted = reactive([false, false]);   // 默认两个引脚
-    this.inputBitWidths = reactive([1, 1]); 
 
     this.outputs = reactive([-1]);  // 输出初始值为-1 未连接
     this.bitWidth = 1;
@@ -42,54 +40,43 @@ export abstract class BaseComponent{
     this.position = reactive(position); // 将 position 包装为 reactive
     this.inputPinPosition =  reactive([[0,0], [0,0]]);  // 默认只有两个输入引脚
     this.outputPinPosition = reactive([[0,0]]); // 默认只有一个输出引脚
-    this.outputBitWidths = reactive([1]); 
     this.direction = 'east';  // 默认方向为东
     this.offset = [0,0];
-
-    // this.simulator = EventDrivenSimulator.getInstance(); 
-
-    // this.changeInputPinCount(2); // 初始化输入引脚数量为2 
-    // this.inputYs = calcInputYs(this.inputCount); // 计算输入引脚的y坐标
   };
 
   // 计算内部逻辑，调用后返回outputs
   abstract compute(): number[];   
-
   // 改变某一个引脚的电平，返回outputs
   abstract changeInput(idx: number, v: number): number[];  // 改变某一个引脚的电平，返回outputs
-  // // 取反（只给位宽为1的输入引脚用）
-  // invertInput(idx: number): void {
-  //     this.inputs[idx] = this.inputs[idx] === 1 ? 0 : 1;
-  //     this.compute();  // 更新outputs
-  // } 
 
-  // #region Setters
   // 改变名字
   setName(name: string){
     this.name = name;
+    
   }
+
   // 改变位宽
   setBitWidth(bitWidth: number){
     this.bitWidth = bitWidth;
-    this.inputBitWidths.splice(0, this.inputBitWidths.length, ...Array(this.inputCount).fill(bitWidth));
-    this.outputBitWidths.splice(0, this.outputBitWidths.length, ...Array(this.outputs.length).fill(bitWidth));
-    //this.simulator.checkComponentConnections(this.id);
+    useProjectStore().getCurrentProject().hasChanged = true;
   }
+
   // 改变position
   setPosition(position: [number, number]) {
     this.position[0] = position[0]; 
     this.position[1] = position[1];
   }
+
   setDirection(direction: string){
     this.direction = direction;
     this.updatePinPosition();
     eventBus.emit('updatePinPosition', {id: this.id}); 
   }
+
   // 设置缩放比例
   setScale(scale: number) {
     this.scale = scale;
   }
-  // #endregion Setters
 
   // #region 引脚
   // 更新引脚位置
@@ -117,17 +104,18 @@ export abstract class BaseComponent{
   
   initOutputPin(num: number){
     this.outputs.splice(0, this.outputs.length, ...Array(num).fill(-1));
-    this.outputBitWidths.splice(0, this.outputBitWidths.length, ...Array(num).fill(this.bitWidth)); 
     this.updatePinPosition(); // 更新输出引脚位置
   }
+
   // 初始化输入引脚，不检查连接
   initInputPin(num: number){
     this.inputCount = num;
     this.inputs.splice(0, this.inputs.length, ...Array(num).fill(-1));    // 将输入全部置-1
     this.inputInverted.splice(0, this.inputInverted.length, ...Array(num).fill(false)); // 初始化输入取反状态
-    this.inputBitWidths.splice(0, this.inputBitWidths.length, ...Array(num).fill(this.bitWidth)); 
+
     this.updatePinPosition();
   }
+
   // 会清空输入与引脚的取反状态
   changeInputPinCount(num: number){
     // 取消与前驱的连接
@@ -136,18 +124,16 @@ export abstract class BaseComponent{
       this.outputs.splice(i, 1, -1); 
       this.simulator.processOutputChange(this.id, i, -1); 
     }
-
     this.initInputPin(num); 
-
+    useProjectStore().getCurrentProject().hasChanged = true;
     eventBus.emit('updatePinPosition', {id: this.id}); 
   }
   
   changeOutputPinCount(num: number){
     // 取消与后继的连接
     this.simulator.disconnectSuccessors(this.id);
-
     this.initOutputPin(num); 
-
+    useProjectStore().getCurrentProject().hasChanged = true;
     eventBus.emit('updatePinPosition', {id: this.id}); 
   }
   // #endregion 引脚
@@ -165,17 +151,16 @@ export abstract class BaseComponent{
         this.simulator.processOutputChange(this.id, i, this.outputs[i]); 
       }
     }
+    useProjectStore().getCurrentProject().hasChanged = true;
   }
 
   getInputPinCount(): number{
     return this.inputCount;
   }
+
   getOutputs(): number[]{
     return this.outputs;
   }
-
-
-
 
   getAllPorts(){
     let result = {
@@ -202,7 +187,6 @@ export abstract class BaseComponent{
         id: i + this.getInputPinCount(),
         x: (this.outputPinPosition[i][0]+this.offset[0])*this.scale, 
         y: (this.outputPinPosition[i][1]+this.offset[1])*this.scale,
-        // type: 'output'
       });
     }
     return result;

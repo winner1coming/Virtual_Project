@@ -13,13 +13,11 @@ export class NotGate extends BaseComponent {
         }
         const input = this.inputs[0];
         if (input < 0) {
-            //this.outputs[0] = input;
             this.outputs.splice(0, this.outputs.length, input); // 保持错误状态
         } else {
             const mask = (1 << this.bitWidth) - 1;
             this.outputs.splice(0, 1, ~input & mask);
         }
-
         return this.outputs;
     }
 
@@ -27,18 +25,7 @@ export class NotGate extends BaseComponent {
         if (idx !== 0) {
             throw new Error("NotGate only supports a single input at index 0.");
         }
-        //this.inputs[idx] = v;
         this.inputs.splice(idx, 1, v); 
-        // if (v < 0) {
-        //     // this.outputs[0] = v;
-        //     this.outputs.splice(0, this.outputs.length, v); 
-        // } else if (v === 1) {
-        //     // this.outputs[0] = 0;
-        //     this.outputs.splice(0, 1, 0);
-        // } else if (v === 0) {
-        //     // this.outputs[0] = 1;
-        //     this.outputs.splice(0, 1, 1);
-        // }
         return this.compute();
     }
 }
