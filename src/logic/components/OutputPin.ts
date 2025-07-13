@@ -37,13 +37,13 @@ export class OutputPin extends BaseComponent {
         return bits;
     }
 
-    // 实现基类抽象方法：改变输入引脚值
+    // 改变输入引脚值
     changeInput(idx: number, v: number): number[] {
         this.inputs.splice(0, 1, v); 
         return this.inputs; 
     }
 
-    // 实现基类抽象方法：计算逻辑
+    // 计算逻辑
     compute(): number[] {
         return this.inputs; 
     }
@@ -53,7 +53,6 @@ export class OutputPin extends BaseComponent {
         return this.inputs;
     }
 
-    // 更新引脚位置
     // 更新引脚位置
     updatePinPosition(): void{
         // 排布相关参数
@@ -85,7 +84,7 @@ export class OutputPin extends BaseComponent {
         }
     }
 
-    // 覆盖基类方法：设置位数
+    // 设置位数
     setBitWidth(bitWidth: number): void {
         if (bitWidth !== this.bitWidth) {
             this.bitWidth = bitWidth;
@@ -99,7 +98,6 @@ export class OutputPin extends BaseComponent {
             }
 
             this.inputs.splice(0, this.inputs.length, ...newInputs); 
-            // this.simulator.checkComponentConnections(this.id); // 检查连线
             this.updatePinPosition();
             eventBus.emit('updatePinPosition', {id: this.id}); 
         }

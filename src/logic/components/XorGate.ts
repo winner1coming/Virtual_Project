@@ -51,8 +51,6 @@ export class XorGate extends BaseComponent {
 		this.inputPinPosition.splice(0, this.inputPinPosition.length,
 		...inputYs.map((pin, index): [number, number] => {
 			return [
-			// 0 + 92 * this.scale,
-			// 0 + pin * this.scale,
 			42,
 			pin,
 			];

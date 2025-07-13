@@ -25,6 +25,7 @@ import { Button } from '@/logic/components/Button';
 import { Light } from '@/logic/components/Light';
 
 
+// 根据类型统一创建对象
 export function createComponentByType(id: number, type: string, position:[number, number] = [0,0], name:string="", projectId: number=-1, simulator:null|EventDrivenSimulator=null): BaseComponent {
   switch (type) {
     case 'AND':
@@ -73,7 +74,6 @@ export function createComponentByType(id: number, type: string, position:[number
       return new Button(id, type, position);
     case 'LIGHT':
       return new Light(id, type, position);
-    // 添加其他组件类型
     default:
       throw new Error(`Unknown component type: ${type}`);
   }

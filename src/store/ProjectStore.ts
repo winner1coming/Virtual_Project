@@ -1,4 +1,3 @@
-// stores/projectStore.ts
 import { defineStore } from 'pinia';
 import { reactive, ref } from 'vue';
 import type { ProjectData } from '@/logic/ProjectData';

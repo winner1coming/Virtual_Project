@@ -18,8 +18,6 @@ export class InputPin extends BaseComponent {
         this.initInputPin(0); // InputPin没有输入引脚
         this.outputs.splice(0, this.outputs.length, 0); 
         this.bitWidth = 1; // 默认为1位
-        // 修改输入
-        this.inputPinPosition.splice(0, this.inputPinPosition.length);
     }
 
     // 更新引脚位置

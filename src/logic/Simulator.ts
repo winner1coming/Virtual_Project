@@ -24,8 +24,6 @@ export class EventDrivenSimulator {
   private connManagerMap: Map<number, ConnectionManager> = new Map(); // 用于存储每个项目的连接管理器
   private circuitStore = useCircuitStore();
   private workMap = new Map<string, WorkItem>();
-  private workQueue: WorkItem[] = [];
-  // private inQueue: Set<string> = new Set();
   private enableSimulator: Boolean = true; // 是否启用模拟器
   private pause: Boolean = false; // 是否暂停模拟器
 
@@ -46,7 +44,7 @@ export class EventDrivenSimulator {
     return EventDrivenSimulator.instance;
   }
 
-  // 启用模拟器  // todo 不要这么做 
+  // 启用模拟器 
   enable() {
     this.enableSimulator = true;
   }
@@ -54,7 +52,6 @@ export class EventDrivenSimulator {
   // 禁用模拟器
   disable() {
     this.enableSimulator = false;
-    this.workQueue = [];
     this.workMap.clear();
   }
 
@@ -110,7 +107,7 @@ export class EventDrivenSimulator {
       const tunnelPinIndex = comp1.type === 'TUNNEL' ? pinIndex1 : pinIndex2;
       const otherComp = comp1.type === 'TUNNEL' ? comp2 : comp1;
       const otherPinIndex = comp1.type === 'TUNNEL' ? pinIndex2 : pinIndex1;
-      // 假如另一组件是输出电流的（则另一组件是输入端）  todo 没有考虑两个都是隧道的情况
+      // 假如另一组件是输出电流的（则另一组件是输入端）  todo 注意考虑两个都是隧道的情况
       if(otherPinIndex >= otherComp.getInputPinCount()) {
         // inputId 对应电线输入端，即其实际上为该元件的输出引脚
         outputId = tunnelComp.id;
@@ -233,7 +230,7 @@ export class EventDrivenSimulator {
       for (const pinIdx of pinMap.keys()) {
         for(const conn of pinMap.get(pinIdx) || []) {
           this.disconnect(id, pinIdx, conn.id, conn.idx);
-           // 通知后继组件该引脚的输入已断开 todo 没考虑两个元件连一个引脚的情况
+           // 通知后继组件该引脚的输入已断开 todo 注意考虑两个元件连一个引脚的情况
           this.enqueue(conn.id, conn.idx, -1);
         }
       }

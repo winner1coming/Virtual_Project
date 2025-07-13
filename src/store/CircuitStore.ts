@@ -6,15 +6,12 @@ import { EventDrivenSimulator } from '@/logic/Simulator';
 import { useProjectStore } from './ProjectStore';
 
 import {createComponentByType} from '@/modules/useComponentType';
-import { SubCircuitComponent } from '@/logic/components/SubCircuitComponent';
 
 
 export const useCircuitStore = defineStore('circuit', {
   state: () => ({
     components: new Map<number, BaseComponent>(),
-    // wires: new Map<string, Wire>(),
-    // 选中的组件ID，-1表示没有选中任何组件
-    selectedId: -1,   
+    selectedId: -1,   // 选中的组件ID，-1表示没有选中任何组件
     currentId: 0,
 
     undoStack:[] as any[],
