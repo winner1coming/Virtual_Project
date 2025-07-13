@@ -41,7 +41,6 @@ export class Register extends BaseComponent {
 
     // 设置输出
     this.outputs.splice(0, this.outputs.length, this.q);
-
     return this.outputs;
   }
 

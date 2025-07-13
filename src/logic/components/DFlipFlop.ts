@@ -55,7 +55,6 @@ export class DFlipFlop extends BaseComponent {
 
     // 设置输出
     this.outputs.splice(0, this.outputs.length, this.q, this.qNot);
-
     return this.outputs;
   }
 
@@ -68,6 +67,7 @@ export class DFlipFlop extends BaseComponent {
     }
     return this.outputs;
   }
+  
   updatePinPosition(): void{
     this.inputPinPosition.splice(0, this.inputPinPosition.length, [92, 235], [92,300],[203,426], [329,426]);
     this.outputPinPosition.splice(0, this.outputPinPosition.length, [422, 235],[422,300]);

@@ -8,14 +8,6 @@ export type PinMap = MultiMap<number, Conn>;   // 每个引脚对应的接线情
 
 
 export class ConnectionManager {
-    // 连线关系的结构如下：
-    // Map{
-    //   id1: MultiMap{   // id1 一般为输入端（对电线来说），即id1为输出设备
-    //       idx1: { id: id2, idx: idx2, legal },
-    //       ...
-    //   },
-    //   ...
-    // }
     // 即Map<id:number, PinMap>
     // 即connections存储的是每个元件的输出端口与其他元件输入端口的连线关系
     connections: Map<number, PinMap>;
@@ -46,7 +38,6 @@ export class ConnectionManager {
             for(const conn of pinMap.get(inputIdx) || []) {
                 if (conn.id === outputId && conn.idx === outputIdx) {
                     pinMap.remove(inputIdx, conn);
-                    //return true;
                 }
             }
         }
@@ -56,11 +47,9 @@ export class ConnectionManager {
             for(const conn of reversePinMap.get(outputIdx) || []) {
                 if (conn.id === inputId && conn.idx === inputIdx) {
                     reversePinMap.remove(outputIdx, conn);
-                    //return true;
                 }
             }
         }
-        //return false;
     }
 
     removeComponentConnections(id: number) {
@@ -99,14 +88,6 @@ export class ConnectionManager {
         }
     }
 
-    // // 查找连线
-    // getConnection(id: number, idx: number): Conn|null {    // 返回{id, idx, legal}
-    //     if (this.connections.has(id)) {
-    //         return this.connections.get(id)!.get(idx) || null;
-    //     }
-    //     return null;
-    // }
-
     // 获取与某组件的输出端的pinMap
     getOutputPinMap(id: number): PinMap | undefined{
         return this.connections.get(id);
@@ -116,32 +97,4 @@ export class ConnectionManager {
     getInputPinMap(id: number): PinMap | undefined {
         return this.reverseConnections.get(id);
     }
-
-    // setConnectionLegal(inputId: number, inputIdx: number, outputId: number, outputIdx: number, legal: boolean) {
-    //     const pinMap = this.connections.get(inputId);
-    //     if (pinMap) {
-    //         const conn = pinMap.get(inputIdx)!.find(c => c.id === outputId && c.idx === outputIdx);
-    //         if (conn) {
-    //             conn.legal = legal; // 更新合法性
-    //         }
-    //     }
-    //     const reversePinMap = this.reverseConnections.get(outputId);
-    //     if (reversePinMap) {
-    //         const conn = reversePinMap.get(outputIdx)!.find(c => c.id === inputId && c.idx === inputIdx);
-    //         if (conn) {
-    //             conn.legal = legal; // 更新合法性
-    //         }
-    //     }
-    // }
-
-    // // 获取所有连线（暂时没什么用）
-    // getAllConnections() {
-    //     const result = [];
-    //     for (const [id1, pinMap] of this.connections) {
-    //         for (const [idx1, { id, idx, legal }] of pinMap) {
-    //             result.push({ id1, idx1, id2: id, idx2: idx, legal });
-    //         }
-    //     }
-    //     return result;
-    // }
 }

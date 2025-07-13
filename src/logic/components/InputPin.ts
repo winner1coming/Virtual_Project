@@ -63,7 +63,6 @@ export class InputPin extends BaseComponent {
             index = this.bitWidth - 1 - index; // 将index转换为低位到高位的顺序
             // 计算当前位的掩码
             const mask = 1 << index;
-
             this.outputs[0] = value ^ mask; // 使用按位异或操作切换位
 
             // 输入引脚的改变会导致电路的改变
@@ -93,7 +92,6 @@ export class InputPin extends BaseComponent {
     }
 
     compute(): number[] {
-        
         return this.outputs;
     }
 
@@ -116,16 +114,11 @@ export class InputPin extends BaseComponent {
                     newOutputs[i] = this.outputs[i];
                 }
             }
-            
-            ////is.outputs = newOutputs;
             this.outputs.splice(0, this.outputs.length, ...newOutputs); // 替换outputs的值
-
             this.simulator.checkComponentConnections(this.id); // 检查连线
             this.updatePinPosition(); // 更新引脚位置
             eventBus.emit('updatePinPosition', {id: this.id}); 
         }
-
-        
     }
 
     // 获取当前值（十进制表示，适用于多bit）

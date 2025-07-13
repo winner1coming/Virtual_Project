@@ -11,8 +11,6 @@ export async function loadChallengesOnStartup(canvasEditorRefs: any) {
     projectStore.createProject('new project');
     nextTick(async() => {
     const canvasRef = canvasEditorRefs.get(projectStore.selectedProjectId);
-    
-
     // 获取文件列表（需要手动维护文件名列表）
     const fileNames = ['1.一位全加器.json', '一位全加器_答案.json'];
 

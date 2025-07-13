@@ -26,6 +26,7 @@ export class HexDisplay extends BaseComponent{
     this.inputs.splice(idx, 1, v); // 替换idx位置的值
     return this.outputs;
   }
+  
   updatePinPosition(): void{
     this.inputPinPosition.splice(0, this.inputPinPosition.length, [208, 426], [313,426]);
   }

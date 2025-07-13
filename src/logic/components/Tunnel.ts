@@ -30,6 +30,7 @@ export class Tunnel extends BaseComponent {
 
     this.simulator.processQueue();
   }
+  
   setDirection(direction: string): void {
     this.direction = direction;
   }

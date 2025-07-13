@@ -13,14 +13,7 @@ export class OrGate extends BaseComponent {
 		this.initInputPin(2); // 初始化输入引脚数量为2
         
     }
-    // updatePinPosition() {
-    //     this.outputPinPosition = this.outputPinPosition.map(pin => {
-    //       return [
-    //         0 + 497 * this.scale,
-    //         0 + 288 * this.scale,
-    //       ];
-    //     });
-    // }
+
     compute(){   // 返回输出(int)
 		let hasConnected = false;
 		const mask = (1 << this.bitWidth) - 1;
@@ -53,10 +46,8 @@ export class OrGate extends BaseComponent {
 	}
 
     changeInput(idx: number, v: number): number[]{
-        // this.inputs[idx] = v;
         this.inputs.splice(idx, 1, v); 
         if(v===-2){
-            // this.outputs[0] = -2;
             this.outputs.splice(0, this.outputs.length, -2);
             return this.outputs;
         }

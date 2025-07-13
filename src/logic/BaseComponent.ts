@@ -42,50 +42,41 @@ export abstract class BaseComponent{
     this.outputPinPosition = reactive([[0,0]]); // 默认只有一个输出引脚
     this.direction = 'east';  // 默认方向为东
     this.offset = [0,0];
-
-    // this.simulator = EventDrivenSimulator.getInstance(); 
-
-    // this.changeInputPinCount(2); // 初始化输入引脚数量为2 
-    // this.inputYs = calcInputYs(this.inputCount); // 计算输入引脚的y坐标
   };
 
   // 计算内部逻辑，调用后返回outputs
   abstract compute(): number[];   
-
   // 改变某一个引脚的电平，返回outputs
   abstract changeInput(idx: number, v: number): number[];  // 改变某一个引脚的电平，返回outputs
-  // // 取反（只给位宽为1的输入引脚用）
-  // invertInput(idx: number): void {
-  //     this.inputs[idx] = this.inputs[idx] === 1 ? 0 : 1;
-  //     this.compute();  // 更新outputs
-  // } 
 
-  // #region Setters
   // 改变名字
   setName(name: string){
     this.name = name;
     
   }
+
   // 改变位宽
   setBitWidth(bitWidth: number){
     this.bitWidth = bitWidth;
     useProjectStore().getCurrentProject().hasChanged = true;
   }
+
   // 改变position
   setPosition(position: [number, number]) {
     this.position[0] = position[0]; 
     this.position[1] = position[1];
   }
+
   setDirection(direction: string){
     this.direction = direction;
     this.updatePinPosition();
     eventBus.emit('updatePinPosition', {id: this.id}); 
   }
+
   // 设置缩放比例
   setScale(scale: number) {
     this.scale = scale;
   }
-  // #endregion Setters
 
   // #region 引脚
   // 更新引脚位置
@@ -115,6 +106,7 @@ export abstract class BaseComponent{
     this.outputs.splice(0, this.outputs.length, ...Array(num).fill(-1));
     this.updatePinPosition(); // 更新输出引脚位置
   }
+
   // 初始化输入引脚，不检查连接
   initInputPin(num: number){
     this.inputCount = num;
@@ -123,6 +115,7 @@ export abstract class BaseComponent{
 
     this.updatePinPosition();
   }
+
   // 会清空输入与引脚的取反状态
   changeInputPinCount(num: number){
     // 取消与前驱的连接
@@ -164,12 +157,10 @@ export abstract class BaseComponent{
   getInputPinCount(): number{
     return this.inputCount;
   }
+
   getOutputs(): number[]{
     return this.outputs;
   }
-
-
-
 
   getAllPorts(){
     let result = {
@@ -196,7 +187,6 @@ export abstract class BaseComponent{
         id: i + this.getInputPinCount(),
         x: (this.outputPinPosition[i][0]+this.offset[0])*this.scale, 
         y: (this.outputPinPosition[i][1]+this.offset[1])*this.scale,
-        // type: 'output'
       });
     }
     return result;

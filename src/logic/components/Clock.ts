@@ -26,7 +26,6 @@ export class Clock extends BaseComponent {
         this.start(); // 启动时钟
     }
 
-
     setParent(parent: SubCircuitComponent) {
         this.parent = parent;
     }
@@ -67,6 +66,7 @@ export class Clock extends BaseComponent {
     changeInput(idx: number, v: number): number[] {
         throw new Error("shouldn't be here")
     }
+    
     // 更新引脚位置
     updatePinPosition(): void{
         this.outputPinPosition.splice(0, this.outputPinPosition.length, [235, 118]);

@@ -114,5 +114,4 @@ export class ConstantInput extends BaseComponent {
             this.outputPinPosition.splice(0,this.outputPinPosition.length,[this.rectWidth/2,96])
         }
     }
-
 }

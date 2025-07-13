@@ -31,7 +31,6 @@ export function toggleInput(gate, index, updateOutputFn) {
   updateOutputFn()
 }
 
-
 export function setInputInverted(gateRef, index, inverted, updateOutputFn) {
   if (index < 0 || index >= gateRef.inputs.length) return
   gateRef.inputs[index].inverted = inverted

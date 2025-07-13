@@ -21,11 +21,6 @@ export function useGateLayout(inputCount, baseTop = 181, baseBottom = 395, ideal
   })
 
   return inputYs
-  //{
-    // computedLineTop,
-    // computedLineBottom,
-    inputYs
-  //}
 }
 
 // 左侧的曲线计算
