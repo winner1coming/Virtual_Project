@@ -153,7 +153,7 @@ nextTick(async() => {
     // const fileNames = ['1.一位全加器.json', '一位全加器_答案.json', '4位先行进位加法器_答案.json',
     //   '8位可控加法器_答案.json'
     // ];
-    const fileNames = ['1.一位全加器.json', '一位全加器_答案.json'];
+    const fileNames = ['1.一位全加器.json', '2.四位快速加法器.json', '3.八位可控加减法器.json','一位全加器_答案.json'];
     for (const fileName of fileNames) {
       projectStore.createProject('new project', 'challenge');
       const response = await fetch(`/assets/challenges/${fileName}`);
@@ -718,6 +718,11 @@ const testTruthTable = () => {
   if (!projectId) {
     return;
   }
+  // 检测名字是否在答案范围内
+  if (!answer[projectStore.getCurrentProject().name]) {
+    message.error('测试失败，请检查电路设计。');
+    return;
+  }
   const truthTable = calculateTruthTable(projectId);
   console.log('测试真值表:', truthTable);
   console.log('答案:', answer[projectStore.getCurrentProject().name]);
@@ -769,17 +774,6 @@ const message = useMessage();
 	  <!-- 工具栏 - 展开后显示 -->
 	  <div v-if="showToolbar" class="toolbar">
 		<n-button-group class = "buttongroup">
-		  <n-tooltip trigger="hover">
-			<template #trigger>
-			  <n-button quaternary @click="saveProject" >
-				<template #icon>
-				  <n-icon><save-icon /></n-icon>
-				</template>
-			  </n-button>
-			</template>
-			保存
-		  </n-tooltip>
-		  
 		  <n-tooltip trigger="hover">
 			<template #trigger>
 			  <n-button quaternary @click="prevStep">

@@ -125,12 +125,16 @@ export class EventDrivenSimulator {
         outputIdx = otherPinIndex;
       }
     }
+    // 判断位宽是否合法   
+    if(comp1.bitWidth !== comp2.bitWidth) {
+      legal = false;
+    }
     this.connectionManager.addConnection(inputId, inputIdx, outputId, outputIdx, legal);
 
     const outputVal = this.circuitStore.getComponent(inputId).getOutputs()[inputIdx];
 
     // 电线输出端的组件，其索引为idx的输入引脚的输入更改为了outputVal
-    this.enqueue(outputId, outputIdx, outputVal);
+    this.enqueue(outputId, outputIdx, legal?outputVal:-2);
     // 如果模拟器未启用或暂停，则不处理队列
     if (!this.enableSimulator || this.pause) return;
     this.processQueue();

@@ -15,15 +15,12 @@ export class Splitter extends BaseComponent {
         }
         this.bitWidth = bitWidth;
         this.initInputPin(1)
-        this.outputs.splice(0, this.outputs.length, ...Array(bitWidth).fill(-1)); // 初始化输出引脚
-        this.updatePinPosition();
+        this.initOutputPin(this.bitWidth); 
     }
 
     setBitWidth(bitWidth: number) {
         this.bitWidth = bitWidth;
-        this.outputs.splice(0, this.outputs.length, ...Array(this.bitWidth).fill(-1)); 
-        this.updatePinPosition();
-        eventBus.emit('updatePinPosition', {id: this.id});
+        this.changeOutputPinCount(this.bitWidth);
     }
 
     compute(): number[] {
@@ -60,13 +57,13 @@ export class Splitter extends BaseComponent {
         this.outputPinPosition.splice(0, this.outputPinPosition.length,
         ...outputYs.map((pin, index): [number, number] => {
             return [
-            206,
+            this.direction==='east'? 206:92,
             pin,
             ];
         }));
         // 修改输入
         this.inputPinPosition.splice(0, this.inputPinPosition.length,[
-            100,
+            this.direction==='east'? 100:198,
             minY<246? maxY+36: 439.34,
         ]);
     }

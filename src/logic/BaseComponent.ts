@@ -14,8 +14,6 @@ export abstract class BaseComponent{
   inputInverted: boolean[]; // 输入引脚是否取反   
   outputs: number[];
   bitWidth: number;
-  // height: number;
-  // width: number;
   scale: number; // 缩放比例
   position: [number, number];
   offset: [number, number];

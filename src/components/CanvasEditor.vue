@@ -77,7 +77,6 @@
         >
           <component
             :is="item.type"
-           
             :inputs="item.inputs"
             :output="item.output"
             :id="item.ID"
@@ -171,7 +170,9 @@ import OutputPin from './Wiring/OutputPin.vue'
 import Power from './Wiring/Power.vue'
 import Splitter from './Wiring/Splitter.vue'
 import Tunnel from './Wiring/Tunnel.vue'
+// 寄存器
 import Register from './memory/Register.vue'
+import DFlipFlop from './memory/DFlipFlop.vue'
 import CustomizeComponent from './CustomizeComponent.vue'
 
 // 逻辑类建模
@@ -184,13 +185,13 @@ import { DFlipFlop as LogicDFlipFlop} from '@/logic/components/DFlipFlop.ts'
 import { Ground as LogicGround} from '@/logic/components/Ground.ts'
 import { HexDisplay as LogicHexDisplay } from '@/logic/components/HexDisplay.ts'
 import { InputPin as LogicInputPin} from '@/logic/components/InputPin.ts'
-import { Light as LogicLED } from '@/logic/components/Light.ts'
+import { Light as LogicLight } from '@/logic/components/Light.ts'
 import { NandGate as LogicNandGate } from '@/logic/components/NandGate.ts'
 import { NorGate as LogicNorGate } from '@/logic/components/NorGate.ts'
 import { NotGate as LogicNotGate } from '@/logic/components/NotGate.ts'
 import { NxorGate as LogicXnorGate } from '@/logic/components/Nxor.ts'
 import { OrGate as LogicOrGate } from '@/logic/components/OrGate.ts'
-import {  Power as LogicPower} from '@/logic/components/Power.ts'
+import { Power as LogicPower} from '@/logic/components/Power.ts'
 import { Register as LogicRegister } from '@/logic/components/Register.ts'
 import { SegmentDisplay as LogicSegmentDisplay} from '@/logic/components/SegmentDisplay.ts'
 import { Splitter as LogicSplitter} from '@/logic/components/Splitter.ts'
@@ -285,7 +286,7 @@ const componentMap = {
   NAND: NandGate,
   SUB_CIRCUIT: CustomizeComponent,
   XOR: XorGate,
-  XNOR: XnorGate,
+  NXOR: XnorGate,
   NOR: NorGate,
   CLOCK: Clock,
   CONSTANT: Constant,
@@ -298,32 +299,33 @@ const componentMap = {
   LIGHT: LED,
   BUTTON: Button,
   REGISTER: Register,
+  D_FLIP_FLOP: DFlipFlop,
 }
 
 // 逻辑类映射表
 const COMPONENT_LOGIC = {
   AND: LogicAndGate, 
-  NAND: LogicNandGate,
-  OR: LogicOrGate,
-  NOR: LogicNorGate,
-  NOT: LogicNotGate,
+  BUTTON: LogicButton,
   CLOCK: LogicClock,
   COMBINER: LogicCombiner,
-  GROUND: LogicGround,
-  POWER: LogicPower,
-  TUNNEL: LogicTunnel,
-  INPUT: LogicInputPin,
-  // OUTPUT: LogicInputPin, 
-  SUB_CIRCUIT: LogicSubCircuit,
   CONSTANT: LogicConstantInput,
+  D_FLIP_FLOP: LogicDFlipFlop,
+  GROUND: LogicGround,
+  HEX_DISPLAY: LogicHexDisplay,
+  INPUT: LogicInputPin,
+  LIGHT: LogicLight,
+  NAND: LogicNandGate,
+  NOR: LogicNorGate,
+  NOT: LogicNotGate,
+  NXOR: LogicXorGate, // XNOR 逻辑门
+  OR: LogicOrGate,
+  POWER: LogicPower,
+  REGISTER: LogicRegister,
   SEGMENT_DISPLAY: LogicSegmentDisplay,
   SPLITTER: LogicSplitter,
+  SUB_CIRCUIT: LogicSubCircuit,
+  TUNNEL: LogicTunnel,
   XOR: LogicXorGate,
-  XNOR: LogicXorGate, // XNOR 逻辑门
-  HEX_DISPLAY: LogicHexDisplay,
-  LIGHT: LogicLED,
-  BUTTON: LogicButton,
-  REGISTER: LogicRegister,
 }
 
 // 初始化各元件尺寸配置
@@ -340,43 +342,53 @@ const COMPONENT_SIZES = {
 
 // SVG映射offset
 const tempSegmentDisplay = new LogicSegmentDisplay(-1, "SEGMENT_DISPLAY");
+const tempButton = new LogicButton(-1, "BUTTON");
 const tempPower = new LogicPower(-1, "POWER");
 const tempNot = new LogicNotGate(-1, "NOT");
 const tempNor = new LogicNorGate(-1, "NOR");
 const tempOr = new LogicOrGate(-1, "OR");
+const tempRegister = new LogicRegister(-1, "REGISTER");
 const tempGround = new LogicGround(-1, "GROUND");
 const tempClock = new LogicClock(-1, "CLOCK");
+const tempNxor = new LogicXnorGate(-1, "NXOR");
 const tempXor = new LogicXorGate(-1, "XOR");
+const tempNand = new LogicNandGate(-1, "NAND");
+const tempSubCircuit = new LogicSubCircuit(-1, "SUB_CIRCUIT");
 const tempAnd = new LogicAndGate(-1, "AND");
+const tempCombiner = new LogicCombiner(-1, "COMBINER");
 const tempConstant = new LogicConstantInput(-1, "CONSTANT");
+const tempHexDisplay = new LogicHexDisplay(-1, "HEX_DISPLAY");
 const tempInput = new LogicInputPin(-1, "INPUT");
+const tempLight = new LogicLight(-1, "LIGHT");
 const tempOutput = new LogicInputPin(-1, "OUTPUT");
 const tempSplitter = new LogicSplitter(-1, "SPLITTER");
 const tempTunnel = new LogicTunnel(-1, "TUNNEL");
-const tempHexDisplay = new LogicHexDisplay(-1, "HEX_DISPLAY");
-const tempLight = new LogicLED(-1, "LIGHT");
-const tempButton = new LogicButton(-1, "BUTTON");
-const tempRegister = new LogicRegister(-1, "REGISTER");
+
 
 const SVG_OFFSET = {
   SEGMENT_DISPLAY: {x: tempSegmentDisplay.offset[0], y: tempSegmentDisplay.offset[1]},
+  BUTTON: {x: tempButton.offset[0], y: tempButton.offset[1]},
   POWER: {x: tempPower.offset[0], y: tempPower.offset[1]},
   NOT: {x: tempNot.offset[0], y: tempNot.offset[1]},
   NOR: {x: tempNor.offset[0], y: tempNor.offset[1]},
   OR: {x: tempOr.offset[0], y: tempOr.offset[1]},
+  REGISTER: {x: tempRegister.offset[0], y: tempRegister.offset[1]},
   GROUND: {x: tempGround.offset[0], y: tempGround.offset[1]},
   CLOCK: {x: tempClock.offset[0], y: tempClock.offset[1]},
+  NXOR: {x: tempNxor.offset[0], y: tempNxor.offset[1]},
   XOR: {x: tempXor.offset[0], y: tempXor.offset[1]},
+  NAND: {x: tempNand.offset[0], y: tempNand.offset[1]},
+  SUB_CIRCUIT: {x: tempSubCircuit.offset[0], y: tempSubCircuit.offset[1]},
   AND: {x: tempAnd.offset[0], y: tempAnd.offset[1]},
+  COMBINER: {x: tempCombiner.offset[0], y: tempCombiner.offset[1]},
   CONSTANT: {x: tempConstant.offset[0], y: tempConstant.offset[1]},
+  HEX_DISPLAY: {x: tempHexDisplay.offset[0], y: tempHexDisplay.offset[1]},
   INPUT: {x: tempInput.offset[0], y: tempInput.offset[1]},
+  LIGHT: {x: -145, y: -145},
   OUTPUT: {x: tempOutput.offset[0], y: tempOutput.offset[1]},
   SPLITTER: {x: tempSplitter.offset[0], y: tempSplitter.offset[1]},
   TUNNEL: {x: tempTunnel.offset[0], y: tempTunnel.offset[1]},
-  HEX_DISPLAY: {x: tempHexDisplay.offset[0], y: tempHexDisplay.offset[1]},
-  LIGHT: {x: tempLight.offset[0], y: tempLight.offset[1]},
-  BUTTON: {x: tempButton.offset[0], y: tempButton.offset[1]},
-  REGISTER: {x: tempRegister.offset[0], y: tempRegister.offset[1]},
+  D_FLIP_FLOP: {x: tempRegister.offset[0], y: tempRegister.offset[1]},
 }
 
  
@@ -391,8 +403,12 @@ const IMAGE_MAP = {
   REGISTER: new Image(),
   GROUND: new Image(),
   CLOCK: new Image(),
+  NXOR: new Image(),
   XOR: new Image(),
+  NAND: new Image(),
+  SUB_CIRCUIT: new Image(),
   AND: new Image(),
+  COMBINER: new Image(),
   CONSTANT: new Image(),
   HEX_DISPLAY: new Image(),
   INPUT: new Image(),
@@ -400,6 +416,7 @@ const IMAGE_MAP = {
   OUTPUT: new Image(),
   SPLITTER: new Image(),
   TUNNEL: new Image(),
+  D_FLIP_FLOP: new Image(),
 }
 
 // 初始化图片资源
@@ -412,8 +429,12 @@ IMAGE_MAP.OR.src = '/assets/或门.svg'
 IMAGE_MAP.REGISTER.src = '/assets/寄存器.svg'
 IMAGE_MAP.GROUND.src = '/assets/接地.svg'
 IMAGE_MAP.CLOCK.src = '/assets/时钟.svg'
+IMAGE_MAP.NXOR.src = '/assets/异或非门.svg'
 IMAGE_MAP.XOR.src = '/assets/异或门.svg'
+IMAGE_MAP.NAND.src = '/assets/与非门.svg'
+IMAGE_MAP.SUB_CIRCUIT.src = '/assets/子组件.svg'
 IMAGE_MAP.AND.src = '/assets/AND.svg'
+IMAGE_MAP.COMBINER.src = '/assets/combiner.svg'
 IMAGE_MAP.CONSTANT.src = '/assets/constant.svg'
 IMAGE_MAP.HEX_DISPLAY.src = '/assets/Hex数码管.svg'
 IMAGE_MAP.INPUT.src = '/assets/inputPin.svg'
@@ -421,9 +442,8 @@ IMAGE_MAP.LIGHT.src = '/assets/LED.svg'
 IMAGE_MAP.OUTPUT.src = '/assets/outputpin.svg'
 IMAGE_MAP.SPLITTER.src = '/assets/splitter.svg'
 IMAGE_MAP.TUNNEL.src = '/assets/Tunnel.svg'
+IMAGE_MAP.D_FLIP_FLOP.src = '/assets/D触发器.svg'
 
-// IMAGE_MAP.NAND.src = '/assets/'
-// IMAGE_MAP.SUB_CIRCUIT.src = '/assets/INPUT.png'
 
 function updateComponentDirection() {
 
@@ -484,21 +504,21 @@ function drawCanvas() {
     ctx.save();// 保存当前画布
     ctx.translate(x + size.width / 2, y + size.height / 2);// 平移到组件中心
     // 旋转元件
-    switch (direction) {
-      case 'east':
-        ctx.rotate(0);
-        break;
-      case 'south':
-        ctx.rotate(Math.PI / 2);
-        break;
-      case 'west':
-        ctx.rotate(Math.PI);
-        break;
-      case 'north':
-        ctx.rotate(-Math.PI / 2);
-        break;
-    }
-    ctx.restore();
+    // switch (direction) {
+    //   case 'east':
+    //     ctx.rotate(0);
+    //     break;
+    //   case 'south':
+    //     ctx.rotate(Math.PI / 2);
+    //     break;
+    //   case 'west':
+    //     ctx.rotate(Math.PI);
+    //     break;
+    //   case 'north':
+    //     ctx.rotate(-Math.PI / 2);
+    //     break;
+    // }
+    // ctx.restore();
   })
   drawConnections(ctx);// 绘制所有连线
 }
@@ -760,7 +780,6 @@ function handleMouseMove(event) {
     const componentInstance = {
       component: componentMap[selectedComponent.value.componentType],
       props: {ID},
-      logic: componentLogic,
     }
 
     // 存储Vue实例引用
@@ -769,7 +788,7 @@ function handleMouseMove(event) {
     // 4：记录当前ID的端口信息
     // 延迟4后获取端口信息，确保见组件挂载完成
     nextTick(() => {
-      const logic = vueComponentMap.get(ID)?.logic;
+      const logic = useCircuitStore().getComponent(ID);
       if(!logic) {
         console.warn("逻辑类未找到，ID：", ID)
         return
@@ -805,7 +824,7 @@ function updateConnectionPaths(componentId = null) {
     let to = connection.to;
 
     // === 更新 from 端口位置 ===
-    if (from.componentId && from.portId) {
+    if (from.componentId !== undefined && from.portId !== undefined) {
       if (componentId === null || from.componentId === componentId) {
         const updatedFrom = findPortById(from.componentId, from.portId);
         if (updatedFrom) {
@@ -816,7 +835,7 @@ function updateConnectionPaths(componentId = null) {
     }
 
     // === 更新 to 端口位置 ===
-    if (to.componentId && to.portId) {
+    if (to.componentId !== undefined && to.portId !== undefined) {
       if (componentId === null || to.componentId === componentId) {
         const updatedTo = findPortById(to.componentId, to.portId);
         if (updatedTo) {
@@ -1224,16 +1243,14 @@ function handleLeftClick(event) {
     const componentInstance = {
       component: componentMap[currentComponent.value.componentType],
       props: {id},
-      logic: componentLogic,
     }
 
     // 存储Vue实例引用
     vueComponentMap.set(id, componentInstance);
-
     // 4：记录当前ID的端口信息
     // 延迟4后获取端口信息，确保见组件挂载完成
     nextTick(() => {
-      const logic = vueComponentMap.get(id)?.logic;
+      const logic = useCircuitStore().getComponent(id);
       if(!logic) {
         console.warn("逻辑类未找到，ID：", id)
         return
@@ -1430,14 +1447,60 @@ function toggleInput(component, index) {
 // #region 项目
 
 const projectStore = useProjectStore();
-watch(() => projectStore.selectedProjectId, (newValue) => {
-  if (newValue) {
-    console.log("项目切换，清空当前组件和电线起点")
+watch(() => projectStore.selectedProjectId, (newValue, oldValue) => {
+
+    console.log(newValue, oldValue)
     currentComponent.value = null; // 清空当前组件
     wireStart.value = null; // 清空电线起点
     wireStartId = null; // 清空电线起点ID
     tempWire.value = null; // 清除临时连线
-  }
+
+    // 缓存当前信息
+    localStorage.setItem('circuit'+oldValue+'Components', JSON.stringify(serializeComponents(components)));
+    localStorage.setItem('circuit'+oldValue+'Connections', JSON.stringify(connections));
+    localStorage.setItem('circuit'+oldValue+'Ports', JSON.stringify(Array.from(Ports.entries())));
+    localStorage.setItem('circuit'+oldValue+'vueComponentMap', JSON.stringify(Array.from(vueComponentMap.entries())));
+    localStorage.setItem('circuit'+oldValue+'ComponentID', JSON.stringify(componentID));
+    localStorage.setItem('circuit'+oldValue+'IntermediatePoints', JSON.stringify(intermediatePoints));
+
+    // 加载新项目
+    const cachedComponents = localStorage.getItem('circuit'+newValue+'Components');
+    const cachedConnections = localStorage.getItem('circuit'+newValue+'Connections');
+    const cachedVueComponentMap = localStorage.getItem('circuit'+newValue+'vueComponentMap');
+    const cachedPortsMap = localStorage.getItem('circuit'+newValue+'Ports');
+    components.splice(0, components.length); // 清空之前的组件
+    connections.splice(0, connections.length); // 清空之前的连线
+    vueComponentMap.clear(); // 清空之前的映射
+    Ports.clear(); // 清空之前的端口映射
+    componentID.splice(0, componentID.length); // 清空之前的元件ID
+    intermediatePoints.value = []; // 清空中继点
+    if (cachedComponents) {
+      const loadedComponents = deserializeComponents(JSON.parse(cachedComponents));
+      components.push(...loadedComponents);
+    }  
+    if( cachedConnections) {
+      connections.splice(0, connections.length, ...JSON.parse(cachedConnections));
+    }
+    if (cachedVueComponentMap) {
+      const vueComponents = JSON.parse(cachedVueComponentMap);
+      vueComponents.forEach(item => {
+        vueComponentMap.set(item[0], item[1]);
+      });
+    }
+    if (cachedPortsMap) {
+      const portsMap = JSON.parse(cachedPortsMap);
+      portsMap.forEach(item => {
+        Ports.set(item[0], item[1]);
+      });
+    }
+    const cachedComponentID = localStorage.getItem(newValue+'ComponentID');
+    if (cachedComponentID) {
+      componentID.splice(0, componentID.length, ...JSON.parse(cachedComponentID));
+    }
+    const cachedIntermediatePoints = localStorage.getItem(newValue+'IntermediatePoints');
+    if (cachedIntermediatePoints) {
+      intermediatePoints.value = JSON.parse(cachedIntermediatePoints);
+    }
 });
 
 function addComponentByScript(type, position) {
@@ -1477,6 +1540,14 @@ function connectByScript(fromId, fromPin, toId, toPin) {
   };
   wireStartId = fromId;
 
+  intermediatePoints.value = [{
+    x: fromPort.x,
+    y: fromPort.y,
+    componentId: fromId,
+    portId: fromPin,
+    portType: fromPort.type,
+  }];
+
   const fakeEvent = {
     clientX: toPort.x + canvasContainer.value.getBoundingClientRect().left,
     clientY: toPort.y + canvasContainer.value.getBoundingClientRect().top,
@@ -1499,6 +1570,19 @@ defineExpose({
 });
 // #endregion 项目
 
+function serializeComponents(components) {
+  return components.map(component => ({
+    ...component,
+    type: component.componentType, 
+  }));
+}
+function deserializeComponents(serializedComponents) {
+  return serializedComponents.map(component => ({
+    ...component,
+    type: componentMap[component.type],
+  }));
+}
+
 onMounted(() => {
   eventBus.on('start-place-component', ({type:type, projectId: projectId=-1}) => {
     projectTypeId = projectId; 
@@ -1514,11 +1598,59 @@ onMounted(() => {
   // 确保画布元素可聚焦
   canvasContainer.value.focus();
   canvasContainer.value.addEventListener('mousemove', handleMouseMove);
+
+  // // 初始化时从 localStorage 加载组件
+  const cachedComponents = localStorage.getItem('circuit'+projectStore.selectedProjectId+'Components');
+  const cachedConnections = localStorage.getItem('circuit'+projectStore.selectedProjectId+'Connections');
+  const cachedVueComponentMap = localStorage.getItem('circuit'+projectStore.selectedProjectId+'vueComponentMap');
+  const cachedPortsMap = localStorage.getItem('circuit'+projectStore.selectedProjectId+'Ports');
+  if (cachedComponents) {
+    const loadedComponents = deserializeComponents(JSON.parse(cachedComponents));
+    components.push(...loadedComponents);
+    console.log("从 localStorage 加载组件：", components);
+  }  
+  if( cachedConnections) {
+    connections.push(...JSON.parse(cachedConnections));
+    console.log("从 localStorage 加载连线：", connections);
+  }
+  if (cachedVueComponentMap) {
+    const vueComponents = JSON.parse(cachedVueComponentMap);
+    vueComponents.forEach(item => {
+      vueComponentMap.set(item[0], item[1]);
+    });
+    console.log("从 localStorage 加载 Vue 组件映射：", vueComponentMap);
+  }
+  if (cachedPortsMap) {
+    const portsMap = JSON.parse(cachedPortsMap);
+    portsMap.forEach(item => {
+      Ports.set(item[0], item[1]);
+    });
+    console.log("从 localStorage 加载端口映射：", Ports);
+  }
+  const cachedComponentID = localStorage.getItem(projectStore.selectedProjectId+'ComponentID');
+  if (cachedComponentID) {
+    componentID.push(...JSON.parse(cachedComponentID));
+    console.log("从 localStorage 加载元件ID：", componentID);
+  }
+  const cachedIntermediatePoints = localStorage.getItem(projectStore.selectedProjectId+'IntermediatePoints');
+  if (cachedIntermediatePoints) {
+    intermediatePoints.value = JSON.parse(cachedIntermediatePoints);
+    console.log("从 localStorage 加载中继点：", intermediatePoints.value);
+  }
+
+
 });
 
 onUnmounted(() => {
   eventBus.off('start-place-component');
   eventBus.off('updateComponentDirection');
+  console.log("缓存组件到 localStorage")
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'Components', JSON.stringify(serializeComponents(components)));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'Connections', JSON.stringify(connections));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'Ports', JSON.stringify(Array.from(Ports.entries())));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'vueComponentMap', JSON.stringify(Array.from(vueComponentMap.entries())));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'ComponentID', JSON.stringify(componentID));
+  localStorage.setItem('circuit'+projectStore.selectedProjectId+'IntermediatePoints', JSON.stringify(intermediatePoints));
 });
 
 </script>

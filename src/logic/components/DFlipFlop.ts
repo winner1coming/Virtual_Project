@@ -69,7 +69,7 @@ export class DFlipFlop extends BaseComponent {
   }
   
   updatePinPosition(): void{
-    this.inputPinPosition.splice(0, this.inputPinPosition.length, [92, 235], [92,300],[203,426], [329,426]);
+    this.inputPinPosition.splice(0, this.inputPinPosition.length, [92, 235], [92,300],[203,426], [266,426],[329,426]);
     this.outputPinPosition.splice(0, this.outputPinPosition.length, [422, 235],[422,300]);
   }
 }
