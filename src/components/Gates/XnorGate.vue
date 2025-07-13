@@ -6,6 +6,8 @@
     </path>
     <path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M303.269 181.612C313.833 179.216 358.755 182.869 373.209 204.739">
     </path>
+    <!-- <path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M440 288L497 288">
+    </path> -->
     <path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M368.226 198.885L450.774 292.115">
     </path>
     <path    stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M146 395.115L316 395.115">
