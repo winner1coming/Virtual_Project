@@ -89,6 +89,7 @@ import InputPort from '@/components/Ports/InputPort.vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 import { defineProps } from 'vue'
+import { getInputLine } from '@/logic/usegates/useGateLayout'
 
 import { useCircuitStore } from '@/store/CircuitStore'
 
