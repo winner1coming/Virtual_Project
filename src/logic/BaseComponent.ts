@@ -17,8 +17,8 @@ export abstract class BaseComponent{
   scale: number; // 缩放比例
   position: [number, number];
   offset: [number, number];
-  inputPinPosition: Array<[number, number]>;   // todo! 默认为2，部分特殊文件中的这个还没改
-  outputPinPosition: Array<[number, number]>;  // todo! 默认为2，部分特殊文件中的这个还没改
+  inputPinPosition: Array<[number, number]>;   // 默认为2
+  outputPinPosition: Array<[number, number]>;  // 默认为2
   direction: string; // 组件的方向，'east', 'west', 'north', 'south'
   simulator!: EventDrivenSimulator; // 关联的模拟器实例
 
@@ -35,7 +35,7 @@ export abstract class BaseComponent{
     this.outputs = reactive([-1]);  // 输出初始值为-1 未连接
     this.bitWidth = 1;
     this.scale = 0.25;    
-    this.position = reactive(position); // 将 position 包装为 reactive
+    this.position = reactive(position); 
     this.inputPinPosition =  reactive([[0,0], [0,0]]);  // 默认只有两个输入引脚
     this.outputPinPosition = reactive([[0,0]]); // 默认只有一个输出引脚
     this.direction = 'east';  // 默认方向为东
@@ -45,12 +45,12 @@ export abstract class BaseComponent{
   // 计算内部逻辑，调用后返回outputs
   abstract compute(): number[];   
   // 改变某一个引脚的电平，返回outputs
-  abstract changeInput(idx: number, v: number): number[];  // 改变某一个引脚的电平，返回outputs
+  abstract changeInput(idx: number, v: number): number[]; 
 
+  //#region setters
   // 改变名字
   setName(name: string){
     this.name = name;
-    
   }
 
   // 改变位宽
@@ -75,6 +75,7 @@ export abstract class BaseComponent{
   setScale(scale: number) {
     this.scale = scale;
   }
+  //#endregion setters
 
   // #region 引脚
   // 更新引脚位置
@@ -170,7 +171,6 @@ export abstract class BaseComponent{
         id: number,
         x: number,
         y: number
-        // type: 'input' | 'output'
       }>
     };
     for(let i = 0; i < this.getInputPinCount(); i++){
@@ -178,7 +178,6 @@ export abstract class BaseComponent{
         id: i,
         x: (this.inputPinPosition[i][0]+this.offset[0])*this.scale,
         y: (this.inputPinPosition[i][1]+this.offset[1])*this.scale,
-        // type: 'input'
       });
         
     }  

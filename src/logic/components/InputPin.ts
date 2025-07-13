@@ -18,8 +18,6 @@ export class InputPin extends BaseComponent {
         this.initInputPin(0); // InputPin没有输入引脚
         this.outputs.splice(0, this.outputs.length, 0); 
         this.bitWidth = 1; // 默认为1位
-        // 修改输入
-        this.inputPinPosition.splice(0, this.inputPinPosition.length);
     }
 
     // 更新引脚位置
@@ -115,7 +113,7 @@ export class InputPin extends BaseComponent {
                 }
             }
             this.outputs.splice(0, this.outputs.length, ...newOutputs); // 替换outputs的值
-            this.simulator.checkComponentConnections(this.id); // 检查连线
+            // this.simulator.checkComponentConnections(this.id); // 检查连线
             this.updatePinPosition(); // 更新引脚位置
             eventBus.emit('updatePinPosition', {id: this.id}); 
         }

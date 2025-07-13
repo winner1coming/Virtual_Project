@@ -1,5 +1,4 @@
 // Combiner.ts - 合并器
-import eventBus from "@/modules/useEventBus";
 import { BaseComponent } from "../BaseComponent";
 import { EventDrivenSimulator } from "../Simulator";
 import { calcInputYs } from "@/logic/utils/useGateLayout";

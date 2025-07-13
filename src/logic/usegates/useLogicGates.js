@@ -1,4 +1,3 @@
-// src/composables/useLogicGate.js
 import { ref, reactive } from 'vue'
 
 export function createInputs(count) {
