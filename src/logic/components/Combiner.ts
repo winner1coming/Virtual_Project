@@ -14,18 +14,12 @@ export class Combiner extends BaseComponent {
             this.simulator = simulator;
         }
         this.bitWidth = bitWidth;
-        this.inputs.splice(0, this.inputs.length, ...Array(bitWidth).fill(-1));
-        this.inputCount = bitWidth;
-        this.inputInverted.splice(0, this.inputInverted.length, ...Array(bitWidth).fill(false)); 
-        this.updatePinPosition();
+        this.initInputPin(this.bitWidth); 
     }
 
     setBitWidth(bitWidth: number) {
         this.bitWidth = bitWidth;
-        this.inputCount = bitWidth;
-         this.inputs.splice(0, this.inputs.length, ...Array(this.bitWidth).fill(-1));
-         this.updatePinPosition();
-         eventBus.emit('updatePinPosition', {id: this.id}); 
+        this.changeInputPinCount(this.bitWidth); 
     }
 
     compute(): number[] {
@@ -54,20 +48,20 @@ export class Combiner extends BaseComponent {
     
     // 更新引脚位置
     updatePinPosition(): void{
-        // 修改输ru
+        // 修改输入
         const inputYs = calcInputYs(this.inputs.length);
         let minY = Math.min(...inputYs);
         let maxY = Math.max(...inputYs);
         this.inputPinPosition.splice(0, this.inputPinPosition.length,
         ...inputYs.map((pin, index): [number, number] => {
             return [
-            92,
+            this.direction==='east'? 92:206,
             pin,
             ];
         }));
-        // 修改输chu
+        // 修改输出
         this.outputPinPosition.splice(0, this.outputPinPosition.length,[
-            206,
+            this.direction==='east'? 198:100,
             minY<246? maxY+36: 439.34,
         ]);
     }

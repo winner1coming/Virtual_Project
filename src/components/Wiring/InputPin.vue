@@ -48,7 +48,7 @@
         text-anchor="middle"
         alignment-baseline="middle"
       >
-        {{ bit }}
+        {{ bit === -1 ? 'x' : bit }}
       </text>
     </g>
     <!-- 输出 -->
