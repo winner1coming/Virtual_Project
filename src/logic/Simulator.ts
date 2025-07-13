@@ -134,7 +134,8 @@ export class EventDrivenSimulator {
     const outputVal = this.circuitStore.getComponent(inputId).getOutputs()[inputIdx];
 
     // 电线输出端的组件，其索引为idx的输入引脚的输入更改为了outputVal
-    this.enqueue(outputId, outputIdx, legal?outputVal:-2);
+    // this.enqueue(outputId, outputIdx, legal?outputVal:-2);
+    this.enqueue(outputId, outputIdx, outputVal); 
     // 如果模拟器未启用或暂停，则不处理队列
     if (!this.enableSimulator || this.pause) return;
     this.processQueue();
@@ -458,7 +459,8 @@ export class EventDrivenSimulator {
                   const targetComponent = this.circuitStore.getComponent(conn.id);
                   if (!targetComponent) continue;
                   if(conn.id === id && conn.idx === idx) continue; // 防止自己通知自己
-                  this.enqueue(conn.id, conn.idx, conn.legal?newOutputs[pinIdx]:-2);
+                  // this.enqueue(conn.id, conn.idx, conn.legal?newOutputs[pinIdx]:-2);
+                  this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]); 
                 }
               //}
             }

@@ -99,7 +99,7 @@ export class OutputPin extends BaseComponent {
             }
 
             this.inputs.splice(0, this.inputs.length, ...newInputs); 
-            this.simulator.checkComponentConnections(this.id); // 检查连线
+            // this.simulator.checkComponentConnections(this.id); // 检查连线
             this.updatePinPosition();
             eventBus.emit('updatePinPosition', {id: this.id}); 
         }
