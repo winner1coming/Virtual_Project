@@ -38,7 +38,7 @@
 </template>
   
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 import { defineProps } from 'vue'
@@ -59,16 +59,8 @@ const tunnel = computed(() => {
 });
 
 const labelTextBox = ref(null);
-// let label = ref('LBL')
 const tunnelName = computed(() => tunnel.value.name);
 const x_right = ref(313);
-
-// const directionToAngle = {
-//   east: 0,
-//   south: 90,
-//   west: 180,
-//   north: 270
-// }
 
 function updateXRight() {
   if (labelTextBox.value && tunnel.value.name) {
@@ -110,19 +102,6 @@ const transform = computed(() => {
     `;
   }
 });
-// const textTransform = computed(() => {
-//   if (tunnel.value.direction === 'west') {
-//     // 中心点 cx = 183.98，文字原始 x = 234
-//     // 镜像后的 x 位置为：(2 * cx - 原始 x)
-//     const mirroredX = 2 * 183.98 - 234;
-
-//     return ``; 
-//     // 解释：
-//     // 1. 先平移到正确镜像位置（相对于整个翻转 g）
-//     // 2. 然后在文字内部反转回来，保持文字不被镜像
-//   }
-//   return '';
-// });
 </script>
 
 <style scoped>

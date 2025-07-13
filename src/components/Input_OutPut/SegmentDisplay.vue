@@ -70,13 +70,12 @@
   </template>
   
   <script setup>
-  import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+  import { computed } from 'vue'
   import InputPort from '@/components/Ports/InputPort.vue'
   import { useCircuitStore } from '@/store/CircuitStore'
   import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
   
   const circuitStore = useCircuitStore();
-  //const id = circuitStore.addComponent('And', [0,0]);  
   const props = defineProps({
     id: {
       type: String,
@@ -84,7 +83,6 @@
     }
   }); 
   const segmentDisplay = computed(() => {
-    //return circuitStore.getComponent(id);   
     return circuitStore.getComponent(props.id);  
   });
 

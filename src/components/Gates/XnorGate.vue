@@ -56,6 +56,10 @@
       stroke="black"
       stroke-width="12"
     />
+
+    <!--选中方框-->
+    <SelectedBox :x="35" :y="minY<181? minY-12: 175" :width="471" :height="minY<181? (maxY-minY+24): 226" :visible="circuitStore.selectedId===props.id"/>
+
     <!-- 输入引脚 -->
     <template v-for="(input, index) in xnorGate.inputs" :key="input.id">
       <circle
@@ -95,15 +99,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { computed } from 'vue'
 import InputPort from '@/components/Ports/InputPort.vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 import { defineProps } from 'vue'
 
-import { useGateLayout, getInputLine } from '@/logic/usegates/useGateLayout'
+import { getInputLine } from '@/logic/usegates/useGateLayout'
 import { useCircuitStore } from '@/store/CircuitStore'
-import {watchComponentChanges} from '@/modules/useComponentsWatchers'
 
 const circuitStore = useCircuitStore();
 const props = defineProps({

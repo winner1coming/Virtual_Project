@@ -20,28 +20,18 @@
                 <path d="M173 86.5 L160.5 75" stroke="black" stroke-width="5"></path>
             </g>
         </g>
-      
-      <!--填充透明区域以便选中-->
-      <!-- <rect
-        x="0"
-        y="0"
-        :width="svgWidth"
-        :height="svgHeight"
-        fill=transparent
-      /> -->
   
       <!--选中方框-->
       <!-- <SelectedBox :x="-6" :y="-6" :width="svgWidth+12" :height="svgHeight+12" :visible="circuitStore.selectedId===props.id"/> -->
 
       <!-- 输出 -->
-      <OutputPort :cx="173" :cy="121" :active="isPressed? 1:0" :bitWidth="1" />
+      <OutputPort :cx="myButton.outputPinPosition[0][0]" :cy="myButton.outputPinPosition[0][1]" :active="isPressed? 1:0" :bitWidth="1" />
     </g>
   </template>
     
   <script setup>
-  import { ref, computed, watch } from 'vue'
+  import { ref, computed } from 'vue'
   import OutputPort from '@/components/Ports/OutputPort.vue'
-  import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
     
   import { useCircuitStore } from '@/store/CircuitStore'
   

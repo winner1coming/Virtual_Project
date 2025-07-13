@@ -51,6 +51,7 @@ export class Combiner extends BaseComponent {
         }
         return this.compute();
     }
+    
     // 更新引脚位置
     updatePinPosition(): void{
         // 修改输ru

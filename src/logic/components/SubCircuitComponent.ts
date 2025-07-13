@@ -9,14 +9,11 @@ import { calcInputYs } from "@/logic/utils/useGateLayout";
 import { Clock } from './Clock';
 
 export class SubCircuitComponent extends BaseComponent {
-  // public inputPins: number[]=[];   // 输入引脚的id
-  // public outputPins: number[]=[];
-  // public componentIdMap: Map<number, BaseComponent> = new Map(); // 用于映射元件的id
   public inputNames: string[] = []; // 输入引脚的名称
   public outputNames: string[] = []; // 输出引脚的名称
   public copyProjectId: number = 0;
   public projectUUID: string = "";
-  // public truthTable: number[][] = []; // 真值表
+  projectStore: any;
 
   constructor(
     id: number,
@@ -33,7 +30,6 @@ export class SubCircuitComponent extends BaseComponent {
 
     const circuitStore = useCircuitStore();
     const projectStore = useProjectStore();
-
     const projectData = projectStore.getProjectById(projectId);
     this.projectUUID = projectData.projectUUID;
     this.initInputPin(projectData.inputPins.length);
@@ -65,7 +61,6 @@ export class SubCircuitComponent extends BaseComponent {
   }
 
   changeInput(idx: number, v: number): number[] {
-    // this.componentIdMap.get(this.inputPins[idx])!.changeInput(0, v);
     let value = v;
     if(v>=0){
       const mask = (1 << this.bitWidth) - 1;
@@ -112,6 +107,7 @@ export class SubCircuitComponent extends BaseComponent {
           pin,
         ];
     }));
+
     // 修改输出
     this.outputPinPosition.splice(0, this.outputPinPosition.length,
       ...outputYs.map((pin, index): [number, number] => {
@@ -120,7 +116,5 @@ export class SubCircuitComponent extends BaseComponent {
           pin,
         ];
     }));
-  
   }
-
 }

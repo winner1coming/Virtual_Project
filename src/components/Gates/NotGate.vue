@@ -1,6 +1,6 @@
 <template>
         <g :transform="transform" cursor="move">
-        <!-- NOT门主体（三角形） -->
+        <!-- NOT门主体三角形 -->
         <path
           d="M438.075 288.5L147.769 392.856L147.769 184.144L438.075 288.5Z"
           stroke="black"
@@ -40,15 +40,12 @@
 </template>
   
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { computed } from 'vue'
 import InputPort from '@/components/Ports/InputPort.vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 import { defineProps } from 'vue'
-
-import { useGateLayout, getInputLine } from '@/logic/usegates/useGateLayout'
 import { useCircuitStore } from '@/store/CircuitStore'
-import {watchComponentChanges} from '@/modules/useComponentsWatchers'
 
 const circuitStore = useCircuitStore();
 const props = defineProps({

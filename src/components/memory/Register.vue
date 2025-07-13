@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { computed } from 'vue'
 import InputPort from '@/components/Ports/InputPort.vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
@@ -67,11 +67,8 @@ const props = defineProps({
     required: true
   }
 })
-// const id = circuitStore.addComponent('And', [0,0]);  // debug
 
-// console.log('AndGate.vue props.id:', props.id); // debug
 const register = computed(() => {
-  // return circuitStore.getComponent(id);   // debug
   return circuitStore.getComponent(props.id);  
 });
 </script>

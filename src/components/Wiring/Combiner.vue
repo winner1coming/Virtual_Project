@@ -25,11 +25,10 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import InputPort from '@/components/Ports/InputPort.vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
-import { createOutputs, setScale } from '@/logic/usegates/useLogicGates'
 import { useGateLayout } from '@/logic/usegates/useGateLayout'
 
 import { useCircuitStore } from '@/store/CircuitStore'
@@ -46,35 +45,10 @@ const combiner = computed(() => {
   return circuitStore.getComponent(props.id);  
 });
 
-// let outputYs = computed(()=>combiner.outputPinPosition.map(item => item[1]));
-// let minY = computed(()=>Math.min(...outputYs.value));
-// let maxY = computed(()=>Math.max(...outputYs.value));
-
 let outputYs = computed(()=>useGateLayout(combiner.value.inputCount))
 
 let minY = computed(()=>Math.min(...outputYs.value.value));
 let maxY = computed(()=>Math.max(...outputYs.value.value));
-
-// function handleToggleInput(index) {
-//     //setOutputCount(9)
-// }
-
-// function handleSetScale(newScale) {
-//   setScale(combiner, newScale)
-// }
-
-// function setOutputCount(newCount)
-// {
-//   combiner.outputCount = newCount;
-//   outputYs = useGateLayout(combiner.outputCount)
-
-//   minY = Math.min(...outputYs.value);
-//   maxY = Math.max(...outputYs.value);
-// }
-
-// onMounted(() => {
-//   combiner.outputs = computed(()=>createOutputs(combiner.outputCount));
-// })
 
 </script>
 
