@@ -102,13 +102,16 @@ export abstract class BaseComponent{
   
   initOutputPin(num: number){
     this.outputs.splice(0, this.outputs.length, ...Array(num).fill(-1));
-    this.updatePinPosition(); // 更新输出引脚位置
+    this.outputPinPosition.splice(0, this.outputPinPosition.length, ...Array(num).fill([0, 0])); 
+    // 更新输出引脚位置
+    this.updatePinPosition(); 
   }
 
   // 初始化输入引脚，不检查连接
   initInputPin(num: number){
     this.inputCount = num;
     this.inputs.splice(0, this.inputs.length, ...Array(num).fill(-1));    // 将输入全部置-1
+    this.inputPinPosition.splice(0, this.inputPinPosition.length, ...Array(num).fill([0, 0]));
     this.inputInverted.splice(0, this.inputInverted.length, ...Array(num).fill(false)); // 初始化输入取反状态
 
     this.updatePinPosition();
