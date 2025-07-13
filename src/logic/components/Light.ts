@@ -2,11 +2,10 @@ import { BaseComponent } from "../BaseComponent";
 export class Light extends BaseComponent{
   constructor(id: number, type: string, position:[number, number] = [0,0]){
     super(id, type, position);
+    this.direction = 'west';
     this.initInputPin(1); 
     this.initOutputPin(0); 
     this.changeInput(0,0);
-    this.direction = 'west';
-    this.updatePinPosition();
   }
 
   compute(){   
