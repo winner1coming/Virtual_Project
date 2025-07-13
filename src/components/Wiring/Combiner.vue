@@ -13,13 +13,13 @@
       />
       <!-- 右下角斜线 -->
       <!-- <path stroke="rgba(0, 0, 0, 1)" stroke-width="12"    d="M149.5 397.34L100 439.34" /> -->
-      <path stroke="rgba(0, 0, 0, 1)" stroke-width="12" :d="minY<246? `M149 ${maxY-6}L198 ${maxY+36}`: `M149.5 397.34L198 439.34`" />
+      <path stroke="rgba(0, 0, 0, 1)" stroke-width="12" :d="minY<246? `M149 ${maxY-6}L${combiner.direction==='east'? 198:100} ${maxY+36}`: `M149.5 397.34L${combiner.direction==='east'? 198:100} 439.34`" />
       <!-- 输出引脚 -->
-      <OutputPort :cx="198" :cy="minY<246? maxY+36: 439.34" :active="1" :bitWidth="combiner.bitWidth"/>
+      <OutputPort :cx="combiner.direction==='east'? 198:100" :cy="minY<246? maxY+36: 439.34" :active="1" :bitWidth="combiner.bitWidth"/>
       <!-- 输入引脚 -->
       <template v-for="(input, index) in combiner.inputs" :key="input.id">
-        <path :d="`M149 ${combiner.inputPinPosition[index][1]}L92 ${combiner.inputPinPosition[index][1]}`" stroke="black" stroke-width="12" />
-        <InputPort :cx="92" :cy="combiner.inputPinPosition[index][1]" :active="input"/>
+        <path :d="`M149 ${combiner.inputPinPosition[index][1]}L${combiner.direction==='east'? 92:206} ${combiner.inputPinPosition[index][1]}`" stroke="black" stroke-width="12" />
+        <InputPort :cx="`${combiner.direction==='east'? 92:206}`" :cy="combiner.inputPinPosition[index][1]" :active="input"/>
       </template>
     </g>
 </template>

@@ -26,6 +26,9 @@
         <path    stroke="black" stroke-width="12"    d="M203 401L203 426">
         </path>
         <InputPort :cx="203" :cy="426" :active="DFlipFlop.inputs[2]" :bitWidth="1" />
+        <path    stroke="black" stroke-width="12"    d="M266 401L266 426">
+        </path>
+        <InputPort :cx="266" :cy="426" :active="DFlipFlop.inputs[3]" :bitWidth="1" />
         <path    stroke="black" stroke-width="12"    d="M329 401L329 426">
         </path>
         <InputPort :cx="329" :cy="426" :active="DFlipFlop.inputs[3]" :bitWidth="1" />
