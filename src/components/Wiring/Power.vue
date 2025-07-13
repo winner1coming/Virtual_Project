@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { computed } from 'vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 import { defineProps } from 'vue'

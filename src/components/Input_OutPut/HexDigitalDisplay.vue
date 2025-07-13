@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { computed } from 'vue'
 import InputPort from '@/components/Ports/InputPort.vue'
 import { useCircuitStore } from '@/store/CircuitStore'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'

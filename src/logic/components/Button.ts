@@ -27,5 +27,21 @@ export class Button extends BaseComponent{
 
   updatePinPosition(): void{
     this.outputPinPosition.splice(0, this.outputPinPosition.length, [173, 121]);
+    if(this.direction === 'east')
+    {
+        this.outputPinPosition.splice(0, this.outputPinPosition.length, [173, 121]);
+    }
+    else if(this.direction === 'west')
+    {
+        this.outputPinPosition.splice(0, this.outputPinPosition.length, [96, 118]);
+    }
+    else if(this.direction === 'north')
+    {
+        this.outputPinPosition.splice(0, this.outputPinPosition.length, [130, 75]);
+    }
+    else if(this.direction === 'south')
+    {
+        this.outputPinPosition.splice(0, this.outputPinPosition.length, [130, 165]);
+    }
   }
 }

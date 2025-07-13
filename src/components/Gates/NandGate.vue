@@ -1,6 +1,6 @@
 <template>
   <g :transform="transform" cursor="move">
-    <!-- AND 门图形 -->
+    <!-- 门图形 -->
      <!--左侧竖线-->
     <path
       stroke="black"
@@ -15,7 +15,6 @@
       stroke-width="12"
       d="M366.5 180C507 259.301 410.965 399.972 366.5 395"
     />
-    <!-- <path stroke="black" stroke-width="12" d="M440 288L497 288" /> -->
     <ellipse cx="470.2452697753906" cy="286.0000305175781" rx="20.754730224609375" ry="20" stroke="rgba(0, 0, 0, 1)" stroke-width="12"      fill="#CCCCCC" fill-opacity="0">
     </ellipse>
 
@@ -53,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { computed } from 'vue'
 import InputPort from '@/components/Ports/InputPort.vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
@@ -68,11 +67,8 @@ id: {
   required: true
 }
 })
-// const id = circuitStore.addComponent('And', [0,0]);  // debug
 
-// console.log('AndGate.vue props.id:', props.id); // debug
 const nandGate = computed(() => {
-// return circuitStore.getComponent(id);   // debug
 return circuitStore.getComponent(props.id);  
 });
 
@@ -116,29 +112,6 @@ const transform = computed(() => {
     `;
   }
 });
-
-
-// 以下为调试用代码，后期可删除---------------------------------------
-
-// 测试用函数，后期删掉  todo
-// function handleToggleInput(index) {
-//   //toggleInput(nandGate, index, updateOutput)
-//   // todotodo
-//   setInputCount(10);
-//   if(nandGate.value.inputs[index] === 0){
-//     nandGate.value.changeInput(index, 1);
-//   }else{
-//     nandGate.value.changeInput(index, 0);
-//   }
-
-//   // test
-//   // this.setInputCount(4); // 更新输入引脚布局
-//   nandGate.value.changeInputInverted(index, !nandGate.value.inputInverted[index]); // 切换输入引脚的反相状态
-// }
-
-// function handleSetScale(newScale){
-//   nandGate.value.scale = newScale;
-// }
 
 </script>
 

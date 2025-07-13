@@ -23,22 +23,16 @@
       <!-- 输出状态 -->
       <OutputPort :cx="clock.outputPinPosition[0][0]" :cy="clock.outputPinPosition[0][1]" :active="clock.outputs[0]" />
 
-      <!--调试用  todo-->
-      <!-- <InputPort :cx="140" :cy="288" :active=0 @toggle="() => handleToggleInput()" /> -->
     </g>
 </template>
 
   
   <script setup>
-  import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
-  import InputPort from '@/components/Ports/InputPort.vue'
+  import { computed } from 'vue'
   import OutputPort from '@/components/Ports/OutputPort.vue'
   import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
   import { defineProps } from 'vue'
-  
-  import { useGateLayout } from '@/logic/usegates/useGateLayout'
   import { useCircuitStore } from '@/store/CircuitStore'
-  import {watchComponentChanges} from '@/modules/useComponentsWatchers'
   
   const circuitStore = useCircuitStore();
   const props = defineProps({
@@ -47,25 +41,9 @@
       required: true
     }
   });
-  //const id = circuitStore.addComponent('And', [0,0]);  // debug
   
   const clock = computed(() => {
-    // return circuitStore.getComponent(id);   // debug
     return circuitStore.getComponent(props.id);  
   });
-  
-  // 调试 --todo---------------------------------------------------------------
-  function handleToggleInput()
-  {
-    console.log(1);
-    if(clock.value.outputs[0]==1){
-      clock.value.outputs[0] = 0;
-      console.log(2);
-    }
-    else{
-        clock.value.outputs[0] = 1;
-        console.log(3);
-    }
-  }
 
 </script>

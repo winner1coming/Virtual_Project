@@ -16,15 +16,7 @@
         d="M366.5 180C507 259.301 410.965 399.972 366.5 395"
       />
       <path stroke="black" stroke-width="12" d="M440 288L497 288" />
-      <!-- <text
-        x="260.5" 
-        :y="minY<181? maxY+18 : 175+226+12" 
-        text-anchor="middle"
-        font-size="48"
-        fill="#333"
-      >
-        这是小字
-      </text> -->
+
       <!--填充透明区域以便选中-->
       <rect
         :x="149"
@@ -59,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { computed } from 'vue'
 import InputPort from '@/components/Ports/InputPort.vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
@@ -74,11 +66,8 @@ const props = defineProps({
     required: true
   }
 })
-// const id = circuitStore.addComponent('And', [0,0]);  // debug
 
-// console.log('AndGate.vue props.id:', props.id); // debug
 const andGate = computed(() => {
-  // return circuitStore.getComponent(id);   // debug
   return circuitStore.getComponent(props.id);  
 });
 
@@ -92,6 +81,7 @@ const directionToAngle = {
   north: 270
 }
 
+// 计算偏移量、旋转方位
 const transform = computed(() => {
   const [x, y] = andGate.value.offset;
   const scale = andGate.value.scale;

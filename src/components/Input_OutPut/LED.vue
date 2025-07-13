@@ -5,21 +5,22 @@
         :cx="0"
         :cy="0"
         :r="40"
-        :fill="LED.inputs[0]? 'red':'rgba(206.55, 206.55, 206.55, 1)'"
+        :fill="LED.inputs[0]? 'red':'transparent'"
         stroke="black"
         stroke-width="6"
       />
-  
+      <!--fill="LED.inputs[0]? 'red':'rgba(206.55, 206.55, 206.55, 1)'"-->
+      
       <!--选中方框-->
       <SelectedBox :x="-40" :y="-40" :width="92" :height="92" :visible="circuitStore.selectedId===props.id"/>
 
       <!-- 输入 -->
-      <InputPort :cx="-40" :cy="0" :active="LED.inputs[0]" :bitWidth="LED.bitWidth" />
+      <InputPort :cx="LED.inputPinPosition[0][0]" :cy="LED.inputPinPosition[0][1]" :active="LED.inputs[0]" :bitWidth="LED.bitWidth" />
     </g>
   </template>
   
   <script setup>
-  import { ref, computed, watch } from 'vue'
+  import { computed } from 'vue'
   import InputPort from '@/components/Ports/InputPort.vue'
   import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
   
