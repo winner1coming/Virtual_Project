@@ -5,7 +5,7 @@
         :cx="0"
         :cy="0"
         :r="40"
-        :fill="LED.inputs[0]? 'red':'transparent'"
+        :fill="LED.inputs[0]? 'red':'rgba(206.55, 206.55, 206.55, 1)'"
         stroke="black"
         stroke-width="6"
       />
