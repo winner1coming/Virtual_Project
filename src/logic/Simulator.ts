@@ -24,8 +24,6 @@ export class EventDrivenSimulator {
   private connManagerMap: Map<number, ConnectionManager> = new Map(); // 用于存储每个项目的连接管理器
   private circuitStore = useCircuitStore();
   private workMap = new Map<string, WorkItem>();
-  private workQueue: WorkItem[] = [];
-  // private inQueue: Set<string> = new Set();
   private enableSimulator: Boolean = true; // 是否启用模拟器
   private pause: Boolean = false; // 是否暂停模拟器
 
@@ -46,20 +44,22 @@ export class EventDrivenSimulator {
     return EventDrivenSimulator.instance;
   }
 
-  // 启用模拟器  // todo 不要这么做 
+  // 启用模拟器 
   enable() {
     this.enableSimulator = true;
   }
+
   // 禁用模拟器
   disable() {
     this.enableSimulator = false;
-    this.workQueue = [];
     this.workMap.clear();
   }
+
   // 暂停模拟器
   pauseSimulator() {
     this.pause = true;
   }
+
   // 恢复模拟器
   resumeSimulator() {
     this.pause = false;
@@ -107,7 +107,7 @@ export class EventDrivenSimulator {
       const tunnelPinIndex = comp1.type === 'TUNNEL' ? pinIndex1 : pinIndex2;
       const otherComp = comp1.type === 'TUNNEL' ? comp2 : comp1;
       const otherPinIndex = comp1.type === 'TUNNEL' ? pinIndex2 : pinIndex1;
-      // 假如另一组件是输出电流的（则另一组件是输入端）  todo 没有考虑两个都是隧道的情况
+      // 假如另一组件是输出电流的（则另一组件是输入端）  todo 注意考虑两个都是隧道的情况
       if(otherPinIndex >= otherComp.getInputPinCount()) {
         // inputId 对应电线输入端，即其实际上为该元件的输出引脚
         outputId = tunnelComp.id;
@@ -131,7 +131,8 @@ export class EventDrivenSimulator {
     const outputVal = this.circuitStore.getComponent(inputId).getOutputs()[inputIdx];
 
     // 电线输出端的组件，其索引为idx的输入引脚的输入更改为了outputVal
-    this.enqueue(outputId, outputIdx, legal?outputVal:-2);
+    // this.enqueue(outputId, outputIdx, legal?outputVal:-2);
+    this.enqueue(outputId, outputIdx, outputVal); 
     // 如果模拟器未启用或暂停，则不处理队列
     if (!this.enableSimulator || this.pause) return;
     this.processQueue();
@@ -199,13 +200,10 @@ export class EventDrivenSimulator {
     if (!pinMap) return false;
     for (const pinIdx of pinMap.keys()) {
       for(const conn of pinMap.get(pinIdx) || []) {
-        //if (conn.legal) {
           const targetComponent = this.circuitStore.getComponent(conn.id);
           if (!targetComponent) continue;
-
           // 通知其他组件该组件的输出改变
           this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]);
-        //}
       }
     }
     this.processQueue();
@@ -223,6 +221,7 @@ export class EventDrivenSimulator {
       }
     }
   }
+
   // 取消一个组件与后继的连接
   disconnectSuccessors(id: number) {
     // 从输出端查找
@@ -231,7 +230,7 @@ export class EventDrivenSimulator {
       for (const pinIdx of pinMap.keys()) {
         for(const conn of pinMap.get(pinIdx) || []) {
           this.disconnect(id, pinIdx, conn.id, conn.idx);
-           // 通知后继组件该引脚的输入已断开 todo 没考虑两个元件连一个引脚的情况
+           // 通知后继组件该引脚的输入已断开 todo 注意考虑两个元件连一个引脚的情况
           this.enqueue(conn.id, conn.idx, -1);
         }
       }
@@ -313,7 +312,6 @@ export class EventDrivenSimulator {
                 break; 
               }
             }
-
             this.enqueue(conn.id, conn.idx, -2); 
           } else {
             if(conn.legal === false){
@@ -332,7 +330,6 @@ export class EventDrivenSimulator {
         }
       }
     }
-
     this.processQueue();
   }
 
@@ -366,9 +363,6 @@ export class EventDrivenSimulator {
       // 传播新的输入
       this.enqueue(id, 0, this.circuitStore.getComponent(id).outputs[0]); 
     }
-
-    
-
   }
 
   // 删除隧道
@@ -417,7 +411,6 @@ export class EventDrivenSimulator {
     this.processQueue();
   }
 
-
   // 全局处理输入改变的情况
   // 参数：id :输入改变的组件的id
   //      idx: 该组件的改变输入的引脚
@@ -434,22 +427,6 @@ export class EventDrivenSimulator {
   }
 
   processQueue(): void {
-    // // 移动到web worker中处理，以增加前端的响应性
-    // const worker = new Worker(new URL('@/workers/simulatorWorker.ts', import.meta.url));
-    // worker.postMessage({
-    //   workQueue: this.workQueue,
-    //   connectionManager: this.connectionManager,
-    //   circuitStore: this.circuitStore,
-    // });
-
-    // worker.onmessage = (event) => {
-    //   // console.log("Queue processed:", event.data);
-    // };
-
-    // worker.onerror = (error) => {
-    //   console.error("Worker error:", error);
-    // };
-
     if(!this.enableSimulator || this.pause) return; // 如果模拟器未启用或暂停，则不处理队列
     while (this.workMap.size > 0) {
       // 组件的id为id，它更改其索引为idx的引脚的输入为value
@@ -479,7 +456,8 @@ export class EventDrivenSimulator {
                   const targetComponent = this.circuitStore.getComponent(conn.id);
                   if (!targetComponent) continue;
                   if(conn.id === id && conn.idx === idx) continue; // 防止自己通知自己
-                  this.enqueue(conn.id, conn.idx, conn.legal?newOutputs[pinIdx]:-2);
+                  // this.enqueue(conn.id, conn.idx, conn.legal?newOutputs[pinIdx]:-2);
+                  this.enqueue(conn.id, conn.idx, newOutputs[pinIdx]); 
                 }
               //}
             }
@@ -517,9 +495,11 @@ export class EventDrivenSimulator {
   getConnectionManager(id: number): ConnectionManager {
     return this.connManagerMap.get(id)!;
   }
+
   getProjectTunnel(id: number): [Map<string, number[]>, Map<string, number[]>] {
     return this.projectTunnel.get(id)!;
   }
+  
   changeProject(id: number): void {
     if (!this.connManagerMap.has(id)) {
       this.connManagerMap.set(id, new ConnectionManager());

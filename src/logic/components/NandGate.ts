@@ -48,10 +48,8 @@ export class NandGate extends BaseComponent {
 	}
 
     changeInput(idx: number, v: number): number[] {
-        //this.inputs[idx] = v;
         this.inputs.splice(idx, 1, v); // 替换idx位置的值
         if (v === -2) {
-            // this.outputs[0] = -2;
             this.outputs.splice(0, this.outputs.length, -2); 
         } else {
             return this.compute();

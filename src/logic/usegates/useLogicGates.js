@@ -1,4 +1,3 @@
-// src/composables/useLogicGate.js
 import { ref, reactive } from 'vue'
 
 export function createInputs(count) {
@@ -30,7 +29,6 @@ export function toggleInput(gate, index, updateOutputFn) {
   gate.inputs[index].value = !gate.inputs[index].value
   updateOutputFn()
 }
-
 
 export function setInputInverted(gateRef, index, inverted, updateOutputFn) {
   if (index < 0 || index >= gateRef.inputs.length) return

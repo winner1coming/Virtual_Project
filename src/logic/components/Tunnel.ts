@@ -1,12 +1,10 @@
-// Tunnel.ts
 import { BaseComponent } from '../BaseComponent';
-import { reactive } from 'vue';
 import { EventDrivenSimulator } from '../Simulator';
 
 export class Tunnel extends BaseComponent {
   constructor(id: number, type: string, position: [number, number] = [0, 0], name: string, simulator: any = null) {
     super(id, type, position);
-    // 只支持输出，隧道输入的逻辑放在模拟器中全局判断  todo 处理模拟器还是子模拟器
+    // 只支持输出，隧道输入的逻辑放在模拟器中全局判断 
     if(!simulator) {
       this.simulator = EventDrivenSimulator.getInstance();
     }
@@ -30,6 +28,7 @@ export class Tunnel extends BaseComponent {
 
     this.simulator.processQueue();
   }
+  
   setDirection(direction: string): void {
     this.direction = direction;
   }

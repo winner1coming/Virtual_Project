@@ -1,5 +1,4 @@
 // Combiner.ts - 合并器
-import eventBus from "@/modules/useEventBus";
 import { BaseComponent } from "../BaseComponent";
 import { EventDrivenSimulator } from "../Simulator";
 import { calcInputYs } from "@/logic/utils/useGateLayout";
@@ -14,17 +13,11 @@ export class Combiner extends BaseComponent {
             this.simulator = simulator;
         }
         this.bitWidth = bitWidth;
-
         this.initInputPin(this.bitWidth); 
-
     }
 
     setBitWidth(bitWidth: number) {
         this.bitWidth = bitWidth;
-        // this.inputCount = bitWidth;
-        // this.inputs.splice(0, this.inputs.length, ...Array(this.bitWidth).fill(-1));
-        // this.updatePinPosition();
-        // eventBus.emit('updatePinPosition', {id: this.id}); 
         this.changeInputPinCount(this.bitWidth); 
     }
 
@@ -51,9 +44,10 @@ export class Combiner extends BaseComponent {
         }
         return this.compute();
     }
+    
     // 更新引脚位置
     updatePinPosition(): void{
-        // 修改输ru
+        // 修改输入
         const inputYs = calcInputYs(this.inputs.length);
         let minY = Math.min(...inputYs);
         let maxY = Math.max(...inputYs);
@@ -64,7 +58,7 @@ export class Combiner extends BaseComponent {
             pin,
             ];
         }));
-        // 修改输chu
+        // 修改输出
         this.outputPinPosition.splice(0, this.outputPinPosition.length,[
             this.direction==='east'? 198:100,
             minY<246? maxY+36: 439.34,

@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { computed } from 'vue'
 import InputPort from '@/components/Ports/InputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 

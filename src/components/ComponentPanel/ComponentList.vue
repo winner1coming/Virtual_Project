@@ -84,6 +84,7 @@ const components4 = [
   {type: 'D_FLIP_FLOP', name: 'D触发器'},
 ]
 
+
 const onDragStart = (type) => {
   // event.dataTransfer.setData('component', JSON.stringify(component));
   eventBus.emit('start-place-component', {type: type, projectId:0}); // 发送拖动事件

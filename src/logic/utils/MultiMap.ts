@@ -26,8 +26,9 @@ export class MultiMap<K, V> {
         const index = values.indexOf(value);
         if (index !== -1) {
             values.splice(index, 1);
+            // 如果值集合为空，删除键
             if (values.length === 0) {
-                this.map.delete(key); // 如果值集合为空，删除键
+                this.map.delete(key); 
             }
             return true;
         }

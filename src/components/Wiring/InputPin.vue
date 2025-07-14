@@ -57,7 +57,7 @@
 </template>
   
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { computed } from 'vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
   
@@ -83,7 +83,6 @@ const padding = 40
 
 // 点击切换
 function toggleBit(index) {
-  //bits.value[index] = bits.value[index] === 0 ? 1 : 0
   inputPin.value.toggleBit(index);
 }
 

@@ -84,22 +84,14 @@
 </template>
 
 <script setup>
-// import {
-//   createInputs,
-//   setInputValue,
-//   toggleInput,
-//   setInputInverted,
-//   setScale
-// } from '@/logic/usegates/useLogicGates'
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { computed } from 'vue'
 import InputPort from '@/components/Ports/InputPort.vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 import { defineProps } from 'vue'
+import { getInputLine } from '@/logic/usegates/useGateLayout'
 
-import { useGateLayout, getInputLine } from '@/logic/usegates/useGateLayout'
 import { useCircuitStore } from '@/store/CircuitStore'
-import {watchComponentChanges} from '@/modules/useComponentsWatchers'
 
 const circuitStore = useCircuitStore();
 const props = defineProps({

@@ -3,7 +3,6 @@
 import { ProjectData } from "@/logic/ProjectData";
 import { useProjectStore } from "@/store/ProjectStore";
 import { useCircuitStore } from "@/store/CircuitStore";
-import { createComponentByType } from "./useComponentType";
 import { nextTick } from "vue";
 import { SubCircuitComponent } from "@/logic/components/SubCircuitComponent";
 const circuitStore = useCircuitStore();
@@ -11,10 +10,12 @@ const projectStore = useProjectStore();
 
 export function exportProject(projectDate: ProjectData): void {
   const simulator = circuitStore.simulator;
+  // 导出组件
   const components: any[] = [];
   projectDate.componentsId.forEach(id => {
     const comp = circuitStore.getComponent(id);
     if(comp.type === "SUB_CIRCUIT") {
+      // 子组件的特殊处理
       const sub = comp as SubCircuitComponent;
       components.push({
         id: sub.id,
@@ -25,7 +26,6 @@ export function exportProject(projectDate: ProjectData): void {
         inputCount: sub.inputCount,
         outputCount: sub.outputs.length,
         inputInverted: sub.inputInverted ? [...sub.inputInverted] : [],
-
         inputNames: sub.inputNames ? [...sub.inputNames] : [],
         outputNames: sub.outputNames ? [...sub.outputNames] : [],
         copyProjectId: sub.copyProjectId,
@@ -44,12 +44,6 @@ export function exportProject(projectDate: ProjectData): void {
       });
     }
   });
-
-  // // 导出隧道
-  // const tunnels = {
-  //   tunnelNameMap: Array.from(simulator.tunnelNameMap.entries()),
-  //   InputTunnelMap: Array.from(simulator.InputTunnelMap.entries())
-  // };
 
   // 导出连接关系
   const connections = [];
@@ -77,8 +71,6 @@ export function exportProject(projectDate: ProjectData): void {
   };
 
   const jsonStr = JSON.stringify(exportData, null, 2);
-  console.log("导出的完整关卡配置：", jsonStr);
-
   const blob = new Blob([jsonStr], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -97,10 +89,9 @@ export async function loadProject(importData: any, canvasRef: any){
   projectStore.getCurrentProject().projectUUID = importData.uuid;
   projectStore.getCurrentProject().mode = importData.mode;
 
-  const componentsIdMap = new Map<number, number>();  // 旧到新
+  const componentsIdMap = new Map<number, number>();  // 旧到新的id的映射
   // 加载元件
   for (const comp of importData.components) {
-    // circuitStore.addComponent(comp.type, comp.position, comp.name, 0);
     await canvasRef.addComponentByScript(comp.type, comp.position);
     // 插入后，元件id即为最新的id-1
     const addedComponent = circuitStore.getComponent(circuitStore.currentId - 1);
@@ -139,14 +130,10 @@ export async function loadProject(importData: any, canvasRef: any){
   // 加载连接关系
   if (importData.connections) {
     for (const conn of importData.connections) {
-      
-      //await new Promise(resolve => setTimeout(resolve, 100)); // 粗暴等 100ms
       // 画布连线
       canvasRef.connectByScript(componentsIdMap.get(conn.fromId), conn.fromPin, componentsIdMap.get(conn.toId), conn.toPin);
-      
     }
   }
-
   console.log("成功导入关卡！");
 }
 

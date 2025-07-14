@@ -1,12 +1,4 @@
-// 对外部提供连线的接口，封装好了连线的内部处理逻辑
-// 用法：
-// const simulator = EventDrivenSimulator.getInstance();
-// simulator.connect(id1, pinIdx1, id2, pinIdx2);
-// simulator.disconnect(id1, pinIdx1, id2, pinIdx2);
-// 注意pinIdx：对于单个组件，输入端是从0开始计数，输出端接着输入端的计数继续
-// 如：二输入与门，其输入引脚的pinIdx分别为0, 1，输出引脚为2
-
-
+// 备用，目前已经弃用子模拟器的逻辑
 import { ConnectionManager, Conn } from './ConnectionManager';
 import { BaseComponent } from './BaseComponent';
 import { Tunnel } from './components/Tunnel';
@@ -30,7 +22,6 @@ export class SubSimulator {
   public tunnelNameMap: Map<string, number[]> = new Map(); // 存储隧道名字与id
   public InputTunnelMap: Map<string, number[]> = new Map(); // 记录接受输入的隧道
   
-
   constructor(projectId: number, componentIdMap: Map<number, BaseComponent> = new Map()) {
     this.componentIdMap = componentIdMap;
     this.connectionManager = new ConnectionManager();
@@ -45,16 +36,19 @@ export class SubSimulator {
   enable() {
     this.enableSimulator = true;
   }
+
   // 禁用模拟器
   disable() {
     this.enableSimulator = false;
     this.workQueue = [];
     this.inQueue.clear();
   }
+
   // 暂停模拟器
   pauseSimulator() {
     this.pause = true;
   }
+
   // 恢复模拟器
   resumeSimulator() {
     this.pause = false;
@@ -64,7 +58,7 @@ export class SubSimulator {
   disconnectPredecessors(id: number){}
   disconnectSuccessors(id: number) {}
   checkComponentConnections(id: number): void { // todo
-    }
+  }
 
   // 处理输出改变时的情况（给BaseComponent调用）
   // 参数：id :改变输出的组件的id
@@ -98,7 +92,6 @@ export class SubSimulator {
     if (this.inQueue.has(key)) return;
     this.workQueue.push({ id, idx, value });
     this.inQueue.add(key);
-
 
     // 处理tunnel同步
     const comp = this.componentIdMap.get(id)!;
@@ -148,12 +141,9 @@ export class SubSimulator {
 
         for (const pinIdx of pinMap.keys()) {
           for( const conn of pinMap.get(pinIdx) || []) {
-            //if (conn.legal) {
               const targetComponent = this.componentIdMap.get(conn.id)!;
               if (!targetComponent) continue;
-
               this.enqueue(conn.id, conn.idx, conn.legal?newOutputs[pinIdx]: -2);
-            //}
           }
         }
       }

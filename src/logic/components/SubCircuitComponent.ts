@@ -1,4 +1,4 @@
-// 模拟子电路的逻辑，承 BaseComponent，内部运行子电路
+// 模拟子电路的逻辑，承 BaseComponent，使用真值表计算输出
 import { BaseComponent } from '../BaseComponent';
 import { useCircuitStore } from '@/store/CircuitStore';
 import { reactive } from 'vue';
@@ -9,14 +9,11 @@ import { calcInputYs } from "@/logic/utils/useGateLayout";
 import { Clock } from './Clock';
 
 export class SubCircuitComponent extends BaseComponent {
-  // public inputPins: number[]=[];   // 输入引脚的id
-  // public outputPins: number[]=[];
-  // public componentIdMap: Map<number, BaseComponent> = new Map(); // 用于映射元件的id
   public inputNames: string[] = []; // 输入引脚的名称
   public outputNames: string[] = []; // 输出引脚的名称
   public copyProjectId: number = 0;
   public projectUUID: string = "";
-  // public truthTable: number[][] = []; // 真值表
+  projectStore: any;
 
   constructor(
     id: number,
@@ -33,8 +30,8 @@ export class SubCircuitComponent extends BaseComponent {
 
     const circuitStore = useCircuitStore();
     const projectStore = useProjectStore();
-
     const projectData = projectStore.getProjectById(projectId);
+    if(!projectData) return;
     this.projectUUID = projectData.projectUUID;
     this.initInputPin(projectData.inputPins.length);
     this.initOutputPin(projectData.outputPins.length);
@@ -43,24 +40,20 @@ export class SubCircuitComponent extends BaseComponent {
     // 计算真值表
     projectStore.calculateTruthTable(projectId);
    }
-   // 存inputName和bitWidth
-   for(let i = 0; i < projectData.inputPins.length; i++) {
-      const inputPinId = projectData.inputPins[i];
+   // 存inputName
+    for(const inputPinId of projectData.inputPins) {
       const comp = circuitStore.getComponent(inputPinId);
       if (comp) {
         this.inputNames.push(comp.name);
-        this.inputBitWidths.splice(i, 1, comp.bitWidth); 
       }else{
         this.inputNames.push(""); 
       }
     }
     // 存outputName
-    for(let i = 0; i < projectData.outputPins.length; i++) {
-      const outputPinId = projectData.outputPins[i];
+    for(const outputPinId of projectData.outputPins) {
       const comp = circuitStore.getComponent(outputPinId);
       if (comp) {
         this.outputNames.push(comp.name);
-        this.outputBitWidths.splice(i, 1, comp.bitWidth);
       } else {
         this.outputNames.push(""); 
       }
@@ -69,7 +62,6 @@ export class SubCircuitComponent extends BaseComponent {
   }
 
   changeInput(idx: number, v: number): number[] {
-    // this.componentIdMap.get(this.inputPins[idx])!.changeInput(0, v);
     let value = v;
     if(v>=0){
       const mask = (1 << this.bitWidth) - 1;
@@ -92,12 +84,12 @@ export class SubCircuitComponent extends BaseComponent {
     }
     const projectStore = useProjectStore();
     // 计算真值表
-    if(projectStore.getProjectById(this.copyProjectId).truthTable.length === 0 || 
-      projectStore.getProjectById(this.copyProjectId).hasChanged) {
+    if(projectStore.getProjectById(this.copyProjectId)!.truthTable.length === 0 || 
+      projectStore.getProjectById(this.copyProjectId)!.hasChanged) {
       projectStore.calculateTruthTable(this.copyProjectId);
     }
     // 更新输出
-    this.outputs.splice(0, this.outputs.length, ...projectStore.getProjectById(this.copyProjectId).truthTable[index]);
+    this.outputs.splice(0, this.outputs.length, ...projectStore.getProjectById(this.copyProjectId)!.truthTable[index]);
     return this.outputs;
   }
 
@@ -116,6 +108,7 @@ export class SubCircuitComponent extends BaseComponent {
           pin,
         ];
     }));
+
     // 修改输出
     this.outputPinPosition.splice(0, this.outputPinPosition.length,
       ...outputYs.map((pin, index): [number, number] => {
@@ -124,7 +117,5 @@ export class SubCircuitComponent extends BaseComponent {
           pin,
         ];
     }));
-  
   }
-
 }

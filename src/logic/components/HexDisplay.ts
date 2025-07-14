@@ -13,10 +13,9 @@ export class HexDisplay extends BaseComponent{
     this.bitWidth = 4;
     this.updatePinPosition();
     this.initInputPin(2); 
-    this.inputBitWidths.splice(0, 1, 4); 
   }
 
-  compute(){   // 返回输出(int)
+  compute(){   
     return this.outputs;
   }
 
@@ -27,6 +26,7 @@ export class HexDisplay extends BaseComponent{
     this.inputs.splice(idx, 1, v); // 替换idx位置的值
     return this.outputs;
   }
+  
   updatePinPosition(): void{
     this.inputPinPosition.splice(0, this.inputPinPosition.length, [208, 426], [313,426]);
   }

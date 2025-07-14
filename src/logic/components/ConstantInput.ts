@@ -20,23 +20,23 @@ export class ConstantInput extends BaseComponent {
         } else {
             this.simulator = simulator;
         }
-        
+        this.inputs.splice(0, this.inputs.length);
+        this.inputCount = 0; 
+        this.inputInverted.splice(0, this.inputInverted.length);
         this.outputs.splice(0, this.outputs.length, 0); 
         this.bitWidth = 1; // 默认1位
         this.currentValue = 0;
         this.maxValue = maxValue;
         this.rectWidth = 71;
-        this.initInputPin(0); 
+        this.updatePinPosition();
     }
 
-    // 实现基类抽象方法
     compute(): number[] {
         // 对于常量输入，直接返回当前值
         this.currentValue = this.outputs[0];
         return this.outputs;
     }
 
-    // 实现基类抽象方法（常量输入没有输入引脚，所以空实现）
     changeInput(idx: number, v: number): number[] {
         // 输入引脚的改变会导致电路的改变
         this.outputs.splice(0, this.outputs.length, v); // 更新输出
@@ -93,8 +93,6 @@ export class ConstantInput extends BaseComponent {
 
     // 更新引脚位置
     updatePinPosition(): void{
-        // 修改输出
-        //this.outputPinPosition.splice(0, this.outputPinPosition.length, [71, 48]);
         if(this.direction === 'east')
         {
             this.outputPinPosition.splice(0,this.outputPinPosition.length,[this.rectWidth,48])
@@ -112,5 +110,4 @@ export class ConstantInput extends BaseComponent {
             this.outputPinPosition.splice(0,this.outputPinPosition.length,[this.rectWidth/2,96])
         }
     }
-
 }

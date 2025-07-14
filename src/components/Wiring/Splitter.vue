@@ -25,11 +25,10 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import InputPort from '@/components/Ports/InputPort.vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
-import { createOutputs, setScale } from '@/logic/usegates/useLogicGates'
 import { useGateLayout } from '@/logic/usegates/useGateLayout'
 
 import { useCircuitStore } from '@/store/CircuitStore'
@@ -46,35 +45,10 @@ const splitter = computed(() => {
   return circuitStore.getComponent(props.id);  
 });
 
-// let outputYs = computed(()=>splitter.outputPinPosition.map(item => item[1]));
-// let minY = computed(()=>Math.min(...outputYs.value));
-// let maxY = computed(()=>Math.max(...outputYs.value));
-
 let outputYs = computed(()=>useGateLayout(splitter.value.outputs.length))
 
 let minY = computed(()=>Math.min(...outputYs.value.value));
 let maxY = computed(()=>Math.max(...outputYs.value.value));
-
-// function handleToggleInput(index) {
-//     //setOutputCount(9)
-// }
-
-// function handleSetScale(newScale) {
-//   setScale(splitter, newScale)
-// }
-
-// function setOutputCount(newCount)
-// {
-//   splitter.outputCount = newCount;
-//   outputYs = useGateLayout(splitter.outputCount)
-
-//   minY = Math.min(...outputYs.value);
-//   maxY = Math.max(...outputYs.value);
-// }
-
-// onMounted(() => {
-//   splitter.outputs = computed(()=>createOutputs(splitter.outputCount));
-// })
 
 </script>
 

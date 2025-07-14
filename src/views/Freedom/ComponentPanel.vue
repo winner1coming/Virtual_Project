@@ -20,11 +20,9 @@
 </template>
 
 <script setup>
-import { NButton, NSplit } from 'naive-ui';
+import {NSplit } from 'naive-ui';
 import Properties from '@/components/ComponentPanel/Properties.vue';
 import ComponentList from '@/components/ComponentPanel/ComponentList.vue';
-
-
 </script>
 
 <style scoped>
@@ -32,8 +30,6 @@ import ComponentList from '@/components/ComponentPanel/ComponentList.vue';
   height: 100vh;
   background-color: transparent;
 }
-
-
 
 .component-item {
   padding: 10px;
@@ -47,6 +43,4 @@ import ComponentList from '@/components/ComponentPanel/ComponentList.vue';
 .component-item:hover {
   background-color: #f0f5ff;
 }
-
-
 </style>

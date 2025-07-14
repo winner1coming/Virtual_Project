@@ -10,34 +10,7 @@ export class AndGate extends BaseComponent{
 		}
 		this.offset = [-280, -280];
 		this.initInputPin(2); // 初始化输入引脚数量为2
-		//this.updatePinPosition();
-		////is.inputs = [-1, -1];  
 	}
-
-//   updatePinPosition() {
-//     this.outputPinPosition = this.outputPinPosition.map(pin => {
-//       return [
-//         0 + 497 * this.scale,
-//         0 + 288 * this.scale,
-//       ];
-//     });
-
-// 	// 修改输入引脚
-//     const inputYs = calcInputYs(num);
-
-//     this.inputPinPosition.splice(0, this.inputPinPosition.length,
-//       ...inputYs.map((pin, index): [number, number] => {
-//         // return [
-//         //   this.position[0] + 92 * this.scale,
-//         //   this.position[1] + inputYs[index] * this.scale,
-//         // ];
-//         return [
-//           0 + 92 * this.scale,
-//           0 + pin * this.scale,
-//         ];
-//     }));
-//   }
-
 
 	compute(){   // 返回输出(int)
 		let hasConnected = false;
@@ -71,14 +44,12 @@ export class AndGate extends BaseComponent{
 	}
 
 	changeInput(idx: number, v: number): number[]{
-		//this.inputs[idx]=v;
-		this.inputs.splice(idx, 1, v); // 替换idx位置的值
+		this.inputs.splice(idx, 1, v); 
 		if(v===-2){
 			this.outputs.splice(0, this.outputs.length, -2); // 输出引脚错误
 		}else{
 			return this.compute();
 		}
-		// console.log(this.inputs);  //
 		return this.outputs;
 	}
 }

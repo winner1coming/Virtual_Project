@@ -29,14 +29,12 @@
 </template>
   
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import OutputPort from '@/components/Ports/OutputPort.vue'
-import InputPort from '@/components/Ports/InputPort.vue'
 import SelectedBox from '@/components/basicComponents/SelectedBox.vue'
 import { defineProps } from 'vue'
 
 import { useCircuitStore } from '@/store/CircuitStore'
-import {watchComponentChanges} from '@/modules/useComponentsWatchers'
 
 const circuitStore = useCircuitStore();
 
@@ -46,15 +44,12 @@ const props = defineProps({
         required: true
     }
 });
-// const id = circuitStore.addComponent('And', [0,0]);  // debug
 
 const constant = computed(() => {
-    // return circuitStore.getComponent(id);   // debug
     return circuitStore.getComponent(props.id);  
 });
 
 const constantTextBox = ref(null);
-// let constant_value = ref('1f');
 const constant_value = computed(()=>constant.value.getValue());
 const rect_width = ref(95);
 
