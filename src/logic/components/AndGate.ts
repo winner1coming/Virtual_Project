@@ -44,14 +44,12 @@ export class AndGate extends BaseComponent{
 	}
 
 	changeInput(idx: number, v: number): number[]{
-		//this.inputs[idx]=v;
-		this.inputs.splice(idx, 1, v); // 替换idx位置的值
+		this.inputs.splice(idx, 1, v); 
 		if(v===-2){
 			this.outputs.splice(0, this.outputs.length, -2); // 输出引脚错误
 		}else{
 			return this.compute();
 		}
-		// console.log(this.inputs);  //
 		return this.outputs;
 	}
 }

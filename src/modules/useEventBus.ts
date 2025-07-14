@@ -1,6 +1,6 @@
 import mitt from 'mitt';
 
-// 定义事件类型（可选）
+// 定义事件类型
 type Events = {
   'start-place-component': { type: string, projectId: number}; // 开始放置组件事件
   'updateComponentDirection': void;// 指定元件旋转方向

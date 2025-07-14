@@ -1,10 +1,4 @@
-// 对外部提供连线的接口，封装好了连线的内部处理逻辑
-// 用法：
-// const simulator = EventDrivenSimulator.getInstance();
-// simulator.connect(id1, pinIdx1, id2, pinIdx2);
-// simulator.disconnect(id1, pinIdx1, id2, pinIdx2);
-// 注意pinIdx：对于单个组件，输入端是从0开始计数，输出端接着输入端的计数继续
-// 如：二输入与门，其输入引脚的pinIdx分别为0, 1，输出引脚为2
+// 备用，目前已经弃用子模拟器的逻辑
 import { ConnectionManager, Conn } from './ConnectionManager';
 import { BaseComponent } from './BaseComponent';
 import { Tunnel } from './components/Tunnel';

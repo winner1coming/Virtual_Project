@@ -444,23 +444,12 @@ IMAGE_MAP.SPLITTER.src = '/assets/splitter.svg'
 IMAGE_MAP.TUNNEL.src = '/assets/Tunnel.svg'
 IMAGE_MAP.D_FLIP_FLOP.src = '/assets/D触发器.svg'
 
-
+// 改变元件朝向
 function updateComponentDirection() {
 
-  // if (!selectedComponent.value) return;
-  // const ID = selectedComponent.value.ID;
-  // const newDirection = selectedComponent.value.direction;
+  const ID = selectedComponent.value.ID;
+  const logic  = useCircuitStore().getComponent(ID);
 
-  // // 获取组件类型对应的逻辑类，实时更新方向
-  // const logic = useCircuitStore().getComponent(ID);
-  // if (logic) {
-  //   logic.setDirection(newDirection);
-  // }
-
-  // 验证是否将旋转信息传给逻辑
-  // console.log("更新元件方向，ID：", ID, "方向：", newDirection)
-  // 更新完方向后重新绘制画布
-  // drawCanvas();
   saveHistory();
   // 临时连线
   if (tempWire.value) {
@@ -503,22 +492,6 @@ function drawCanvas() {
     const {x, y, size, direction} = component;
     ctx.save();// 保存当前画布
     ctx.translate(x + size.width / 2, y + size.height / 2);// 平移到组件中心
-    // 旋转元件
-    // switch (direction) {
-    //   case 'east':
-    //     ctx.rotate(0);
-    //     break;
-    //   case 'south':
-    //     ctx.rotate(Math.PI / 2);
-    //     break;
-    //   case 'west':
-    //     ctx.rotate(Math.PI);
-    //     break;
-    //   case 'north':
-    //     ctx.rotate(-Math.PI / 2);
-    //     break;
-    // }
-    // ctx.restore();
   })
   drawConnections(ctx);// 绘制所有连线
 }
@@ -772,7 +745,7 @@ function handleMouseMove(event) {
     // 获取组件类型对应的逻辑类
     let componentLogic = useCircuitStore().getComponent(ID);
 
-    // 触发引脚坐标更新（非常重要）
+    // 触发引脚坐标更新
     componentLogic.setPosition([selectedComponent.value.x, selectedComponent.value.y]);
     
 
@@ -1022,7 +995,7 @@ function handleWireConnection(x, y) {
   finalWire.color = "#000";
   finalWire.strokeWidth = 8;
 
-  // ✅【补全元件连接信息！】
+  // 补全元件连接信息
   finalWire.from = {
     x: lastPoint.x,
     y: lastPoint.y,
@@ -1060,11 +1033,9 @@ function handleWireConnection(x, y) {
   }
 }
 
-// import { computeMidX } from '@/modules/useMaths'
 // 创建电线路径
 function createWirePath(start, end) {
   const midX = (start.x + end.x) / 2;
-  // const midX = computeMidX(start.x, start.y, end.x, end.y); 
   console.log("计算中点X坐标：", midX)
   const d = `M ${start.x} ${start.y} L ${midX} ${start.y} L ${midX} ${end.y} L ${end.x} ${end.y}`;
   return { 

@@ -15,7 +15,7 @@ export class HexDisplay extends BaseComponent{
     this.initInputPin(2); 
   }
 
-  compute(){   // 返回输出(int)
+  compute(){   
     return this.outputs;
   }
 

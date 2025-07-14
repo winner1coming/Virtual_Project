@@ -3,7 +3,6 @@
 import { ProjectData } from "@/logic/ProjectData";
 import { useProjectStore } from "@/store/ProjectStore";
 import { useCircuitStore } from "@/store/CircuitStore";
-import { createComponentByType } from "./useComponentType";
 import { nextTick } from "vue";
 import { SubCircuitComponent } from "@/logic/components/SubCircuitComponent";
 const circuitStore = useCircuitStore();
@@ -11,10 +10,12 @@ const projectStore = useProjectStore();
 
 export function exportProject(projectDate: ProjectData): void {
   const simulator = circuitStore.simulator;
+  // 导出组件
   const components: any[] = [];
   projectDate.componentsId.forEach(id => {
     const comp = circuitStore.getComponent(id);
     if(comp.type === "SUB_CIRCUIT") {
+      // 子组件的特殊处理
       const sub = comp as SubCircuitComponent;
       components.push({
         id: sub.id,
@@ -88,7 +89,7 @@ export async function loadProject(importData: any, canvasRef: any){
   projectStore.getCurrentProject().projectUUID = importData.uuid;
   projectStore.getCurrentProject().mode = importData.mode;
 
-  const componentsIdMap = new Map<number, number>();  // 旧到新
+  const componentsIdMap = new Map<number, number>();  // 旧到新的id的映射
   // 加载元件
   for (const comp of importData.components) {
     await canvasRef.addComponentByScript(comp.type, comp.position);
