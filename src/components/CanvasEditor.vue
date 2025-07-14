@@ -441,7 +441,7 @@ IMAGE_MAP.OUTPUT.src = '/assets/outputpin.svg'
 IMAGE_MAP.SPLITTER.src = '/assets/splitter.svg'
 IMAGE_MAP.TUNNEL.src = '/assets/Tunnel.svg'
 
-
+// 改变元件朝向
 function updateComponentDirection() {
 
   const ID = selectedComponent.value.ID;
