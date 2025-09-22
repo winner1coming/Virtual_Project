@@ -59,7 +59,7 @@
 ## 🔧 技术架构
 
 - **前端框架**：Vue 3
-- **图形渲染**：SVG + Canvas
+- **图形渲染**：SVG
 - **电路仿真**：事件驱动模拟器（EventDrivenSimulator）
 - **学习资料**：PDF 文件加载与展示（pdfjs-dist）
 
