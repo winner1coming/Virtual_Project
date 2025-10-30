@@ -144,36 +144,40 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, watch, defineAsyncComponent } from 'vue'
 import { useProjectStore } from '@/store/ProjectStore'
-// 元件建模
-// 逻辑门
-import AndGate from './Gates/AndGate.vue'
-import NandGate from './Gates/NandGate.vue'
-import OrGate from './Gates/OrGate.vue'
-import NorGate from './Gates/NorGate.vue'
-import NotGate from './Gates/NotGate.vue'
-import XorGate from './Gates/XorGate.vue'
-import XnorGate from './Gates/XnorGate.vue'
+import { throttle } from 'lodash-es';
+
+// 元件建模 - 逻辑门
+const AndGate = defineAsyncComponent(() => import('./Gates/AndGate.vue'))
+const NandGate = defineAsyncComponent(() => import('./Gates/NandGate.vue'))
+const OrGate = defineAsyncComponent(() => import('./Gates/OrGate.vue'))
+const NorGate = defineAsyncComponent(() => import('./Gates/NorGate.vue'))
+const NotGate = defineAsyncComponent(() => import('./Gates/NotGate.vue'))
+const XorGate = defineAsyncComponent(() => import('./Gates/XorGate.vue'))
+const XnorGate = defineAsyncComponent(() => import('./Gates/XnorGate.vue'))
+
 // 输入输出
-import Button from './Input_OutPut/Button.vue'
-import HEX_DISPLAY from './Input_OutPut/HexDigitalDisplay.vue'
-import LED from './Input_OutPut/LED.vue'
-import SegmentDisplay from './Input_OutPut/SegmentDisplay.vue'
-// 线路？
-import Clock from './Wiring/Clock.vue'
-import Combiner from './Wiring/Combiner.vue'
-import Constant from './Wiring/Constant.vue'
-import Ground from './Wiring/Ground.vue'
-import InputPin from './Wiring/InputPin.vue'
-import OutputPin from './Wiring/OutputPin.vue'
-import Power from './Wiring/Power.vue'
-import Splitter from './Wiring/Splitter.vue'
-import Tunnel from './Wiring/Tunnel.vue'
+const Button = defineAsyncComponent(() => import('./Input_OutPut/Button.vue'))
+const HEX_DISPLAY = defineAsyncComponent(() => import('./Input_OutPut/HexDigitalDisplay.vue'))
+const LED = defineAsyncComponent(() => import('./Input_OutPut/LED.vue'))
+const SegmentDisplay = defineAsyncComponent(() => import('./Input_OutPut/SegmentDisplay.vue'))
+
+// 线路组件
+const Clock = defineAsyncComponent(() => import('./Wiring/Clock.vue'))
+const Combiner = defineAsyncComponent(() => import('./Wiring/Combiner.vue'))
+const Constant = defineAsyncComponent(() => import('./Wiring/Constant.vue'))
+const Ground = defineAsyncComponent(() => import('./Wiring/Ground.vue'))
+const InputPin = defineAsyncComponent(() => import('./Wiring/InputPin.vue'))
+const OutputPin = defineAsyncComponent(() => import('./Wiring/OutputPin.vue'))
+const Power = defineAsyncComponent(() => import('./Wiring/Power.vue'))
+const Splitter = defineAsyncComponent(() => import('./Wiring/Splitter.vue'))
+const Tunnel = defineAsyncComponent(() => import('./Wiring/Tunnel.vue'))
+
 // 寄存器
-import Register from './memory/Register.vue'
-import DFlipFlop from './memory/DFlipFlop.vue'
-import CustomizeComponent from './CustomizeComponent.vue'
+const Register = defineAsyncComponent(() => import('./memory/Register.vue'))
+const DFlipFlop = defineAsyncComponent(() => import('./memory/DFlipFlop.vue'))
+const CustomizeComponent = defineAsyncComponent(() => import('./CustomizeComponent.vue'))
 
 // 逻辑类建模
 import { AndGate as LogicAndGate } from '@/logic/components/AndGate.ts'
@@ -719,74 +723,192 @@ function updatePinPosition(ID) {
 
 }
 
-// 修改 handleMouseMove 以支持连线拖动
-function handleMouseMove(event) {
+let cachedRect = null;
+let rectCacheTime = 0;
+const CACHE_DURATION = 100; 
+function getCachedRect() {
+  const now = Date.now();
+  if (!cachedRect || now - rectCacheTime > CACHE_DURATION) {
+    // 只有缓存过期时才触发重排
+    cachedRect = canvasContainer.value.getBoundingClientRect();
+    rectCacheTime = now;
+  }
+  return cachedRect;
+}
+
+// function handleMouseMove(event) {
   
-  const rect = canvasContainer.value.getBoundingClientRect();
+//   const rect =  getCachedRect();
+//   const x = event.clientX - rect.left;
+//   const y = event.clientY - rect.top;
+
+//   // console.log("选中的元件selectedComponent.value：", selectedComponent.value)
+
+//   if (currentComponent.value) {
+//     // 预览位置更新
+//     previewPos.x = x;
+//     previewPos.y = y;
+//   } else if (isDragging.value && selectedComponent.value) {
+//     // 选中且拖动：虽然我知道拖动这里用偏移量来做更合理，但是出现了意想不到的bug，因此照搬新建逻辑
+//     // selectedComponent：元件初始位置
+//     // dragOffset：拖动偏移量
+//     // x, y：元件下放位置
+//     selectedComponent.value.x = x - dragOffset.x;
+//     selectedComponent.value.y = y - dragOffset.y;
+
+//     let ID = selectedComponent.value.ID// 获取元件ID
+
+//     // 获取组件类型对应的逻辑类
+//     let componentLogic = useCircuitStore().getComponent(ID);
+
+//     // 触发引脚坐标更新
+//     componentLogic.setPosition([selectedComponent.value.x, selectedComponent.value.y]);
+    
+
+//     // // 创建Vue组件实例
+//     // const componentInstance = {
+//     //   component: componentMap[selectedComponent.value.componentType],
+//     //   props: {ID},
+//     // }
+
+//     // // 存储Vue实例引用
+//     // vueComponentMap.set(ID, componentInstance);
+
+//     // 4：记录当前ID的端口信息
+//     // 延迟4后获取端口信息，确保见组件挂载完成
+//     nextTick(() => {
+//       const logic = useCircuitStore().getComponent(ID);
+//       if(!logic) {
+//         console.warn("逻辑类未找到，ID：", ID)
+//         return
+//       }
+//       const portsInfo = logic.getAllPorts()
+//       // console.log("端口信息1：", portsInfo)
+//       // console.log("selectedComponent.value.x:", selectedComponent.value.x, "selectedComponent.value.y:", selectedComponent.value.y)
+//       updateComponentPorts(ID, portsInfo, selectedComponent.value.x, selectedComponent.value.y);
+//       // console.log("所有端口：", Ports)
+//     })
+
+//     useCircuitStore().moveComponent(ID, [x, y])// 调用函数移动元件
+
+//     // 更新所有相关连线的路径
+//     updateConnectionPaths(ID);
+//   } else if (tempWire.value) {
+//     const rect = canvasContainer.value.getBoundingClientRect();
+//     const x = event.clientX - rect.left;
+//     const y = event.clientY - rect.top;
+//     tempWire.value.to = { x, y };
+
+//     const from = tempWire.value.from;
+//     tempWire.value.path = `M ${from.x} ${from.y} L ${(from.x + x) / 2} ${from.y} L ${(from.x + x) / 2} ${y} L ${x} ${y}`;
+//   }
+// }
+
+let animationFrameId = null;
+let lastEvent = null;
+
+function handleMouseMove(event) {
+  // 保存最新的事件对象
+  lastEvent = event;
+  
+  // 取消之前安排的帧回调
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
+  
+  // 在新的动画帧中执行实际更新
+  animationFrameId = requestAnimationFrame(() => {
+    performUpdates(lastEvent);
+    animationFrameId = null;
+  });
+}
+
+// 实际的更新逻辑分离出来
+function performUpdates(event) {
+  const rect = getCachedRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
 
-  // console.log("选中的元件selectedComponent.value：", selectedComponent.value)
-
   if (currentComponent.value) {
-    // 预览位置更新
+    // 预览位置更新 - 轻量操作，保持实时性
     previewPos.x = x;
     previewPos.y = y;
   } else if (isDragging.value && selectedComponent.value) {
-    // 选中且拖动：虽然我知道拖动这里用偏移量来做更合理，但是出现了意想不到的bug，因此照搬新建逻辑
-    // selectedComponent：元件初始位置
-    // dragOffset：拖动偏移量
-    // x, y：元件下放位置
-    selectedComponent.value.x = x - dragOffset.x;
-    selectedComponent.value.y = y - dragOffset.y;
-
-    let ID = selectedComponent.value.ID// 获取元件ID
-
-    // 获取组件类型对应的逻辑类
-    let componentLogic = useCircuitStore().getComponent(ID);
-
-    // 触发引脚坐标更新
-    componentLogic.setPosition([selectedComponent.value.x, selectedComponent.value.y]);
-    
-
-    // 创建Vue组件实例
-    const componentInstance = {
-      component: componentMap[selectedComponent.value.componentType],
-      props: {ID},
-    }
-
-    // 存储Vue实例引用
-    vueComponentMap.set(ID, componentInstance);
-
-    // 4：记录当前ID的端口信息
-    // 延迟4后获取端口信息，确保见组件挂载完成
-    nextTick(() => {
-      const logic = useCircuitStore().getComponent(ID);
-      if(!logic) {
-        console.warn("逻辑类未找到，ID：", ID)
-        return
-      }
-      const portsInfo = logic.getAllPorts()
-      // console.log("端口信息1：", portsInfo)
-      // console.log("selectedComponent.value.x:", selectedComponent.value.x, "selectedComponent.value.y:", selectedComponent.value.y)
-      updateComponentPorts(ID, portsInfo, selectedComponent.value.x, selectedComponent.value.y);
-      // console.log("所有端口：", Ports)
-    })
-
-    useCircuitStore().moveComponent(ID, [x, y])// 调用函数移动元件
-
-    // 更新所有相关连线的路径
-    updateConnectionPaths(ID);
+    // 拖动逻辑优化
+    handleDragUpdate(x, y);
   } else if (tempWire.value) {
-    const rect = canvasContainer.value.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    tempWire.value.to = { x, y };
-
-    const from = tempWire.value.from;
-    tempWire.value.path = `M ${from.x} ${from.y} L ${(from.x + x) / 2} ${from.y} L ${(from.x + x) / 2} ${y} L ${x} ${y}`;
+    // 临时连线更新
+    handleTempWireUpdate(x, y);
   }
 }
+
+function handleDragUpdate(x, y) {
+  const newX = x - dragOffset.x;
+  const newY = y - dragOffset.y;
+  
+  if (selectedComponent.value.x === newX && selectedComponent.value.y === newY) {
+    return;
+  }
+  
+  selectedComponent.value.x = newX;
+  selectedComponent.value.y = newY;
+
+  const ID = selectedComponent.value.ID;
+  const componentLogic = useCircuitStore().getComponent(ID);
+
+  componentLogic.setPosition([newX, newY]);
+  useCircuitStore().moveComponent(ID, [newX, newY]);
+  
+  updateConnectionPaths(ID);
+  
+  // 🔴 修复：使用缓存的端口信息，只更新位置
+  updatePortsWithCachedInfo(ID, newX, newY);
+}
+
+// 缓存端口信息，避免重复获取
+let portsCache = new Map();
+
+function updatePortsWithCachedInfo(ID, x, y) {
+  nextTick(() => {
+    const logic = useCircuitStore().getComponent(ID);
+    if (!logic) return;
+    
+    // 如果缓存中没有端口信息，先获取一次
+    if (!portsCache.has(ID)) {
+      const portsInfo = logic.getAllPorts();
+      portsCache.set(ID, portsInfo);
+    }
+    
+    const portsInfo = portsCache.get(ID);
+    updateComponentPorts(ID, portsInfo, x, y);
+  });
+}
+
+// 在组件删除或拖动结束时清理缓存
+function clearPortsCache(ID) {
+  portsCache.delete(ID);
+}
+
+// 临时连线更新
+function handleTempWireUpdate(x, y) {
+  tempWire.value.to = { x, y };
+  const from = tempWire.value.from;
+  tempWire.value.path = `M ${from.x} ${from.y} L ${(from.x + x) / 2} ${from.y} L ${(from.x + x) / 2} ${y} L ${x} ${y}`;
+}
+
+// 端口初始化（只在需要时执行）
+// function initializePorts(ID) {
+//   nextTick(() => {
+//     const logic = useCircuitStore().getComponent(ID);
+//     if (!logic) {
+//       console.warn("逻辑类未找到，ID：", ID);
+//       return;
+//     }
+//     const portsInfo = logic.getAllPorts();
+//     updateComponentPorts(ID, portsInfo, selectedComponent.value.x, selectedComponent.value.y);
+//     selectedComponent.value.portsInitialized = true;
+//   });
+// }
 
 // 更新所有跟该元件相关的连线路径
 function updateConnectionPaths(componentId = null) {
@@ -1147,6 +1269,7 @@ function handleMouseUp() {
     saveHistory()
   }
   isDragging.value = false
+  clearPortsCache()
 }
 
 // 选中元件selectedComponent
