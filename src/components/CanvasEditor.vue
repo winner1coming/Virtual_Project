@@ -233,7 +233,7 @@ const wireStart = ref(null) // 记录起始点
 const tempWire = ref(null) // 临时连线
 const wireEndPort = ref(null) // 记录终点端口信息
 let wireStartId = null // 记录起始点port的元件ID
-const { saveHistory, saveSnapshot } = useHistory(components) // 使用自定义的历史记录管理
+const { saveSnapshot } = useHistory(components) // 使用自定义的历史记录管理
 /** @type {Ref<Array<{x: number, y: number}>>} */
 const intermediatePoints = ref([]);// 存储电线中继点
 
@@ -454,7 +454,7 @@ function updateComponentDirection() {
   const ID = selectedComponent.value.ID;
   const logic  = useCircuitStore().getComponent(ID);
 
-  saveHistory();
+  saveSnapshot();
   // 临时连线
   if (tempWire.value) {
     ctx.strokeStyle = tempWire.value.color;
@@ -482,7 +482,7 @@ function startPlacingVueComponent(type) {
   }
   
   // components.push(currentComponent.value)// 将当前组件添加到组件列表
-  saveHistory();
+  saveSnapshot();
 }
 
 function drawCanvas() {
@@ -590,7 +590,7 @@ function handlePinMouseUp(component, { pinType, pinIndex }) {
       { component, pinType, pinIndex }
     );
     
-    saveHistory();
+    saveSnapshot();
   }
   
   // 重置状态
@@ -983,7 +983,7 @@ function deleteComponent() {
     contextMenu.targetIndex = null;
     contextMenu.targetWireIndex = null;
 
-    saveHistory(); // 撤销历史记录
+    saveSnapshot(); // 撤销历史记录
   } else if (contextMenu.targetWireIndex !== null) {
     // 删除的是连线
     connections.splice(contextMenu.targetWireIndex, 1);
@@ -991,7 +991,7 @@ function deleteComponent() {
     contextMenu.targetIndex = null;
     contextMenu.targetWireIndex = null;
 
-    saveHistory();
+    saveSnapshot();
   }
 }
 
@@ -1017,7 +1017,7 @@ function handleMouseDown(event) {
 
   // console.log("处理完连线逻辑了！")
 
-  saveSnapshot();
+  //saveSnapshot();
 }
 
 // 连线逻辑
@@ -1266,7 +1266,7 @@ function deselectComponent(clickX, clickY) {
 // 拖动过程
 function handleMouseUp() {
   if (isDragging.value) {// 拖动结束，保存状态
-    saveHistory()
+    saveSnapshot()
   }
   isDragging.value = false
   clearPortsCache()
@@ -1355,7 +1355,7 @@ function handleLeftClick(event) {
       // console.log("所有端口：", Ports)
     })
 
-    saveHistory();
+    saveSnapshot();
     currentComponent.value = null;
     // console.log("放置元件后，当前组件已清空:", currentComponent.value)
     return; // 放置元件后不画线
@@ -1433,7 +1433,7 @@ function handleRightClick(event) {
 
     // 删除这条被右键点中的线段
     connections.splice(wireIndex, 1);
-    saveHistory();
+    saveSnapshot();
     return;
   }
 
@@ -1476,7 +1476,7 @@ function handleRightClick(event) {
 
     useCircuitStore().removeComponent(ID); // 删除元件
 
-    saveHistory(); // 撤销历史记录
+    saveSnapshot(); // 撤销历史记录
   } else if (contextMenu.targetWireIndex !== null) {
     // 删除的是连线
     connections.splice(contextMenu.targetWireIndex, 1);
@@ -1484,7 +1484,7 @@ function handleRightClick(event) {
     contextMenu.targetIndex = null;
     contextMenu.targetWireIndex = null;
 
-    saveHistory();
+    saveSnapshot();
   }
 }
 
