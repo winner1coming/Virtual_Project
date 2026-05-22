@@ -148,60 +148,20 @@ import { ref, reactive, onMounted, onUnmounted, watch, defineAsyncComponent } fr
 import { useProjectStore } from '@/store/ProjectStore'
 import { throttle } from 'lodash-es';
 
-// 元件建模 - 逻辑门
-const AndGate = defineAsyncComponent(() => import('./Gates/AndGate.vue'))
-const NandGate = defineAsyncComponent(() => import('./Gates/NandGate.vue'))
-const OrGate = defineAsyncComponent(() => import('./Gates/OrGate.vue'))
-const NorGate = defineAsyncComponent(() => import('./Gates/NorGate.vue'))
-const NotGate = defineAsyncComponent(() => import('./Gates/NotGate.vue'))
-const XorGate = defineAsyncComponent(() => import('./Gates/XorGate.vue'))
-const XnorGate = defineAsyncComponent(() => import('./Gates/XnorGate.vue'))
+// 从注册表自动发现所有组件
+import { asyncViewImporters, offsetMap, imagePathMap, sizeMap } from '@/registry'
 
-// 输入输出
-const Button = defineAsyncComponent(() => import('./Input_OutPut/Button.vue'))
-const HEX_DISPLAY = defineAsyncComponent(() => import('./Input_OutPut/HexDigitalDisplay.vue'))
-const LED = defineAsyncComponent(() => import('./Input_OutPut/LED.vue'))
-const SegmentDisplay = defineAsyncComponent(() => import('./Input_OutPut/SegmentDisplay.vue'))
+const componentMap = {}
+const IMAGE_MAP = {}
+for (const [type, importer] of Object.entries(asyncViewImporters)) {
+  componentMap[type] = defineAsyncComponent(importer)
+  const img = new Image()
+  img.src = imagePathMap[type]
+  IMAGE_MAP[type] = img
+}
+const SVG_OFFSET = offsetMap
+const COMPONENT_SIZES = { ...sizeMap }
 
-// 线路组件
-const Clock = defineAsyncComponent(() => import('./Wiring/Clock.vue'))
-const Combiner = defineAsyncComponent(() => import('./Wiring/Combiner.vue'))
-const Constant = defineAsyncComponent(() => import('./Wiring/Constant.vue'))
-const Ground = defineAsyncComponent(() => import('./Wiring/Ground.vue'))
-const InputPin = defineAsyncComponent(() => import('./Wiring/InputPin.vue'))
-const OutputPin = defineAsyncComponent(() => import('./Wiring/OutputPin.vue'))
-const Power = defineAsyncComponent(() => import('./Wiring/Power.vue'))
-const Splitter = defineAsyncComponent(() => import('./Wiring/Splitter.vue'))
-const Tunnel = defineAsyncComponent(() => import('./Wiring/Tunnel.vue'))
-
-// 寄存器
-const Register = defineAsyncComponent(() => import('./memory/Register.vue'))
-const DFlipFlop = defineAsyncComponent(() => import('./memory/DFlipFlop.vue'))
-const CustomizeComponent = defineAsyncComponent(() => import('./CustomizeComponent.vue'))
-
-// 逻辑类建模
-import { AndGate as LogicAndGate } from '@/logic/components/AndGate.ts'
-import { Button as LogicButton} from '@/logic/components/Button.ts'
-import { Clock as LogicClock} from '@/logic/components/Clock.ts'
-import { Combiner as LogicCombiner} from '@/logic/components/Combiner.ts'
-import { ConstantInput as LogicConstantInput} from '@/logic/components/ConstantInput.ts'
-import { DFlipFlop as LogicDFlipFlop} from '@/logic/components/DFlipFlop.ts'
-import { Ground as LogicGround} from '@/logic/components/Ground.ts'
-import { HexDisplay as LogicHexDisplay } from '@/logic/components/HexDisplay.ts'
-import { InputPin as LogicInputPin} from '@/logic/components/InputPin.ts'
-import { Light as LogicLight } from '@/logic/components/Light.ts'
-import { NandGate as LogicNandGate } from '@/logic/components/NandGate.ts'
-import { NorGate as LogicNorGate } from '@/logic/components/NorGate.ts'
-import { NotGate as LogicNotGate } from '@/logic/components/NotGate.ts'
-import { NxorGate as LogicXnorGate } from '@/logic/components/Nxor.ts'
-import { OrGate as LogicOrGate } from '@/logic/components/OrGate.ts'
-import { Power as LogicPower} from '@/logic/components/Power.ts'
-import { Register as LogicRegister } from '@/logic/components/Register.ts'
-import { SegmentDisplay as LogicSegmentDisplay} from '@/logic/components/SegmentDisplay.ts'
-import { Splitter as LogicSplitter} from '@/logic/components/Splitter.ts'
-import { SubCircuitComponent as LogicSubCircuit } from '@/logic/components/SubCircuitComponent.ts'
-import { Tunnel as LogicTunnel} from '@/logic/components/Tunnel.ts'
-import { XorGate as LogicXorGate} from '@/logic/components/XorGate.ts'
 import { BaseComponent } from '@/logic/BaseComponent.ts'// 父类
 
 // 其他
@@ -279,174 +239,7 @@ function updateComponentPorts(componentId, portsInfo, index_x, index_y) {
   addComponentPorts(componentId, portsInfo, index_x, index_y)
 }
 
-// 组件映射表
-const componentMap = {
-  AND: AndGate,
-  OR: OrGate,
-  NOT: NotGate,
-  TUNNEL: Tunnel,
-  INPUT: InputPin,
-  OUTPUT: OutputPin,
-  NAND: NandGate,
-  SUB_CIRCUIT: CustomizeComponent,
-  XOR: XorGate,
-  NXOR: XnorGate,
-  NOR: NorGate,
-  CLOCK: Clock,
-  CONSTANT: Constant,
-  POWER: Power,
-  SPLITTER: Splitter,
-  COMBINER: Combiner,
-  SEGMENT_DISPLAY: SegmentDisplay,
-  GROUND: Ground,
-  HEX_DISPLAY: HEX_DISPLAY,
-  LIGHT: LED,
-  BUTTON: Button,
-  REGISTER: Register,
-  D_FLIP_FLOP: DFlipFlop,
-}
-
-// 逻辑类映射表
-const COMPONENT_LOGIC = {
-  AND: LogicAndGate, 
-  BUTTON: LogicButton,
-  CLOCK: LogicClock,
-  COMBINER: LogicCombiner,
-  CONSTANT: LogicConstantInput,
-  D_FLIP_FLOP: LogicDFlipFlop,
-  GROUND: LogicGround,
-  HEX_DISPLAY: LogicHexDisplay,
-  INPUT: LogicInputPin,
-  LIGHT: LogicLight,
-  NAND: LogicNandGate,
-  NOR: LogicNorGate,
-  NOT: LogicNotGate,
-  NXOR: LogicXorGate, // XNOR 逻辑门
-  OR: LogicOrGate,
-  POWER: LogicPower,
-  REGISTER: LogicRegister,
-  SEGMENT_DISPLAY: LogicSegmentDisplay,
-  SPLITTER: LogicSplitter,
-  SUB_CIRCUIT: LogicSubCircuit,
-  TUNNEL: LogicTunnel,
-  XOR: LogicXorGate,
-}
-
-// 初始化各元件尺寸配置
-const COMPONENT_SIZES = {
-  AND: { width: LogicAndGate.width, height: LogicAndGate.height },
-  OR: { width: 150, height: 150 },
-  NOT: { width: 60, height: 60 },
-  TUNNEL: { width: 50, height: 50 },
-  INPUT: { width: 30, height: 30 },
-  OUTPUT: { width: 30, height: 30 },
-  NAND: { width: 30, height: 30 },
-  SUB_CIRCUIT: { width: 300, height: 200 }, 
-}
-
-// SVG映射offset
-const tempSegmentDisplay = new LogicSegmentDisplay(-1, "SEGMENT_DISPLAY");
-const tempButton = new LogicButton(-1, "BUTTON");
-const tempPower = new LogicPower(-1, "POWER");
-const tempNot = new LogicNotGate(-1, "NOT");
-const tempNor = new LogicNorGate(-1, "NOR");
-const tempOr = new LogicOrGate(-1, "OR");
-const tempRegister = new LogicRegister(-1, "REGISTER");
-const tempGround = new LogicGround(-1, "GROUND");
-const tempClock = new LogicClock(-1, "CLOCK");
-const tempNxor = new LogicXnorGate(-1, "NXOR");
-const tempXor = new LogicXorGate(-1, "XOR");
-const tempNand = new LogicNandGate(-1, "NAND");
-const tempSubCircuit = new LogicSubCircuit(-1, "SUB_CIRCUIT");
-const tempAnd = new LogicAndGate(-1, "AND");
-const tempCombiner = new LogicCombiner(-1, "COMBINER");
-const tempConstant = new LogicConstantInput(-1, "CONSTANT");
-const tempHexDisplay = new LogicHexDisplay(-1, "HEX_DISPLAY");
-const tempInput = new LogicInputPin(-1, "INPUT");
-const tempLight = new LogicLight(-1, "LIGHT");
-const tempOutput = new LogicInputPin(-1, "OUTPUT");
-const tempSplitter = new LogicSplitter(-1, "SPLITTER");
-const tempTunnel = new LogicTunnel(-1, "TUNNEL");
-
-
-const SVG_OFFSET = {
-  SEGMENT_DISPLAY: {x: tempSegmentDisplay.offset[0], y: tempSegmentDisplay.offset[1]},
-  BUTTON: {x: tempButton.offset[0], y: tempButton.offset[1]},
-  POWER: {x: tempPower.offset[0], y: tempPower.offset[1]},
-  NOT: {x: tempNot.offset[0], y: tempNot.offset[1]},
-  NOR: {x: tempNor.offset[0], y: tempNor.offset[1]},
-  OR: {x: tempOr.offset[0], y: tempOr.offset[1]},
-  REGISTER: {x: tempRegister.offset[0], y: tempRegister.offset[1]},
-  GROUND: {x: tempGround.offset[0], y: tempGround.offset[1]},
-  CLOCK: {x: tempClock.offset[0], y: tempClock.offset[1]},
-  NXOR: {x: tempNxor.offset[0], y: tempNxor.offset[1]},
-  XOR: {x: tempXor.offset[0], y: tempXor.offset[1]},
-  NAND: {x: tempNand.offset[0], y: tempNand.offset[1]},
-  SUB_CIRCUIT: {x: tempSubCircuit.offset[0], y: tempSubCircuit.offset[1]},
-  AND: {x: tempAnd.offset[0], y: tempAnd.offset[1]},
-  COMBINER: {x: tempCombiner.offset[0], y: tempCombiner.offset[1]},
-  CONSTANT: {x: tempConstant.offset[0], y: tempConstant.offset[1]},
-  HEX_DISPLAY: {x: tempHexDisplay.offset[0], y: tempHexDisplay.offset[1]},
-  INPUT: {x: tempInput.offset[0], y: tempInput.offset[1]},
-  LIGHT: {x: -145, y: -145},
-  OUTPUT: {x: tempOutput.offset[0], y: tempOutput.offset[1]},
-  SPLITTER: {x: tempSplitter.offset[0], y: tempSplitter.offset[1]},
-  TUNNEL: {x: tempTunnel.offset[0], y: tempTunnel.offset[1]},
-  D_FLIP_FLOP: {x: tempRegister.offset[0], y: tempRegister.offset[1]},
-}
-
- 
-// 按钮图片资源映射表
-const IMAGE_MAP = {
-  SEGMENT_DISPLAY: new Image(),
-  BUTTON: new Image(),
-  POWER: new Image(),
-  NOT: new Image(),
-  NOR: new Image(),
-  OR: new Image(),
-  REGISTER: new Image(),
-  GROUND: new Image(),
-  CLOCK: new Image(),
-  NXOR: new Image(),
-  XOR: new Image(),
-  NAND: new Image(),
-  SUB_CIRCUIT: new Image(),
-  AND: new Image(),
-  COMBINER: new Image(),
-  CONSTANT: new Image(),
-  HEX_DISPLAY: new Image(),
-  INPUT: new Image(),
-  LIGHT: new Image(),
-  OUTPUT: new Image(),
-  SPLITTER: new Image(),
-  TUNNEL: new Image(),
-  D_FLIP_FLOP: new Image(),
-}
-
-// 初始化图片资源
-IMAGE_MAP.SEGMENT_DISPLAY.src = '/assets/7段数码管.svg'
-IMAGE_MAP.BUTTON.src = '/assets/按钮.svg'
-IMAGE_MAP.POWER.src = '/assets/电源.svg'
-IMAGE_MAP.NOT.src = '/assets/非门.svg'
-IMAGE_MAP.NOR.src = '/assets/或非门.svg'
-IMAGE_MAP.OR.src = '/assets/或门.svg'
-IMAGE_MAP.REGISTER.src = '/assets/寄存器.svg'
-IMAGE_MAP.GROUND.src = '/assets/接地.svg'
-IMAGE_MAP.CLOCK.src = '/assets/时钟.svg'
-IMAGE_MAP.NXOR.src = '/assets/异或非门.svg'
-IMAGE_MAP.XOR.src = '/assets/异或门.svg'
-IMAGE_MAP.NAND.src = '/assets/与非门.svg'
-IMAGE_MAP.SUB_CIRCUIT.src = '/assets/子组件.svg'
-IMAGE_MAP.AND.src = '/assets/AND.svg'
-IMAGE_MAP.COMBINER.src = '/assets/combiner.svg'
-IMAGE_MAP.CONSTANT.src = '/assets/constant.svg'
-IMAGE_MAP.HEX_DISPLAY.src = '/assets/Hex数码管.svg'
-IMAGE_MAP.INPUT.src = '/assets/inputPin.svg'
-IMAGE_MAP.LIGHT.src = '/assets/LED.svg'
-IMAGE_MAP.OUTPUT.src = '/assets/outputpin.svg'
-IMAGE_MAP.SPLITTER.src = '/assets/splitter.svg'
-IMAGE_MAP.TUNNEL.src = '/assets/Tunnel.svg'
-IMAGE_MAP.D_FLIP_FLOP.src = '/assets/D触发器.svg'
+// 改变元件朝向
 
 // 改变元件朝向
 function updateComponentDirection() {

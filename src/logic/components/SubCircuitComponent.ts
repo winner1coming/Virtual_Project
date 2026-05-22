@@ -4,7 +4,6 @@ import { useCircuitStore } from '@/store/CircuitStore';
 import { reactive } from 'vue';
 import { SubSimulator } from '../SubSimulator';
 import { useProjectStore } from '@/store/ProjectStore';
-import { createComponentByType } from '@/modules/useComponentType';
 import { calcInputYs } from "@/logic/utils/useGateLayout";
 import { Clock } from './Clock';
 
