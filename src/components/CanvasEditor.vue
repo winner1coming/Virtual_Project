@@ -165,11 +165,16 @@ const COMPONENT_SIZES = { ...sizeMap }
 import { BaseComponent } from '@/logic/BaseComponent.ts'// 父类
 
 // 其他
-import { useHistory } from '@/modules/useHistory';
+import { getHistoryManager } from '@/modules/useHistory';
+import { AddComponentCommand } from '@/modules/commands/AddComponentCommand';
+import { RemoveComponentCommand } from '@/modules/commands/RemoveComponentCommand';
+import { MoveComponentCommand } from '@/modules/commands/MoveComponentCommand';
+import { ConnectCommand } from '@/modules/commands/ConnectCommand';
+import { DisconnectCommand } from '@/modules/commands/DisconnectCommand';
+import { ClearAllCommand } from '@/modules/commands/ClearAllCommand';
 import eventBus from '@/modules/useEventBus';
 import { useCircuitStore } from '@/store/CircuitStore';
 import { nextTick } from 'vue'
-import { convertCompilerOptionsFromJson } from 'typescript'
 
 const canvasContainer = ref(null)
 const components = reactive([])
@@ -177,6 +182,7 @@ const currentComponent = ref(null)
 const selectedComponent = ref(null)// 鼠标选中的元件
 const isDragging = ref(false)
 const dragOffset = reactive({ x: 0, y: 0 })// 拖动偏移量
+let _dragStartPos = { x: 0, y: 0 } // 记录拖动前的位置，用于 MoveComponentCommand
 const previewPos = reactive({ x: 0, y: 0 })// 预览的位置
 const connections = reactive([])// 全局连接列表
 const componentID = reactive([])// 全局组件ID
@@ -193,9 +199,32 @@ const wireStart = ref(null) // 记录起始点
 const tempWire = ref(null) // 临时连线
 const wireEndPort = ref(null) // 记录终点端口信息
 let wireStartId = null // 记录起始点port的元件ID
-const { saveSnapshot } = useHistory(components) // 使用自定义的历史记录管理
 /** @type {Ref<Array<{x: number, y: number}>>} */
 const intermediatePoints = ref([]);// 存储电线中继点
+/** Track segments created during a wire-drag session for ConnectCommand */
+let _pendingWireSegments = []
+const hm = getHistoryManager()
+// 注册 CanvasContext，使 HistoryManager 能访问 store 和视图层状态
+{
+  const ctx = {
+    store: useCircuitStore(),
+    components,
+    connections,
+    Ports,
+    vueComponentMap,
+    componentID,
+    intermediatePoints,
+    componentMap,
+    componentSizes: COMPONENT_SIZES,
+    updatePorts: (id, x, y) => {
+      const logic = ctx.store.getComponent(id);
+      if (!logic) return;
+      updateComponentPorts(id, logic.getAllPorts(), x, y);
+    },
+    updateConnectionPaths,
+  }
+  hm.registerContext(ctx)
+}
 
 
 // 当前拖动起点信息
@@ -247,7 +276,6 @@ function updateComponentDirection() {
   const ID = selectedComponent.value.ID;
   const logic  = useCircuitStore().getComponent(ID);
 
-  saveSnapshot();
   // 临时连线
   if (tempWire.value) {
     ctx.strokeStyle = tempWire.value.color;
@@ -273,9 +301,8 @@ function startPlacingVueComponent(type) {
       direction: 'east' // 默认方向
     }
   }
-  
+
   // components.push(currentComponent.value)// 将当前组件添加到组件列表
-  saveSnapshot();
 }
 
 function drawCanvas() {
@@ -360,7 +387,7 @@ function handlePinMouseUp(component, { pinType, pinIndex }) {
   // 检查连接是否有效
   if (isConnectionValid(startPin, { component, pinType, pinIndex })) {
     // 创建新连接
-    connections.push({
+    const newSeg = {
       from: {
         componentId: components.indexOf(startPin.component),
         pinType: startPin.pinType,
@@ -375,15 +402,21 @@ function handlePinMouseUp(component, { pinType, pinIndex }) {
         { x: startPin.x, y: startPin.y },
         { x: endPinPos.x, y: endPinPos.y }
       )
-    });
-    
+    };
+    connections.push(newSeg);
+
     // 更新元件状态：将输入连接到输出之类的
     updateComponentConnection(
-      startPin.component, 
+      startPin.component,
       { component, pinType, pinIndex }
     );
-    
-    saveSnapshot();
+
+    const fromId = startPin.component.ID;
+    const toId = component.ID;
+    if (fromId !== undefined && toId !== undefined) {
+      useCircuitStore().connect(fromId, startPin.pinIndex, toId, pinIndex);
+      hm.execute(new ConnectCommand(fromId, startPin.pinIndex, toId, pinIndex, [newSeg]));
+    }
   }
   
   // 重置状态
@@ -752,16 +785,14 @@ function findPortById(componentId, portId) {
 
 // 修改 deleteComponent 以删除相关连线
 function deleteComponent() {
-  // console.log("删除元件逻辑触发")
-
   if (contextMenu.targetIndex !== null) {
-    const component = components[contextMenu.targetIndex]; // 获取删除的元件对象
-    const componentId = component.ID; // ✅ 取真实ID
+    const component = components[contextMenu.targetIndex];
+    const componentId = component.ID;
 
-    // 删除逻辑连接
-    useCircuitStore().removeComponent(componentId);  
+    const _rm = new RemoveComponentCommand(componentId);
+    _rm.capture(hm.getContext());
 
-    // 删除与该元件相关的连线
+    // Delete associated connections
     for (let i = connections.length - 1; i >= 0; i--) {
       const from = connections[i].from;
       const to = connections[i].to;
@@ -770,21 +801,29 @@ function deleteComponent() {
       }
     }
 
-    // 删除元件本体
+    useCircuitStore().removeComponent(componentId);
     components.splice(contextMenu.targetIndex, 1);
     contextMenu.visible = false;
     contextMenu.targetIndex = null;
     contextMenu.targetWireIndex = null;
 
-    saveSnapshot(); // 撤销历史记录
+    hm.execute(_rm)
   } else if (contextMenu.targetWireIndex !== null) {
     // 删除的是连线
+    const _wireSeg = connections[contextMenu.targetWireIndex];
     connections.splice(contextMenu.targetWireIndex, 1);
     contextMenu.visible = false;
     contextMenu.targetIndex = null;
     contextMenu.targetWireIndex = null;
-
-    saveSnapshot();
+    if (_wireSeg?.from?.componentId && _wireSeg?.to?.componentId) {
+      hm.execute(new DisconnectCommand(
+        _wireSeg.from.componentId,
+        _wireSeg.from.portId || _wireSeg.from.pinIndex,
+        _wireSeg.to.componentId,
+        _wireSeg.to.portId || _wireSeg.to.pinIndex,
+        [_wireSeg],
+      ))
+    }
   }
 }
 
@@ -834,6 +873,7 @@ function handleWireConnection(x, y) {
 
       // 记录第一个点
       intermediatePoints.value = [wireStart.value];
+      _pendingWireSegments = []
 
       // 初始化 tempWire 为预览线
       tempWire.value = {
@@ -873,6 +913,7 @@ function handleWireConnection(x, y) {
     newWire.color = "#000"; // 中继线为黑色
     newWire.strokeWidth = 8;
     connections.push(newWire);
+    _pendingWireSegments.push(newWire)
     console.log("中继电线信息：", newWire)
 
     // 中继点会不断传到起点所指向的元件引脚信息
@@ -930,6 +971,7 @@ function handleWireConnection(x, y) {
   console.log("最终电线信息：", finalWire)
 
   connections.push(finalWire);
+  _pendingWireSegments.push(finalWire)
 
   // 加入逻辑连接
   useCircuitStore().connect(
@@ -938,6 +980,15 @@ function handleWireConnection(x, y) {
     endPort.componentId,
     endPort.id
   );
+
+  hm.execute(new ConnectCommand(
+    wireStartId,
+    wireStart.value.portId,
+    endPort.componentId,
+    endPort.id,
+    _pendingWireSegments,
+  ))
+  _pendingWireSegments = []
 
   // 清空状态
   wireStart.value = null;
@@ -1058,8 +1109,9 @@ function deselectComponent(clickX, clickY) {
 
 // 拖动过程
 function handleMouseUp() {
-  if (isDragging.value) {// 拖动结束，保存状态
-    saveSnapshot()
+  if (isDragging.value && selectedComponent.value) {
+    const toPos = [selectedComponent.value.x, selectedComponent.value.y];
+    hm.execute(new MoveComponentCommand(selectedComponent.value.ID, _dragStartPos, toPos));
   }
   isDragging.value = false
   clearPortsCache()
@@ -1075,7 +1127,8 @@ function selectComponent(item, event) {
   dragOffset.x = x - item.x
   dragOffset.y = y - item.y
   isDragging.value = true
-  
+  _dragStartPos = [item.x, item.y] // 记录拖动前位置，用于撤销
+
   useCircuitStore().selectComponent(item.ID);
 
   console.log("选中的元件：", selectedComponent.value)
@@ -1148,7 +1201,11 @@ function handleLeftClick(event) {
       // console.log("所有端口：", Ports)
     })
 
-    saveSnapshot();
+    const _viewComp = components.find(c => c.ID === id);
+    const _vueEntry = vueComponentMap.get(id);
+    if (_viewComp) {
+      hm.execute(new AddComponentCommand(id, currentComponent.value.componentType, [x, y], projectTypeId, _viewComp, _vueEntry));
+    }
     currentComponent.value = null;
     // console.log("放置元件后，当前组件已清空:", currentComponent.value)
     return; // 放置元件后不画线
@@ -1226,37 +1283,39 @@ function handleRightClick(event) {
 
     // 删除这条被右键点中的线段
     connections.splice(wireIndex, 1);
-    saveSnapshot();
+    if (head.from?.componentId && tail.to?.componentId) {
+      hm.execute(new DisconnectCommand(
+        head.from.componentId, head.from.portId,
+        tail.to.componentId, tail.to.portId,
+        [wire],
+      ));
+    }
     return;
   }
 
   // 右键时选中的元件
-  const ID = selectedComponent.value.ID;
-  // console.log("当前组件：", ID)
+  const ID = selectedComponent.value?.ID;
+  if (ID != null) {
+    // Capture before deletion
+    const _rm = new RemoveComponentCommand(ID);
+    _rm.capture(hm.getContext());
 
-  // 删除元件本体
-  // console.log("预计想要删除的元件ID：", ID)
-  selectedComponent.visible = false; // 隐藏选中元件
-  // 删除元件本体（不要用 ID 当索引）
-  const deleteIndex = components.findIndex(c => c.ID === ID);
-  if (deleteIndex !== -1) {
-    components.splice(deleteIndex, 1);
-  }
+    // Hide selected component
+    selectedComponent.visible = false;
 
-  if (ID !== null) {
-    
-    const component = useCircuitStore().getComponent(ID);
+    // Remove from view components array
+    const deleteIndex = components.findIndex(c => c.ID === ID);
+    if (deleteIndex !== -1) {
+      components.splice(deleteIndex, 1);
+    }
 
-    removeComponentPorts(ID); // 删除引脚信息
+    removeComponentPorts(ID);
 
-    // 删除与该元件相关的连线
+    // Delete associated wires and disconnect at store level
     for (let i = connections.length - 1; i >= 0; i--) {
-      // console.log("进行到这， from:", connections[i].from, "to:", connections[i].to)
       const from = connections[i].from;
       const to = connections[i].to;
-      // console.log("检查连线，from:", from.componentId, "to:", to.componentId)
       if (from.componentId === ID || to.componentId === ID) {
-        // console.log("删除连线：", connections[i])
         connections.splice(i, 1);
         useCircuitStore().disconnect(
           from.componentId,
@@ -1267,17 +1326,24 @@ function handleRightClick(event) {
       }
     }
 
-    useCircuitStore().removeComponent(ID); // 删除元件
-
-    saveSnapshot(); // 撤销历史记录
+    useCircuitStore().removeComponent(ID);
+    hm.execute(_rm);
   } else if (contextMenu.targetWireIndex !== null) {
     // 删除的是连线
+    const _wireSeg = connections[contextMenu.targetWireIndex];
     connections.splice(contextMenu.targetWireIndex, 1);
     contextMenu.visible = false;
     contextMenu.targetIndex = null;
     contextMenu.targetWireIndex = null;
-
-    saveSnapshot();
+    if (_wireSeg?.from?.componentId && _wireSeg?.to?.componentId) {
+      hm.execute(new DisconnectCommand(
+        _wireSeg.from.componentId,
+        _wireSeg.from.portId || _wireSeg.from.pinIndex,
+        _wireSeg.to.componentId,
+        _wireSeg.to.portId || _wireSeg.to.pinIndex,
+        [_wireSeg],
+      ))
+    }
   }
 }
 
@@ -1315,7 +1381,6 @@ function deleteSelectedItem() {
     connections.splice(contextMenu.targetWireIndex, 1);
   }
   contextMenu.visible = false;
-  saveSnapshot();
 }
 
 
@@ -1482,6 +1547,20 @@ onMounted(() => {
   eventBus.on('updatePinPosition', ({id}) => {
     updatePinPosition(id);
   });
+  eventBus.on('clear-workspace', () => {
+    const _cc = new ClearAllCommand();
+    _cc.captureAll(hm.getContext());
+    for (let i = components.length - 1; i >= 0; i--) {
+      const cid = components[i].ID;
+      useCircuitStore().removeComponent(cid);
+      removeComponentPorts(cid);
+    }
+    components.splice(0, components.length);
+    connections.splice(0, connections.length);
+    componentID.splice(0, componentID.length);
+    vueComponentMap.clear();
+    hm.execute(_cc);
+  });
   // 确保画布元素可聚焦
   canvasContainer.value.focus();
   canvasContainer.value.addEventListener('mousemove', handleMouseMove);
@@ -1531,6 +1610,7 @@ onMounted(() => {
 onUnmounted(() => {
   eventBus.off('start-place-component');
   eventBus.off('updateComponentDirection');
+  eventBus.off('clear-workspace');
   console.log("缓存组件到 localStorage")
   localStorage.setItem('circuit'+projectStore.selectedProjectId+'Components', JSON.stringify(serializeComponents(components)));
   localStorage.setItem('circuit'+projectStore.selectedProjectId+'Connections', JSON.stringify(connections));

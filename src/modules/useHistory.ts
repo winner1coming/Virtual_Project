@@ -1,136 +1,105 @@
-import { reactive } from 'vue';
-import { useCircuitStore } from '@/store/CircuitStore';
-export function useHistory(components: any[]) {
-  const circuitStore = useCircuitStore();
-  const undoStack = circuitStore.undoStack;
-  const redoStack = circuitStore.redoStack;
+import type { useCircuitStore } from '@/store/CircuitStore';
 
-  const MAX_HISTORY = 50;
+// #region 类型定义
 
-  // 深拷贝辅助函数
-  function deepClone(state: any[]) {
-    return JSON.parse(JSON.stringify(state));
-  }
-
-  // 保存快照
-  function saveSnapshot() {
-    // 限制历史记录数量
-    if (undoStack.length >= MAX_HISTORY) {
-      undoStack.splice(0, undoStack.length-MAX_HISTORY);
-    }
-    
-    undoStack.push(deepClone(components));
-    redoStack.length = 0; // 清空重做栈
-  }
-
-  // 应用快照
-  function applySnapshot(snapshot: any[]) {
-    components.splice(0, components.length, ...deepClone(snapshot));
-  }
-
-  // 修正后的撤销
-  function undo() {
-    if (undoStack.length === 0) return; // 修正：检查栈是否为空
-    
-    // 保存当前状态到重做栈
-    redoStack.push(deepClone(components));
-    
-    // 获取并应用上一个状态
-    const prevState = undoStack.pop();
-    applySnapshot(prevState);
-  }
-
-  // 重做
-  function redo() {
-    if (redoStack.length === 0) return;
-    
-    // 保存当前状态到撤销栈
-    undoStack.push(deepClone(components));
-    
-    // 获取并应用下一个状态
-    const nextState = redoStack.pop();
-    applySnapshot(nextState);
-  }
-
-  // 清空画布（支持撤销）
-  function clearAll() {
-    saveSnapshot(); // 保存当前状态
-    components.splice(0, components.length); // 清空组件
-  }
-
-  return {
-    saveSnapshot,
-    undo,
-    redo,
-    clearAll,
-  };
+export interface ICommand {
+  /** 执行正向操作（用于 redo-after-undo） */
+  redo(ctx: CanvasContext): void;
+  /** 逆向操作（用于 undo） */
+  undo(ctx: CanvasContext): void;
 }
-// export function useHistory(components: any[]) {
-//   const circuitStore = useCircuitStore();
-//   const undoStack = circuitStore.undoStack;  // 历史操作栈
-//   const redoStack = circuitStore.redoStack;  // 重做栈
 
-//   // 保存当前状态为快照
-//   function saveSnapshot() {
-//     undoStack.push(JSON.parse(JSON.stringify(components))); // 保存快照到撤销栈
-//     redoStack.length = 0; // 清空重做栈
-//   }
+export interface CanvasContext {
+  store: ReturnType<typeof useCircuitStore>;
+  components: any[];
+  connections: any[];
+  Ports: Map<any, any>;
+  vueComponentMap: Map<any, any>;
+  componentID: number[];
+  intermediatePoints: { value: any[] };
+  componentMap: Record<string, any>;
+  componentSizes: Record<string, { width: number; height: number }>;
+  /** 更新指定元件的端口位置并重绘关联连线 */
+  updatePorts: (id: number, x: number, y: number) => void;
+  updateConnectionPaths: (id: number) => void;
+}
 
-//   // 应用快照
-//   function applySnapshot(snapshot: any[]) {
-//     components.splice(0, components.length, ...JSON.parse(JSON.stringify(snapshot)));
-//   }
+// #endregion
 
-//   // 撤销
-//   function undo() {
-//     // 保存当前状态到重做栈
-//     if (undoStack.length > 0) return
-//     // 保存当前状态到重做栈
-//     redoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
-//     // 获取上一个状态
-//     const prevState = undoStack.pop()
-//     applySnapshot(prevState)// 应用上一个状态
-//   }
+// #region HistoryManager
 
-//   // 重做
-//   function redo() {
-//     if (redoStack.length === 0) return
-//     // 保存当前状态到重做栈
-//     undoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
-//     // 获取下一个状态
-//     const nextState = redoStack.pop()
-//     applySnapshot(nextState)// 应用下一个状态
-//   }
+const MAX_HISTORY = 50;
 
-//   // 原函数：保存历史（可删除）
-//   function saveHistory() {
-//     if (undoStack.length >= 50) undoStack.shift()// 限制撤销栈的长度
-//     undoStack.push(JSON.parse(JSON.stringify(components)))// 保存快照到撤销栈
-//     redoStack.length = 0
-//   }
+export class HistoryManager {
+  undoStack: ICommand[] = [];
+  redoStack: ICommand[] = [];
+  private ctx: CanvasContext | null = null;
+  private listeners: Array<() => void> = [];
 
-//   // 清空画布：支持撤销
-//   function clearAll() {
-//     saveSnapshot()// 保存快照
-//     //TODO
-//     components.splice(0) // 清空组件
-//     saveHistory()
-//   }
+  /** Subscribe to stack mutations (for UI reactivity). Returns unsubscribe fn. */
+  onChange(cb: () => void): () => void {
+    this.listeners.push(cb);
+    return () => {
+      const idx = this.listeners.indexOf(cb);
+      if (idx !== -1) this.listeners.splice(idx, 1);
+    };
+  }
 
-//   // 原函数：清空组件（可删除）
-//   function clearComponents() {
-//     if (components.length > 0) {
-//       saveHistory()
-//       components.splice(0)
-//     }
-//   }
+  private notify(): void {
+    for (const cb of this.listeners) cb();
+  }
 
-//   return {
-//     saveSnapshot,
-//     undo,
-//     redo,
-//     saveHistory,
-//     clearAll,
-//     clearComponents,
-//   };
-// }
+  registerContext(ctx: CanvasContext): void {
+    this.ctx = ctx;
+  }
+
+  /**
+   * 记录一个命令到历史栈。
+   * 注意：不调用 cmd.redo() —— 正向操作已在调用 execute() 之前由调用者完成。
+   * cmd.redo() 仅在 redo-after-undo 时由 redo() 方法调用。
+   */
+  execute(cmd: ICommand): void {
+    this.undoStack.push(cmd);
+    this.redoStack = [];
+    if (this.undoStack.length > MAX_HISTORY) {
+      this.undoStack.shift();
+    }
+    this.notify();
+  }
+
+  undo(): void {
+    const cmd = this.undoStack.pop();
+    if (!cmd) return;
+    cmd.undo(this.ctx!);
+    this.redoStack.push(cmd);
+    this.notify();
+  }
+
+  redo(): void {
+    const cmd = this.redoStack.pop();
+    if (!cmd) return;
+    cmd.redo(this.ctx!);
+    this.undoStack.push(cmd);
+    this.notify();
+  }
+
+  clear(): void {
+    this.undoStack = [];
+    this.redoStack = [];
+    this.notify();
+  }
+
+  /** 供 RemoveComponentCommand.capture() 等场景获取上下文 */
+  getContext(): CanvasContext {
+    return this.ctx!;
+  }
+}
+
+let instance: HistoryManager | null = null;
+
+export function getHistoryManager(): HistoryManager {
+  if (!instance) instance = new HistoryManager();
+  return instance;
+}
+
+// #endregion

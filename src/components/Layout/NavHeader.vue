@@ -22,7 +22,7 @@ import {
   CloudUploadOutline as UploadIcon,
   Book
 } from '@vicons/ionicons5'
-import { ref, computed, onMounted, watch, useTemplateRef, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, useTemplateRef, nextTick } from 'vue'
 import { useRouter,useRoute } from 'vue-router'
 const props = defineProps<{
   mode: 'practice' | 'challenge' | 'tutorial',
@@ -55,17 +55,26 @@ const handleClick = () => {
 
 
 // #region 历史记录
-import {useHistory} from '@/modules/useHistory'
-const {redo, undo, clearAll} = useHistory(); 
-const prevStep = () => {
-  undo();
-}
-const nextStep = () => {
-  redo();
-}
-const clearWorkspace = () => {
-  clearAll();
-}
+import { getHistoryManager } from '@/modules/useHistory';
+const _hm = getHistoryManager()
+const _historyVersion = ref(0)
+
+// Reactively track every stack mutation (execute/undo/redo/clear from any component)
+const off = _hm.onChange(() => { _historyVersion.value++ })
+onUnmounted(off)
+
+const prevStep = () => _hm.undo()
+const nextStep = () => _hm.redo()
+const clearWorkspace = () => eventBus.emit('clear-workspace')
+
+const canUndo = computed(() => {
+  _historyVersion.value // reactive dependency — re-evaluates on every stack change
+  return _hm.undoStack.length > 0
+})
+const canRedo = computed(() => {
+  _historyVersion.value
+  return _hm.redoStack.length > 0
+})
 // #endregion 历史记录
 
 // #region 模拟器
@@ -169,10 +178,12 @@ nextTick(async() => {
     console.log('所有关卡加载完成！');
     eventBus.emit('freshProject'); // 刷新项目
     if(props.mode === 'practice'){
-      projectStore.loadProject(0); 
+      projectStore.loadProject(0);
     }else{
       projectStore.loadProject(1); // 默认加载第一关
     }
+    // Clear undo/redo — initialization commands should not be undoable
+    getHistoryManager().clear();
   }
 });
 // 答案
@@ -776,7 +787,7 @@ const message = useMessage();
 		<n-button-group class = "buttongroup">
 		  <n-tooltip trigger="hover">
 			<template #trigger>
-			  <n-button quaternary @click="prevStep">
+			  <n-button quaternary :disabled="!canUndo" @click="prevStep">
 				<template #icon>
 				  <n-icon><arrow-back-icon /></n-icon>
 				</template>
@@ -787,7 +798,7 @@ const message = useMessage();
 		  
 		  <n-tooltip trigger="hover">
 			<template #trigger>
-			  <n-button quaternary @click="nextStep" >
+			  <n-button quaternary :disabled="!canRedo" @click="nextStep" >
 				<template #icon>
 				  <n-icon><arrow-forward-icon /></n-icon>
 				</template>

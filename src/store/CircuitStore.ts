@@ -14,8 +14,6 @@ export const useCircuitStore = defineStore('circuit', {
     selectedId: -1,   // 选中的组件ID，-1表示没有选中任何组件
     currentId: 0,
 
-    undoStack:[] as any[],
-    redoStack:[] as any[],
     simulator: EventDrivenSimulator.getInstance(),
     // 获取项目管理器实例
     projectStore: useProjectStore(), 
